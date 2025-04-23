@@ -5,6 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "pocketbase:build": "docker build -t pb:0.27.1 ./pb",
+    "pocketbase:run": "docker run -d -it --name pocketbase -v ./pb/pb_data:/pb/pb_data -v ./pb/pb_migrations:/pb/pb_migrations -p 8080:8080 pb:0.27.1",
     "build": "run-p type-check \"build-only {@}\" --",
     "preview": "vite preview",
     "build-only": "vite build",
