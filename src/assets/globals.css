@@ -1,0 +1,137 @@
+/* CUSTOM PROPERTIES */
+:root {
+  /* Color Palette */
+  --color-background: #2c3e50;
+  --color-text: #ecf0f1;
+  --color-accent: #e74c3c;
+  --color-secondary: #f39c12;
+  --color-tertiary: #8e44ad;
+
+  /* Font Sizes */
+  --font-0: 0.875rem; /* Small text */
+  --font-1: 1rem; /* Base text */
+  --font-2: 1.25rem; /* Large text */
+  --font-3: 1.5rem; /* Extra large text */
+
+  /* Spacing */
+  --spacing-xs: 0.25rem; /* Extra small spacing */
+  --spacing-sm: 0.5rem; /* Small spacing */
+  --spacing-md: 1rem; /* Medium spacing */
+  --spacing-lg: 1.5rem; /* Large spacing */
+  --spacing-xl: 2rem; /* Extra large spacing */
+  --spacing-xxl: 4rem; /* Border Radius */
+
+  /* Border Styles */
+  --border-radius-sm: 0.125rem; /* Small border radius */
+  --border-radius-md: 0.25rem; /* Medium border radius */
+  --border-radius-lg: 0.5rem; /* Large border radius */
+  --border-radius-full: 50%; /* Full border radius for circles */
+  --border-size: 1px;
+}
+
+/* GLOBAL STYLES */
+
+* {
+  color: var(--color-text);
+  font-family:
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    Roboto,
+    Oxygen,
+    Ubuntu,
+    Cantarell,
+    'Open Sans',
+    'Helvetica Neue',
+    sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--color-background);
+  font-size: 16px;
+}
+
+/* CSS RESET */
+/* 1. Use a more-intuitive box-sizing model */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* 2. Remove default margin */
+* {
+  margin: 0;
+}
+
+/* 3. Enable keyword animations */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    interpolate-size: allow-keywords;
+  }
+}
+
+body {
+  /* 4. Add accessible line-height */
+  line-height: 1.5;
+  /* 5. Improve text rendering */
+  -webkit-font-smoothing: antialiased;
+}
+
+/* 6. Improve media defaults */
+img,
+picture,
+video,
+canvas,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+/* 7. Inherit fonts for form controls */
+input,
+button,
+textarea,
+select {
+  font: inherit;
+}
+
+/* 8. Avoid text overflows */
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  overflow-wrap: break-word;
+}
+
+/* 9. Improve line wrapping */
+p {
+  text-wrap: pretty;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  text-wrap: balance;
+}
+
+/*
+    10. Create a root stacking context
+  */
+#root,
+#__next {
+  isolation: isolate;
+}
+
+ul,
+ol {
+  list-style: none;
+}

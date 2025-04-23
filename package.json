@@ -13,7 +13,9 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "@types/vue-feather-icons": "^5.0.8",
     "vue": "^3.5.13",
+    "vue-feather-icons": "^5.1.0",
     "vue-router": "^4.5.0"
   },
   "devDependencies": {
