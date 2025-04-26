@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import HabitCenter from '@/components/HabitCenter.vue'
+import DailyHabits from '@/components/DailyHabits.vue'
 </script>
 
 <template>
   <main>
     <h1>Daily Habits</h1>
-    <HabitCenter />
+    <DailyHabits />
   </main>
 </template>
 

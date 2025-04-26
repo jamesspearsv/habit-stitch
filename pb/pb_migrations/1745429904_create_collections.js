@@ -6,10 +6,11 @@ migrate(
     let habits = new Collection({
       type: 'base',
       name: 'habits',
-      listRule: null,
-      viewRule: "@request.auth.id != ''",
+      listRule: '',
+      viewRule: '',
       createRule: '',
-      updateRule: "@request.auth.id != ''",
+      updateRule: '',
+      deleteRule: '',
       fields: [
         { type: 'text', name: 'habit_name', required: true },
         { type: 'number', name: 'habit_goal', required: true },
@@ -19,14 +20,15 @@ migrate(
 
     let log = new Collection({
       type: 'base',
-      name: 'log',
-      listRule: null,
-      viewRule: "@request.auth.id != ''",
+      name: 'activities',
+      listRule: '',
+      viewRule: '',
       createRule: '',
-      updateRule: "@request.auth.id != ''",
+      updateRule: '',
+      deleteRule: '',
       fields: [
         {
-          name: 'habit',
+          name: 'habit_id',
           type: 'relation',
           required: true,
           cascadeDelete: false,
@@ -41,7 +43,7 @@ migrate(
   (app) => {
     // add down queries...
     let habits = app.findCollectionByNameOrId('habits')
-    let log = app.findCollectionByNameOrId('log')
+    let log = app.findCollectionByNameOrId('activities')
     app.delete(log)
     app.delete(habits)
   },

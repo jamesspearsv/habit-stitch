@@ -1,0 +1,21 @@
+export type Result<T = string> = { success: true; data: T } | { success: false; error: string }
+
+export interface Habit {
+  id: string
+  habit_name: string
+  habit_goal: number
+}
+
+export interface Activity {
+  id: string
+  habit_id: string
+  date: string
+}
+
+export interface MappedHabit {
+  id: string
+  habit_name: string
+  habit_goal: number
+  completed_date: string
+  activity_id: string
+}

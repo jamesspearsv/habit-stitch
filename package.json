@@ -9,6 +9,7 @@
     "pb:run": "docker run -d -it --name pocketbase -v ./pb/pb_data:/pb/pb_data -v ./pb/pb_migrations:/pb/pb_migrations -p 8080:8080 pb:0.27.1",
     "pb:command": "docker exec -it pocketbase /pb/pocketbase",
     "pb:stop": "docker stop pocketbase && docker rm pocketbase",
+    "pb:reset": "rm -rf ./pb/pb_data",
     "build": "run-p type-check \"build-only {@}\" --",
     "preview": "vite preview",
     "build-only": "vite build",
@@ -18,6 +19,7 @@
   },
   "dependencies": {
     "@types/vue-feather-icons": "^5.0.8",
+    "pocketbase": "^0.26.0",
     "vue": "^3.5.13",
     "vue-feather-icons": "^5.1.0",
     "vue-router": "^4.5.0"
