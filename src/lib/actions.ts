@@ -1,16 +1,12 @@
-import PocketBase from 'pocketbase'
+import { pb } from '@/lib/pb'
 import type { Activity, Habit, MappedHabit, Result } from '@/lib/types'
-export const pb = new PocketBase('http://localhost:8080')
 
 function mapHabits(habits: Habit[], activities: Activity[]) {
   const map: MappedHabit[] = []
 
   habits.forEach((habit) => {
-    // todo: finish mapping function
-    // separate the temp storage variable and the mapping function
+    // Filter activities for those that match the current habit
     const activity = activities.filter((activity) => activity.habit_id === habit.id)[0]
-
-    console.log(activity)
 
     map.push({
       id: habit.id,
@@ -25,6 +21,7 @@ function mapHabits(habits: Habit[], activities: Activity[]) {
 }
 
 export async function fetchHabits(): Promise<Result<MappedHabit[]>> {
+  // Build start and end dates for today
   let todayStart: Date | string = new Date()
   todayStart.setHours(0, 0, 0, 0)
   todayStart = todayStart.toISOString().replace('T', ' ')
@@ -32,8 +29,6 @@ export async function fetchHabits(): Promise<Result<MappedHabit[]>> {
   let todayEnd: Date | string = new Date()
   todayEnd.setHours(23, 59, 59, 999)
   todayEnd = todayEnd.toISOString().replace('T', ' ')
-
-  console.log('today:', todayStart, todayEnd)
 
   try {
     const habits = (await pb
@@ -44,9 +39,6 @@ export async function fetchHabits(): Promise<Result<MappedHabit[]>> {
       filter: `date >= '${todayStart}' && date <= '${todayEnd}'`,
       fields: 'id,habit_id,date',
     })) as Activity[]
-
-    // console.log(habits)
-    // console.log(activities)
 
     const mappedHabits = mapHabits(habits, activities)
     console.log(mappedHabits)
