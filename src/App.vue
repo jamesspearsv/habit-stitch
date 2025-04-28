@@ -8,4 +8,11 @@ import MenuBar from './components/MenuBar.vue'
   <MenuBar />
 </template>
 
-<style></style>
+<style>
+@media screen and (min-width: 768px) {
+  body {
+    width: 50%;
+    margin: auto;
+  }
+}
+</style>

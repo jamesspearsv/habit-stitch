@@ -16,7 +16,6 @@ function mapHabits(habits: Habit[], activities: Activity[]) {
       activity_id: activity ? activity.id : '',
     })
   })
-
   return map
 }
 
@@ -41,7 +40,6 @@ export async function fetchHabits(): Promise<Result<MappedHabit[]>> {
     })) as Activity[]
 
     const mappedHabits = mapHabits(habits, activities)
-    console.log(mappedHabits)
     return { success: true, data: mappedHabits }
   } catch (error) {
     console.error(error)
@@ -50,12 +48,16 @@ export async function fetchHabits(): Promise<Result<MappedHabit[]>> {
 }
 
 export async function logActivity(habit_id: string): Promise<Result> {
+  if (!pb.authStore.record) return { success: false, error: 'No user logged in' }
+
   try {
     console.log(habit_id)
     const entry = {
       habit_id,
       date: new Date().toISOString(),
-    }
+      user_id: pb.authStore.record.id,
+    } as Activity
+
     await pb.collection('activities').create(entry)
     return { success: true, data: 'Successfully logged habit' }
   } catch (error) {

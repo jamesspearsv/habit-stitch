@@ -2,30 +2,38 @@
 /// <reference path="../pb_data/types.d.ts" />
 migrate(
   (app) => {
+    const users = app.findCollectionByNameOrId('users')
     // add up queries...
     let habits = new Collection({
       type: 'base',
       name: 'habits',
-      listRule: '',
-      viewRule: '',
-      createRule: '',
-      updateRule: '',
-      deleteRule: '',
+      listRule: 'user_id = @request.auth.id',
+      viewRule: 'user_id = @request.auth.id',
+      createRule: 'user_id = @request.auth.id',
+      updateRule: 'user_id = @request.auth.id',
+      deleteRule: 'user_id = @request.auth.id',
       fields: [
         { type: 'text', name: 'habit_name', required: true },
         { type: 'number', name: 'habit_goal', required: true },
+        {
+          name: 'user_id',
+          type: 'relation',
+          required: true,
+          cascadeDelete: false,
+          collectionID: users.id,
+        },
       ],
     })
     app.save(habits)
 
-    let log = new Collection({
+    let activities = new Collection({
       type: 'base',
       name: 'activities',
-      listRule: '',
-      viewRule: '',
-      createRule: '',
-      updateRule: '',
-      deleteRule: '',
+      listRule: 'user_id = @request.auth.id',
+      viewRule: 'user_id = @request.auth.id',
+      createRule: 'user_id = @request.auth.id',
+      updateRule: 'user_id = @request.auth.id',
+      deleteRule: 'user_id = @request.auth.id',
       fields: [
         {
           name: 'habit_id',
@@ -35,16 +43,23 @@ migrate(
           collectionID: habits.id,
         },
         { name: 'date', type: 'date', required: true },
+        {
+          name: 'user_id',
+          type: 'relation',
+          required: true,
+          cascadeDelete: false,
+          collectionID: users.id,
+        },
       ],
     })
 
-    app.save(log)
+    app.save(activities)
   },
   (app) => {
     // add down queries...
     let habits = app.findCollectionByNameOrId('habits')
-    let log = app.findCollectionByNameOrId('activities')
-    app.delete(log)
+    let activities = app.findCollectionByNameOrId('activities')
+    app.delete(activities)
     app.delete(habits)
   },
 )

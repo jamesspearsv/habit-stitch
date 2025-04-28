@@ -29,6 +29,7 @@ router.beforeEach(async (to) => {
       console.log('protected')
       return { name: 'Login' }
     }
+    console.log(pb.authStore.record)
   }
 
   // Temp: signout route

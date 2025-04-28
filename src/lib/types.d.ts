@@ -4,12 +4,14 @@ export interface Habit {
   id: string
   habit_name: string
   habit_goal: number
+  user_id: string
 }
 
 export interface Activity {
   id: string
   habit_id: string
   date: string
+  user_id: string
 }
 
 export interface MappedHabit {
