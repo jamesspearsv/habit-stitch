@@ -7,14 +7,13 @@ const formData = ref({
   email: '',
   password: '',
 })
+const error = ref('')
 
 async function handleSubmit() {
   const result = await signin(formData.value)
-  if (result.success) {
-    router.push({ name: 'Home' })
-  } else {
-    return false
-  }
+
+  if (result.success) router.push({ name: 'Home' })
+  else error.value = result.error
 }
 </script>
 
@@ -22,15 +21,18 @@ async function handleSubmit() {
   <main>
     <h1>Login Page</h1>
     <form @submit.prevent="handleSubmit">
-      <div class="form_group">
+      <div class="form-group">
         <label for="email">Email</label>
-        <input type="email" name="email" id="email" v-model="formData.email" />
+        <input type="email" name="email" id="email" v-model="formData.email" required />
       </div>
-      <div class="form_group">
+      <div class="form-group">
         <label for="password">Password</label>
-        <input type="password" name="password" id="password" v-model="formData.password" />
+        <input type="password" name="password" id="password" v-model="formData.password" required />
       </div>
-      <input type="submit" value="Login" />
+      <div class="form-group">
+        <input type="submit" value="Login" />
+        <div v-if="error" class="error-msg">{{ error }}</div>
+      </div>
     </form>
   </main>
   <div class="signup">
@@ -44,5 +46,10 @@ async function handleSubmit() {
   display: flex;
   justify-content: center;
   padding-block: var(--sp-md);
+}
+
+.error-msg {
+  color: var(--c-danger);
+  font-style: italic;
 }
 </style>

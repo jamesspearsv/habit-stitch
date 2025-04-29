@@ -28,7 +28,6 @@ router.beforeEach(async (to) => {
   if (protectedRoutes.includes(to.path)) {
     // Validate the current user
     if (!pb.authStore.isValid) {
-      console.log('protected')
       return { name: 'Login' }
     }
   }

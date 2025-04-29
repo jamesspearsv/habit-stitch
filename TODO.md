@@ -1,8 +1,7 @@
-# Habit Stitch MVP Todo List
+# Todo.md File
 
-- [ ] Better auth error handling
-- [ ] Add auth error feedback
-- [ ] Add auth schema validation
+- [x] Better auth error handling
+- [x] Add auth error feedback
 - [ ] Add ability to create new habits
 - [ ] Clean up global styles
 - [ ] Add improved styles to today view

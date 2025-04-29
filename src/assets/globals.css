@@ -7,6 +7,7 @@
   --c-accent: #e74c3c;
   --c-secondary: #f39c12;
   --c-tertiary: #8e44ad;
+  --c-danger: #ed3545;
 
   /* Font Sizes */
   --fs-0: 0.875rem; /* Small text */
@@ -74,7 +75,7 @@ input {
   }
 }
 
-.form_group {
+.form-group {
   display: flex;
   flex-direction: column;
   gap: var(--sp-sm);
