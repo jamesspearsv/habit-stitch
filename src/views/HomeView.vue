@@ -11,6 +11,6 @@ import DailyHabits from '@/components/DailyHabits.vue'
 
 <style scoped>
 main {
-  margin: var(--spacing-md);
+  margin: var(--sp-md);
 }
 </style>

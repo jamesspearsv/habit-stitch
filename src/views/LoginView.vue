@@ -9,10 +9,9 @@ const formData = ref({
 })
 
 async function handleSubmit() {
-  console.log(formData.value)
   const result = await signin(formData.value)
   if (result.success) {
-    router.push('/')
+    router.push({ name: 'Home' })
   } else {
     return false
   }
@@ -23,19 +22,27 @@ async function handleSubmit() {
   <main>
     <h1>Login Page</h1>
     <form @submit.prevent="handleSubmit">
-      <div>
+      <div class="form_group">
         <label for="email">Email</label>
         <input type="email" name="email" id="email" v-model="formData.email" />
       </div>
-      <div>
+      <div class="form_group">
         <label for="password">Password</label>
         <input type="password" name="password" id="password" v-model="formData.password" />
       </div>
       <input type="submit" value="Login" />
     </form>
   </main>
-  <div>
-    <p>{{ formData.email }}</p>
-    <p>{{ formData.password }}</p>
+  <div class="signup">
+    <RouterLink :to="{ name: 'Signup' }">Create an account here!</RouterLink>
   </div>
 </template>
+
+<style scoped>
+.signup {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding-block: var(--sp-md);
+}
+</style>

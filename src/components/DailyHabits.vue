@@ -60,20 +60,20 @@ async function handleActivityDelete(activity_id: string) {
 
 <style scoped>
 button.habit {
-  background-color: color-mix(in srgb, var(--color-background) 100%, #fff 5%);
-  padding: var(--spacing-xxl) var(--spacing-sm);
-  border: solid var(--border-size) color-mix(in srgb, var(--color-background) 100%, #000 5%);
-  border-radius: var(--border-radius-md);
+  background-color: var(--c-bg-alt);
+  padding: var(--sp-xxl) var(--sp-sm);
+  border: solid var(--bs-0) color-mix(in srgb, var(--c-bg) 100%, #000 5%);
+  border-radius: var(--br-md);
   cursor: pointer;
   width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-block: var(--spacing-md);
+  margin-block: var(--sp-md);
 }
 
 button.today {
-  background-color: var(--color-accent);
-  color: var(--color-text);
+  background-color: var(--c-accent);
+  color: var(--c-text);
 }
 </style>

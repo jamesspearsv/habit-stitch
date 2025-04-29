@@ -2,13 +2,7 @@
   <nav>
     <ul>
       <li>
-        <RouterLink to="/todo">Habits</RouterLink>
-      </li>
-      <li>
-        <RouterLink to="/">Home</RouterLink>
-      </li>
-      <li>
-        <RouterLink to="/todo">History</RouterLink>
+        <RouterLink :to="{ name: 'Home' }">Home</RouterLink>
       </li>
     </ul>
   </nav>
@@ -20,15 +14,15 @@ nav {
   bottom: 0;
   left: 0;
   right: 0;
-  background-color: var(--color-secondary);
+  background-color: var(--c-secondary);
 }
 
 ul {
-  height: var(--spacing-xxl);
+  height: var(--sp-xxl);
   display: flex;
   justify-content: space-around;
   align-items: center;
-  gap: var(--spacing-md);
+  gap: var(--sp-md);
 }
 
 a {
@@ -36,8 +30,8 @@ a {
 }
 
 a.router-link-active {
-  color: var(--color-accent);
+  color: var(--c-accent);
   font-weight: 700;
-  font-size: var(--font-2);
+  font-size: var(--fs-2);
 }
 </style>
