@@ -57,7 +57,6 @@
 body {
   background-color: var(--c-bg);
   font-size: 16px;
-  padding-inline: var(--sp-lg);
 }
 
 input {
@@ -73,6 +72,14 @@ input {
   &[type='submit']:hover {
     background-color: var(--c-tertiary);
   }
+}
+
+button {
+  background-color: var(--c-tertiary);
+  border: none;
+  padding: var(--sp-sm);
+  border-radius: var(--br-md);
+  cursor: pointer;
 }
 
 .form-group {

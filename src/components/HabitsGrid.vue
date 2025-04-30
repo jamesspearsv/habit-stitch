@@ -1,11 +1,10 @@
 <script lang="ts" setup>
 import { deleteActivity, fetchHabits, logActivity } from '@/lib/actions'
 import type { MappedHabit } from '@/lib/types'
-import { onMounted, ref, watch } from 'vue'
+import { onMounted, ref } from 'vue'
 
 const habits = ref<MappedHabit[] | null>(null)
 const error = ref(false)
-const refresh = ref(Math.random())
 
 async function fetchData() {
   const result = await fetchHabits()
@@ -23,17 +22,15 @@ onMounted(async () => {
   await fetchData()
 })
 
-watch(refresh, fetchData)
-
 async function handleActivityLog(habit_id: string) {
   const result = await logActivity(habit_id)
-  if (result.success) refresh.value = Math.random()
+  if (result.success) await fetchData()
 }
 
 async function handleActivityDelete(activity_id: string) {
   console.log('delete')
   const result = await deleteActivity(activity_id)
-  if (result.success) refresh.value = Math.random()
+  if (result.success) await fetchData()
 }
 </script>
 
