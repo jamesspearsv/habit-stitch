@@ -23,7 +23,7 @@ const router = createRouter({
 })
 
 router.beforeEach(async (to) => {
-  const protectedRoutes = ['/today']
+  const protectedRoutes = ['/']
   // Check if the requested route is protected
   if (protectedRoutes.includes(to.path)) {
     // Validate the current user
