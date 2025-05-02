@@ -1,2 +1,3 @@
 import PocketBase from 'pocketbase'
-export const pb = new PocketBase('http://localhost:8080')
+const pb_url = import.meta.env.VITE_PB_URL || 'http://localhost:8080'
+export const pb = new PocketBase(pb_url)
