@@ -1,5 +1,6 @@
 import { pb } from '@/lib/pb'
 import type { Activity, Habit, MappedHabit, Result } from '@/lib/types'
+import { ClientResponseError } from 'pocketbase'
 
 function mapHabits(habits: Habit[], activities: Activity[]) {
   const map: MappedHabit[] = []
@@ -17,6 +18,29 @@ function mapHabits(habits: Habit[], activities: Activity[]) {
     })
   })
   return map
+}
+
+export async function createHabit(data: {
+  habit_name: string
+  habit_goal: number
+}): Promise<Result> {
+  if (!pb.authStore.record) return { success: false, error: 'No logged in user' }
+
+  const habit = {
+    habit_name: data.habit_name,
+    habit_goal: data.habit_goal,
+    user_id: [pb.authStore.record?.id],
+  }
+
+  try {
+    await pb.collection('habits').create(habit)
+    return { success: true, data: 'Successfully created habit' }
+  } catch (error) {
+    if (error instanceof ClientResponseError) {
+      console.error(`${error.status}: ${error.message}`)
+    }
+    return { success: false, error: 'Unable to create habit' }
+  }
 }
 
 export async function fetchHabits(): Promise<Result<MappedHabit[]>> {

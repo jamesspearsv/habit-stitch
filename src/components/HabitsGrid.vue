@@ -1,10 +1,11 @@
 <script lang="ts" setup>
 import { deleteActivity, fetchHabits, logActivity } from '@/lib/actions'
 import type { MappedHabit } from '@/lib/types'
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 
 const habits = ref<MappedHabit[] | null>(null)
 const error = ref(false)
+const props = defineProps<{ signal: number }>()
 
 async function fetchData() {
   const result = await fetchHabits()
@@ -17,6 +18,11 @@ async function fetchData() {
   }
 }
 
+watch(
+  () => props.signal,
+  async () => await fetchData(),
+)
+
 // Fetch habits from backend
 onMounted(async () => {
   await fetchData()
@@ -28,7 +34,6 @@ async function handleActivityLog(habit_id: string) {
 }
 
 async function handleActivityDelete(activity_id: string) {
-  console.log('delete')
   const result = await deleteActivity(activity_id)
   if (result.success) await fetchData()
 }
@@ -50,7 +55,7 @@ async function handleActivityDelete(activity_id: string) {
       "
     >
       {{ habit.habit_name }}
-      <p v-if="habit.completed_date">Completed on {{ habit.completed_date }}</p>
+      <!-- <p v-if="habit.completed_date">Completed on {{ habit.completed_date }}</p> -->
     </button>
   </div>
 </template>

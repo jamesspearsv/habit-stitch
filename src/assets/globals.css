@@ -29,6 +29,7 @@
   --br-lg: 0.5rem; /* Large border radius */
   --br-full: 50%; /* Full border radius for circles */
   --bs-0: 1px;
+  --dialog-margin: 25dvh;
 }
 
 /* GLOBAL STYLES */
