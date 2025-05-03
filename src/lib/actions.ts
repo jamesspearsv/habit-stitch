@@ -75,7 +75,6 @@ export async function logActivity(habit_id: string): Promise<Result> {
   if (!pb.authStore.record) return { success: false, error: 'No user logged in' }
 
   try {
-    console.log(habit_id)
     const entry = {
       habit_id,
       date: new Date().toISOString(),

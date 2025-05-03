@@ -1,7 +1,8 @@
 <script lang="ts" setup>
-import { deleteActivity, fetchHabits, logActivity } from '@/lib/actions'
+import { fetchHabits } from '@/lib/actions'
 import type { MappedHabit } from '@/lib/types'
 import { onMounted, ref, watch } from 'vue'
+import HabitCard from './HabitCard.vue'
 
 const habits = ref<MappedHabit[] | null>(null)
 const error = ref(false)
@@ -27,36 +28,23 @@ watch(
 onMounted(async () => {
   await fetchData()
 })
-
-async function handleActivityLog(habit_id: string) {
-  const result = await logActivity(habit_id)
-  if (result.success) await fetchData()
-}
-
-async function handleActivityDelete(activity_id: string) {
-  const result = await deleteActivity(activity_id)
-  if (result.success) await fetchData()
-}
 </script>
 
 <template>
   <div v-if="error">Error!</div>
-  <div v-else-if="!habits">Loading....</div>
   <div v-else>
-    <button
-      v-for="habit in habits"
-      :key="habit.id"
-      :class="{ habit: true, today: habit.completed_date }"
-      @click="
-        () => {
-          if (habit.completed_date) handleActivityDelete(habit.activity_id)
-          if (!habit.completed_date) handleActivityLog(habit.id)
+    <HabitCard
+      @stale-data="
+        async () => {
+          await fetchData()
         }
       "
-    >
-      {{ habit.habit_name }}
-      <!-- <p v-if="habit.completed_date">Completed on {{ habit.completed_date }}</p> -->
-    </button>
+      v-for="habit in habits"
+      :key="habit.id"
+      :id="habit.id"
+      :habit_name="habit.habit_name"
+      :activity_id="habit.activity_id"
+    />
   </div>
 </template>
 
