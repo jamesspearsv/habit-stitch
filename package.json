@@ -5,8 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "pb:build": "docker build -t pb:0.27.1 ./pb",
-    "pb:run": "docker run -d -it --name pocketbase -v ./pb/pb_data:/pb/pb_data -v ./pb/pb_migrations:/pb/pb_migrations -p 8080:8080 pb:0.27.1",
+    "pb:build": "docker build -t pb ./pb",
+    "pb:run": "docker run -d -it --name pocketbase -v ./pb/pb_data:/pb/pb_data -v ./pb/pb_migrations:/pb/pb_migrations -p 8080:8080 pb",
     "pb:command": "docker exec -it pocketbase /pb/pocketbase",
     "pb:stop": "docker stop pocketbase && docker rm pocketbase",
     "pb:reset": "rm -rf ./pb/pb_data",
@@ -14,7 +14,7 @@
     "preview": "vite preview",
     "build-only": "vite build",
     "type-check": "vue-tsc --build",
-    "lint": "eslint . --fsix",
+    "lint": "eslint . --fix",
     "format": "prettier --write src/"
   },
   "dependencies": {

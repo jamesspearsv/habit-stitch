@@ -12,7 +12,7 @@ function mapHabits(habits: Habit[], activities: Activity[]) {
     map.push({
       id: habit.id,
       habit_name: habit.habit_name,
-      habit_goal: habit.habit_goal,
+      habit_color: habit.habit_color,
       completed_date: activity ? activity.date : '',
       activity_id: activity ? activity.id : '',
     })
@@ -20,15 +20,11 @@ function mapHabits(habits: Habit[], activities: Activity[]) {
   return map
 }
 
-export async function createHabit(data: {
-  habit_name: string
-  habit_goal: number
-}): Promise<Result> {
+export async function createHabit(data: { habit_name: string }): Promise<Result> {
   if (!pb.authStore.record) return { success: false, error: 'No logged in user' }
 
   const habit = {
     habit_name: data.habit_name,
-    habit_goal: data.habit_goal,
     user_id: [pb.authStore.record?.id],
   }
 
@@ -56,7 +52,7 @@ export async function fetchHabits(): Promise<Result<MappedHabit[]>> {
   try {
     const habits = (await pb
       .collection('habits')
-      .getFullList({ fields: 'id,habit_name,habit_goal,' })) as Habit[]
+      .getFullList({ fields: 'id,habit_name,habit_color,' })) as Habit[]
 
     const activities = (await pb.collection('activities').getFullList({
       filter: `date >= '${todayStart}' && date <= '${todayEnd}'`,

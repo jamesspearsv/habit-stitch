@@ -14,7 +14,11 @@ migrate(
       deleteRule: 'user_id = @request.auth.id',
       fields: [
         { type: 'text', name: 'habit_name', required: true },
-        { type: 'number', name: 'habit_goal', required: true },
+        {
+          type: 'text',
+          name: 'habit_color',
+          autogeneratePattern: '#([0-9a-f]{6})',
+        },
         {
           name: 'user_id',
           type: 'relation',
