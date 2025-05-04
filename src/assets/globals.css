@@ -34,6 +34,7 @@
 
 /* GLOBAL STYLES */
 * {
+  interpolate-size: allow-keywords;
   color: var(--c-text);
   font-family:
     system-ui,

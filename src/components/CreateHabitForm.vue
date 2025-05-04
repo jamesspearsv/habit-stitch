@@ -6,6 +6,7 @@ const initialState = { habit_name: '' }
 const formData = ref({ ...initialState })
 const dialog = ref<HTMLDialogElement | null>(null)
 const open = ref(false)
+const emit = defineEmits(['update'])
 
 watch(open, () => {
   if (!dialog.value) return
@@ -23,7 +24,7 @@ function closeDialog() {
     setTimeout(() => {
       dialog.value?.close()
       dialog.value?.classList.remove('closing')
-    }, 250)
+    }, 200)
   }
 }
 
@@ -32,41 +33,47 @@ async function addHabit() {
   const result = await createHabit(formData.value)
   if (result.success) {
     open.value = false
+    emit('update')
   }
 }
 </script>
 
 <template>
-  <!--
-  TODO: Position new habit button
--->
-  <button @click="() => (open = true)">New Habit</button>
-  <dialog ref="dialog">
-    <section class="dialog-section">
-      <form @submit.prevent="addHabit" @reset.prevent="() => (open = false)">
-        <h2>Add a new habit</h2>
-        <div class="form-group">
-          <label for="habit_name">Habit</label>
-          <input
-            type="text"
-            name="habit_name"
-            id="habit_name"
-            v-model="formData.habit_name"
-            required
-          />
-        </div>
-        <div class="form-group">
-          <input type="submit" value="Add" class="submit-btn" />
-        </div>
-        <div class="form-group">
-          <input type="reset" class="cancel-btn" value="Cancel" />
-        </div>
-      </form>
-    </section>
+  <div class="heading">
+    <slot />
+    <button @click="() => (open = true)">New Habit</button>
+  </div>
+  <dialog ref="dialog" @close.prevent="() => (open = false)">
+    <form @submit.prevent="addHabit" @reset.prevent="() => (open = false)">
+      <h2>Add a new habit</h2>
+      <div class="form-group">
+        <label for="habit_name">Habit</label>
+        <input
+          type="text"
+          name="habit_name"
+          id="habit_name"
+          v-model="formData.habit_name"
+          required
+        />
+      </div>
+      <div class="form-group">
+        <input type="submit" value="Add" class="submit-btn" />
+      </div>
+      <div class="form-group">
+        <input type="reset" class="cancel-btn" value="Cancel" />
+      </div>
+    </form>
   </dialog>
 </template>
 
 <style scoped>
+.heading {
+  display: flex;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  padding-block: var(--sp-xs);
+}
 @keyframes dialog-opening {
   from {
     margin-top: 100dvh;
@@ -75,18 +82,17 @@ async function addHabit() {
 
 @keyframes dialog-closing {
   from {
-    margin-top: var(--dialog-margin);
+    margin-top: 5dvh;
   }
 }
 
 dialog {
   border: none;
-  border-radius: var(--br-lg) var(--br-lg) 0 0;
+  border-radius: var(--br-lg);
   background-color: var(--c-bg);
   padding: var(--sp-lg);
-  min-width: 100dvw;
-  min-height: 100dvh;
-  margin-top: var(--dialog-margin);
+  width: 90dvw;
+  margin-inline: auto;
 }
 
 dialog::backdrop {
@@ -94,6 +100,7 @@ dialog::backdrop {
 }
 
 dialog:open {
+  margin-top: 5dvh;
   animation-name: dialog-opening;
   animation-duration: 200ms;
   animation-timing-function: ease-in-out;
@@ -137,5 +144,11 @@ form {
   border-radius: 100%;
   aspect-ratio: 1/1;
   width: 40px;
+}
+
+@media screen and (min-width: 768px) {
+  dialog {
+    width: 50dvw;
+  }
 }
 </style>

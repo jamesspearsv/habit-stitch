@@ -9,7 +9,7 @@ const props = defineProps<{
   habit_color: string
   activity_id: string
 }>()
-const emit = defineEmits(['stale-data'])
+const emit = defineEmits(['update'])
 
 const completed = ref(props.activity_id ? true : false)
 
@@ -18,7 +18,7 @@ async function handleActivityLog(habit_id: string) {
   // Optimistically update the habit completed state
   if (result.success) {
     completed.value = true
-    emit('stale-data')
+    emit('update')
   }
 }
 
@@ -27,7 +27,7 @@ async function handleActivityDelete(activity_id: string) {
     const result = await deleteActivity(activity_id)
     if (result.success) {
       completed.value = false
-      emit('stale-data')
+      emit('update')
     }
   }
 }
@@ -43,7 +43,9 @@ async function handleActivityDelete(activity_id: string) {
       }
     "
   >
-    {{ props.habit_name }}
+    <div class="habit-name">
+      {{ props.habit_name }}
+    </div>
   </button>
 </template>
 <style scoped>
@@ -73,5 +75,16 @@ button::before {
   height: 100%;
   position: absolute;
   left: 0;
+}
+
+.habit-name {
+  padding: var(--sp-xs);
+  border: none;
+  border-radius: var(--br-md);
+}
+
+button.today > .habit-name {
+  background-color: var(--c-text);
+  color: var(--c-bg);
 }
 </style>
