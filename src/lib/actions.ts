@@ -97,3 +97,20 @@ export async function deleteActivity(activity_id: string): Promise<Result> {
     return { success: false, error: `Unable to delete activity ${activity_id}` }
   }
 }
+
+/* 
+TODO: Finish fetchActivities function
+- get activity_id and data
+- expand habit relation to get habit_name, habit_color, and habit_id
+- return activities if successful
+*/
+export async function fetchActivities(): Promise<Result> {
+  try {
+    const activities = await pb.collection('activities').getFullList()
+    console.log(activities)
+    return { success: true, data: 'Success!' }
+  } catch (error) {
+    if (error instanceof ClientResponseError) console.error(error)
+    return { success: false, error: 'Unable to fetch activities' }
+  }
+}

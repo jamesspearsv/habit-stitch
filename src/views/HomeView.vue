@@ -46,10 +46,6 @@ onMounted(async () => {
 </template>
 
 <style scoped>
-main {
-  margin: var(--sp-xl);
-}
-
 .nav-section {
   padding: var(--sp-md);
   display: flex;

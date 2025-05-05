@@ -1,5 +1,6 @@
 export type Result<T = string> = { success: true; data: T } | { success: false; error: string }
 
+// TODO: Update habit and activity type definitions
 export interface Habit {
   id: string
   habit_name: string

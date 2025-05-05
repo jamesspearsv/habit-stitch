@@ -6,8 +6,12 @@ const open = ref(false)
 
 <template>
   <nav :class="{ open: open }">
+    <!--
+      TODO: Fix event bubbling when clicking menu element
+      -->
     <menu @click="() => (open = false)">
       <RouterLink :to="{ name: 'Home' }">Home</RouterLink>
+      <RouterLink :to="{ name: 'Habit Pattern' }">Habit Patterns</RouterLink>
     </menu>
     <button @click="() => (open = !open)">
       <div>Menu</div>

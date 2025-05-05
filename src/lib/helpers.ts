@@ -4,7 +4,7 @@ export function generateHexCode() {
   let code = '#'
 
   for (let i = 0; i < 6; i++) {
-    code = code + values[Math.ceil(Math.random() * 16)]
+    code = code + values[Math.floor(Math.random() * 16)]
   }
   return code
 }

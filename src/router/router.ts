@@ -2,16 +2,22 @@ import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '@/views/HomeView.vue'
 import LoginView from '@/views/LoginView.vue'
 import SignupView from '@/views/SignupView.vue'
+import AppView from '@/views/AppView.vue'
 import { signout } from '@/lib/auth'
 import { pb } from '@/lib/pb'
+import HabitPatternView from '@/views/HabitPatternView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: '/',
-      name: 'Home',
-      component: HomeView,
+      path: '/app',
+      name: 'App',
+      component: AppView,
+      children: [
+        { path: '', name: 'Home', component: HomeView },
+        { path: 'pattern', name: 'Habit Pattern', component: HabitPatternView },
+      ],
     },
     {
       path: '/login',
@@ -23,13 +29,16 @@ const router = createRouter({
 })
 
 router.beforeEach(async (to) => {
-  const protectedRoutes = ['/']
   // Check if the requested route is protected
-  if (protectedRoutes.includes(to.path)) {
+  if (to.path.match('/app')) {
     // Validate the current user
     if (!pb.authStore.isValid) {
       return { name: 'Login' }
     }
+  }
+
+  if (to.path === '/login' && pb.authStore.isValid) {
+    return { name: 'Home' }
   }
 
   // Temp: signout route

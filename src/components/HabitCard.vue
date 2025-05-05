@@ -84,7 +84,7 @@ button::before {
 }
 
 button.today > .habit-name {
-  background-color: var(--c-text);
-  color: var(--c-bg);
+  font-weight: 700;
+  color: color-mix(in srgb, v-bind(habit_color), var(--c-bg) 90%);
 }
 </style>

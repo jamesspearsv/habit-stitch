@@ -61,6 +61,10 @@ body {
   font-size: 16px;
 }
 
+main {
+  margin: var(--sp-xl);
+}
+
 input {
   background-color: var(--c-bg-alt);
   border: none;
