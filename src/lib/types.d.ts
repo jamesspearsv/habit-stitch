@@ -1,6 +1,5 @@
 export type Result<T = string> = { success: true; data: T } | { success: false; error: string }
 
-// TODO: Update habit and activity type definitions
 export interface Habit {
   id: string
   habit_name: string
@@ -13,6 +12,7 @@ export interface Activity {
   habit_id: string
   date: string
   user_id: string
+  expand?: { habit_id: { habit_color } }
 }
 
 export interface MappedHabit {
@@ -21,4 +21,10 @@ export interface MappedHabit {
   habit_color: string
   completed_date: string
   activity_id: string
+}
+
+export interface MappedActivity {
+  id: string
+  date: string
+  color: string
 }

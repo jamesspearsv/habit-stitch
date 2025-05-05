@@ -1,25 +1,25 @@
 <script setup lang="ts">
 import { fetchActivities } from '@/lib/actions'
-import { generateHexCode } from '@/lib/helpers'
+import type { MappedActivity } from '@/lib/types'
 import { onMounted, ref } from 'vue'
-const activities = ref<{ habit_color: string }[]>([])
-for (let i = 0; i < 75; i++) {
-  console.log(generateHexCode())
-  activities.value.push({ habit_color: generateHexCode() })
-}
+const activities = ref<MappedActivity[] | null>()
 
 onMounted(async () => {
-  await fetchActivities()
+  const result = await fetchActivities()
+  if (result.success) activities.value = result.data
 })
 </script>
 <template>
   <main>
     <h1>Habit Pattern!</h1>
     <section>
+      <!--
+        TODO: set up color blending using activity index and activities length
+      -->
       <article
         v-for="activity in activities"
-        :key="activity.habit_color"
-        :style="{ backgroundColor: activity.habit_color }"
+        :key="activity.id"
+        :style="{ backgroundColor: activity.color }"
       />
     </section>
   </main>

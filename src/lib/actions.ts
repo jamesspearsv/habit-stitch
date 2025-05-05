@@ -1,5 +1,5 @@
 import { pb } from '@/lib/pb'
-import type { Activity, Habit, MappedHabit, Result } from '@/lib/types'
+import type { Activity, Habit, MappedActivity, MappedHabit, Result } from '@/lib/types'
 import { ClientResponseError } from 'pocketbase'
 
 function mapHabits(habits: Habit[], activities: Activity[]) {
@@ -98,17 +98,22 @@ export async function deleteActivity(activity_id: string): Promise<Result> {
   }
 }
 
-/* 
-TODO: Finish fetchActivities function
-- get activity_id and data
-- expand habit relation to get habit_name, habit_color, and habit_id
-- return activities if successful
-*/
-export async function fetchActivities(): Promise<Result> {
+export async function fetchActivities(): Promise<Result<MappedActivity[]>> {
   try {
-    const activities = await pb.collection('activities').getFullList()
-    console.log(activities)
-    return { success: true, data: 'Success!' }
+    const activities = (await pb.collection('activities').getFullList({
+      expand: 'habit_id ',
+      fields: 'date,id,expand.habit_id.habit_color',
+    })) as Activity[]
+
+    const mappedActivities: MappedActivity[] = activities.map((activity) => {
+      return {
+        id: activity.id,
+        date: activity.date,
+        color: activity.expand?.habit_id.habit_color,
+      }
+    })
+
+    return { success: true, data: mappedActivities }
   } catch (error) {
     if (error instanceof ClientResponseError) console.error(error)
     return { success: false, error: 'Unable to fetch activities' }
