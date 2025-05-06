@@ -15,7 +15,7 @@
       </p>
       <h2>How does Habit Stitch work?</h2>
       <p>
-        Add your habits and routines into habit tracker and check them off throughout the day. Each
+        Add your habits and routines into Habit Stitch and check them off throughout the day. Each
         time you log an activity you'll add another stitch to your habit pattern for the month.
         Check on your pattern to see it grow and changes as you build your new habits and routines!
       </p>
