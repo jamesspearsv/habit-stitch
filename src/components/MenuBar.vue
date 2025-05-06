@@ -67,7 +67,7 @@ menu {
   /* align-items: center; */
   justify-content: center;
   flex-direction: column;
-  width: 25%;
+  width: 50%;
   margin: auto;
   gap: var(--sp-lg);
   transition: height 200ms ease-in-out;
