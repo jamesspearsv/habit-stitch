@@ -4,6 +4,7 @@ import { ref } from 'vue'
 const open = ref(false)
 </script>
 
+// TODO: fix menu bar top position changing when scrolling on mobile
 <template>
   <nav :class="{ open: open }">
     <!--
@@ -37,6 +38,7 @@ nav {
   transition-property: top border-top;
   transition-duration: 200ms;
   transition-timing-function: ease-in-out;
+  z-index: 100;
 }
 
 nav.open {

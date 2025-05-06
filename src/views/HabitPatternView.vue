@@ -10,19 +10,17 @@ onMounted(async () => {
 })
 </script>
 <template>
-  <main>
-    <h1>Habit Pattern!</h1>
-    <section>
-      <!--
+  <h1>Habit Pattern!</h1>
+  <section>
+    <!--
         TODO: set up color blending using activity index and activities length
       -->
-      <article
-        v-for="activity in activities"
-        :key="activity.id"
-        :style="{ backgroundColor: activity.color }"
-      />
-    </section>
-  </main>
+    <article
+      v-for="activity in activities"
+      :key="activity.id"
+      :style="{ backgroundColor: activity.color }"
+    />
+  </section>
 </template>
 <style scoped>
 section {

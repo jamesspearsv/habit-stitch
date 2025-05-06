@@ -26,23 +26,21 @@ onMounted(async () => {
 </script>
 
 <template>
-  <main>
-    <CreateHabitForm>
-      <h1>Today's Habits</h1>
-    </CreateHabitForm>
-    <div v-if="error">Error!</div>
-    <section v-else>
-      <HabitCard
-        @update="async () => await fetchData()"
-        v-for="habit in habits"
-        :key="habit.id"
-        :id="habit.id"
-        :habit_name="habit.habit_name"
-        :activity_id="habit.activity_id"
-        :habit_color="habit.habit_color"
-      />
-    </section>
-  </main>
+  <CreateHabitForm @update="async () => await fetchData()">
+    <h1>Today's Habits</h1>
+  </CreateHabitForm>
+  <div v-if="error">Error!</div>
+  <section v-else>
+    <HabitCard
+      @update="async () => await fetchData()"
+      v-for="habit in habits"
+      :key="habit.id"
+      :id="habit.id"
+      :habit_name="habit.habit_name"
+      :activity_id="habit.activity_id"
+      :habit_color="habit.habit_color"
+    />
+  </section>
 </template>
 
 <style scoped>

@@ -72,8 +72,11 @@ async function addHabit() {
   justify-content: space-between;
   position: sticky;
   top: 0;
-  padding-block: var(--sp-xs);
+  padding-block: var(--sp-sm);
+  z-index: 100;
+  background-color: var(--c-bg);
 }
+
 @keyframes dialog-opening {
   from {
     margin-top: 100dvh;
