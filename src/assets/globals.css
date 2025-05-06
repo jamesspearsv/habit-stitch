@@ -14,6 +14,8 @@
   --fs-1: 1rem; /* Base text */
   --fs-2: 1.25rem; /* Large text */
   --fs-3: 1.5rem; /* Extra large text */
+  --fs-4: 2rem;
+  --fs-5: 3rem;
 
   /* Spacing */
   --sp-xs: 0.25rem; /* Extra small spacing */
@@ -59,10 +61,6 @@
 body {
   background-color: var(--c-bg);
   font-size: 16px;
-}
-
-main {
-  margin: var(--sp-xl);
 }
 
 input {

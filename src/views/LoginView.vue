@@ -41,6 +41,12 @@ async function handleSubmit() {
 </template>
 
 <style scoped>
+main {
+  width: 95%;
+  margin: auto;
+  padding-block: var(--sp-lg);
+}
+
 .signup {
   width: 100%;
   display: flex;

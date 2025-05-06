@@ -1,15 +1,17 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '@/views/HomeView.vue'
+import HomeView from '@/views/AppViews/HomeView.vue'
 import LoginView from '@/views/LoginView.vue'
 import SignupView from '@/views/SignupView.vue'
 import AppView from '@/views/AppView.vue'
 import { signout } from '@/lib/auth'
 import { pb } from '@/lib/pb'
-import HabitPatternView from '@/views/HabitPatternView.vue'
+import HabitPatternView from '@/views/AppViews/HabitPatternView.vue'
+import LandingView from '@/views/LandingView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
+    { path: '/', name: 'Landing', component: LandingView },
     {
       path: '/app',
       name: 'App',
@@ -37,14 +39,14 @@ router.beforeEach(async (to) => {
     }
   }
 
-  if (to.path === '/login' && pb.authStore.isValid) {
+  if ((to.path === '/login' || to.path === '/signup') && pb.authStore.isValid) {
     return { name: 'Home' }
   }
 
   // Temp: signout route
   if (to.path === '/signout') {
     await signout()
-    return { name: 'Login' }
+    return { name: 'Landing' }
   }
 })
 

@@ -9,7 +9,14 @@ import MenuBar from '@/components/MenuBar.vue'
 </template>
 <style scoped>
 main {
-  padding: var(--sp-lg);
+  padding: var(--sp-sm);
   margin-bottom: 7dvh;
+}
+
+@media screen and (min-width: 768px) {
+  main {
+    width: 50%;
+    margin: auto;
+  }
 }
 </style>

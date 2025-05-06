@@ -44,6 +44,12 @@ async function handleSubmit() {
 </template>
 
 <style scoped>
+main {
+  width: 95%;
+  margin: auto;
+  padding-block: var(--sp-lg);
+}
+
 .error-msg {
   color: var(--c-danger);
   font-style: italic;
