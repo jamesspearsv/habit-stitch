@@ -12,9 +12,6 @@ onMounted(async () => {
 <template>
   <h1>Habit Pattern!</h1>
   <section>
-    <!--
-        TODO: set up color blending using activity index and activities length
-      -->
     <article
       v-for="activity in activities"
       :key="activity.id"

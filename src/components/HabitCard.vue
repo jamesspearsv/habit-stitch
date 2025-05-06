@@ -1,4 +1,3 @@
-// TODO: Add inner element to ensure contrast is readable
 <script setup lang="ts">
 import { logActivity, deleteActivity } from '@/lib/actions'
 import { ref } from 'vue'
