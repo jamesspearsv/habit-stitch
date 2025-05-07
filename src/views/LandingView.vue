@@ -25,7 +25,7 @@
 <style lang="css" scoped>
 .hero-section {
   width: 100%;
-  height: 100dvh;
+  height: 100vh;
   position: relative;
   /* margin-top: var(--sp-xl); */
   /* margin-inline: auto; */
