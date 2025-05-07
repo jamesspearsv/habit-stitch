@@ -12,7 +12,7 @@ const open = ref(false)
     <menu @click="() => (open = false)" :class="{ open: open }">
       <RouterLink :to="{ name: 'Home' }">Home</RouterLink>
       <RouterLink :to="{ name: 'Habit Pattern' }">Habit Patterns</RouterLink>
-      <RouterLink to="signout">Signout</RouterLink>
+      <RouterLink to="/signout">Signout</RouterLink>
     </menu>
     <div class="menu-bar">
       <button @click="() => (open = !open)">
