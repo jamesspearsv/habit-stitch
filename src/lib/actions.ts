@@ -99,9 +99,7 @@ export async function deleteActivity(activity_id: string): Promise<Result> {
   }
 }
 
-export async function fetchActivities(): Promise<
-  Result<{ activities: MappedActivity[]; pattern: string; extendedPattern: string }>
-> {
+export async function fetchActivities(): Promise<Result<MappedActivity[]>> {
   try {
     const activities = (await pb.collection('activities').getFullList({
       expand: 'habit_id ',
@@ -116,42 +114,42 @@ export async function fetchActivities(): Promise<
       }
     })
 
-    let colors: { [key: string]: { total: number; count: number } } = {}
-
-    mappedActivities.forEach((activity) => {
-      const date = new Date(activity.date).toLocaleString().split(',')[0]
-      const colorInt = parseInt(activity.color.split('#')[1], 16)
-      if (!colors[date]) {
-        colors = { ...colors, [date]: { total: colorInt, count: 1 } }
-      } else {
-        colors = {
-          ...colors,
-          [date]: {
-            total: colors[date].total + colorInt,
-            count: colors[date].count + 1,
-          },
-        }
-      }
-    })
-
-    const gradientSteps: string[] = []
-    const dates = Object.keys(colors).sort()
-    dates.forEach((k) => {
-      const c = Math.trunc(colors[k].total / colors[k].count)
-      gradientSteps.push(`#${Number(c).toString(16)}`)
-    })
-
-    const cssGradient = tinygradient(gradientSteps).css()
-    const extended = tinygradient(mappedActivities.map((a) => a.color)).css('linear', 'to bottom')
-    console.log(gradientSteps)
-    console.log(cssGradient)
-
     return {
       success: true,
-      data: { activities: mappedActivities, pattern: cssGradient, extendedPattern: extended },
+      data: mappedActivities,
     }
   } catch (error) {
     if (error instanceof ClientResponseError) console.error(error)
     return { success: false, error: 'Unable to fetch activities' }
   }
 }
+
+// let colors: { [key: string]: { total: number; count: number } } = {}
+
+// mappedActivities.forEach((activity) => {
+//   const date = new Date(activity.date).toLocaleString().split(',')[0]
+//   const colorInt = parseInt(activity.color.split('#')[1], 16)
+//   if (!colors[date]) {
+//     colors = { ...colors, [date]: { total: colorInt, count: 1 } }
+//   } else {
+//     colors = {
+//       ...colors,
+//       [date]: {
+//         total: colors[date].total + colorInt,
+//         count: colors[date].count + 1,
+//       },
+//     }
+//   }
+// })
+
+// const gradientSteps: string[] = []
+// const dates = Object.keys(colors).sort()
+// dates.forEach((k) => {
+//   const c = Math.trunc(colors[k].total / colors[k].count)
+//   gradientSteps.push(`#${Number(c).toString(16)}`)
+// })
+
+// const cssGradient = tinygradient(gradientSteps).css()
+// const extended = tinygradient(mappedActivities.map((a) => a.color)).css('linear', '45deg')
+// console.log(gradientSteps)
+// console.log(cssGradient)
