@@ -40,7 +40,7 @@ nav {
 
 div.menu-bar {
   border-top: solid 1px var(--c-secondary);
-  min-height: var(--sp-xxl);
+  min-height: var(--menu-height);
   display: flex;
   align-items: center;
 }
@@ -85,6 +85,6 @@ menu a {
 }
 
 menu.open {
-  height: calc(100dvh - var(--sp-xxl));
+  height: calc(100dvh - var(--menu-height));
 }
 </style>

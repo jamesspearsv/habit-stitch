@@ -49,6 +49,7 @@ async function handleActivityDelete(activity_id: string) {
 </template>
 <style scoped>
 button.habit {
+  --border-width: 5px;
   position: relative;
   background-color: var(--c-bg-alt);
   padding: var(--sp-xxl) var(--sp-sm);
@@ -60,30 +61,36 @@ button.habit {
   justify-content: center;
   align-items: center;
   margin-block: var(--sp-md);
+  border: solid var(--border-width) transparent;
+  border-left: none;
+  transition: background-color border-color;
+  transition-duration: 250ms;
+  transition-timing-function: ease-in-out;
 }
 
 button.today {
-  background-color: v-bind(habit_color);
-  color: var(--c-bg);
+  background-color: color-mix(in srgb, v-bind(habit_color), #000000 40%);
+  border-color: v-bind(habit_color);
 }
 
 button::before {
   content: '';
   background-color: v-bind(habit_color);
-  width: 3px;
-  height: 100%;
+  width: var(--border-width);
+  height: calc(100% + var(--border-width));
   position: absolute;
   left: 0;
+  border-radius: var(--br-md);
 }
 
 .habit-name {
   padding: var(--sp-xs);
   border: none;
   border-radius: var(--br-md);
+  font-weight: 700;
 }
 
 button.today > .habit-name {
-  font-weight: 700;
-  color: color-mix(in srgb, v-bind(habit_color), var(--c-bg) 90%);
+  color: color-mix(in srgb, v-bind(habit_color), #ffffff 75%);
 }
 </style>

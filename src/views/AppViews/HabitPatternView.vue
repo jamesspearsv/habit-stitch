@@ -16,12 +16,13 @@ onMounted(async () => {
 <template>
   <h1>Habit Pattern!</h1>
   <section>
-    <div
+    <h2>This section is a work in progress...</h2>
+    <!-- <div
       class="hexagon"
       v-for="activity in activities"
       :key="activity.id"
       :style="{ backgroundColor: activity.color }"
-    />
+    /> -->
   </section>
 </template>
 
