@@ -27,7 +27,9 @@ onMounted(async () => {
 
 <template>
   <CreateHabitForm @update="async () => await fetchData()">
-    <h1>Today's Habits</h1>
+    <div>
+      <h1 class="heading">What will you do today?</h1>
+    </div>
   </CreateHabitForm>
   <div v-if="error">Error!</div>
   <section v-else>
@@ -44,6 +46,10 @@ onMounted(async () => {
 </template>
 
 <style scoped>
+.heading {
+  font-size: var(--fs-3);
+}
+
 .nav-section {
   padding: var(--sp-md);
   display: flex;

@@ -11,9 +11,9 @@ import LandingView from '@/views/LandingView.vue'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
-    { path: '/', name: 'Landing', component: LandingView },
+    { path: '/landing', name: 'Landing', component: LandingView },
     {
-      path: '/app',
+      path: '/',
       name: 'App',
       component: AppView,
       children: [
@@ -31,11 +31,13 @@ const router = createRouter({
 })
 
 router.beforeEach(async (to) => {
+  console.log(to)
+  const protectedPaths = ['/', '/pattern']
   // Check if the requested route is protected
-  if (to.path.match('/app')) {
+  if (protectedPaths.includes(to.path)) {
     // Validate the current user
     if (!pb.authStore.isValid) {
-      return { name: 'Login' }
+      return { name: 'Landing' }
     }
   }
 

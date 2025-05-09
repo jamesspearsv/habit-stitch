@@ -70,6 +70,7 @@ async function addHabit() {
 .heading {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   position: sticky;
   top: 0;
   padding-block: var(--sp-sm);
