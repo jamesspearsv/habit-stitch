@@ -1,7 +1,6 @@
 import { pb } from '@/lib/pb'
-import type { Activity, Habit, MappedActivity, MappedHabit, Result } from '@/lib/types'
+import type { Activity, Habit, MappedActivity, MappedHabit, Result, SummaryMap } from '@/lib/types'
 import { ClientResponseError } from 'pocketbase'
-import tinygradient from 'tinygradient'
 
 function mapHabits(habits: Habit[], activities: Activity[]) {
   const map: MappedHabit[] = []
@@ -121,6 +120,37 @@ export async function fetchActivities(): Promise<Result<MappedActivity[]>> {
   } catch (error) {
     if (error instanceof ClientResponseError) console.error(error)
     return { success: false, error: 'Unable to fetch activities' }
+  }
+}
+
+export async function fetchSummary(): Promise<Result<SummaryMap[]>> {
+  try {
+    const [habits, activities] = await Promise.all([
+      pb.collection('habits').getFullList({ fields: 'id,habit_name,habit_color' }),
+      pb.collection('activities').getFullList({ fields: 'id,habit_id,date' }),
+    ])
+    console.log('*** POCKETBASE QUERIES ***')
+    console.log(habits, activities)
+
+    // map habits and activities together
+    /* I need to know the activity % of total for each habit */
+    const map: SummaryMap[] = []
+    habits.forEach((habit) => {
+      const filtered = activities.filter((activity) => activity.habit_id === habit.id)
+
+      map.push({
+        habit_id: habit.id,
+        habit_name: habit.habit_name,
+        habit_color: habit.habit_color,
+        activity_percent: filtered.length / activities.length,
+      })
+    })
+    console.log(map)
+
+    return { success: true, data: map }
+  } catch (error) {
+    if (error instanceof ClientResponseError) console.error(error)
+    return { success: false, error: 'Unable to fetch habits summary' }
   }
 }
 

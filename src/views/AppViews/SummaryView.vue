@@ -1,23 +1,26 @@
 <script setup lang="ts">
-import { fetchActivities } from '@/lib/actions'
-import type { MappedActivity } from '@/lib/types'
+import { fetchActivities, fetchSummary } from '@/lib/actions'
+import type { MappedActivity, SummaryMap } from '@/lib/types'
 // import type { MappedActivity } from '@/lib/types'
 import { onMounted, ref, useTemplateRef, watch } from 'vue'
 const activities = ref<MappedActivity[] | null>(null)
+const summary = ref<SummaryMap[] | null>(null)
 const canvas = useTemplateRef('canvas')
 const canvasDimensions = { x: 500, y: 500 }
-const inDevelopment = import.meta.env.DEV
 
 onMounted(async () => {
   const result = await fetchActivities()
+  const map = await fetchSummary()
   if (result.success) {
     activities.value = result.data
   }
+
+  if (map.success) summary.value = map.data
 })
 
-watch(activities, () => {
+watch(summary, () => {
   // Draw pattern on canvas
-  if (!canvas.value || !activities.value) return
+  if (!canvas.value || !summary.value) return
   const ctx = canvas.value.getContext('2d')
   if (ctx) {
     /*
@@ -25,10 +28,10 @@ watch(activities, () => {
     - Increase the radius of each circle in proportion to the % that each habit is of the total activities
     - Adjust the position of each circle based on the number of activities completed 
     */
-    activities.value.forEach((activity) => {
-      let x = Math.ceil(Math.random() * canvasDimensions.x)
-      let y = Math.ceil(Math.random() * canvasDimensions.y)
-      const radius = 75
+    summary.value.forEach((habit) => {
+      let x = canvasDimensions.x / 2 + canvasDimensions.x * habit.activity_percent
+      let y = canvasDimensions.y / 2 + canvasDimensions.y * habit.activity_percent
+      const radius = 15 / habit.activity_percent
       const safeArea = 100
       const startAngle = 0
       const endAngle = (Math.PI / 180) * 360
@@ -39,7 +42,7 @@ watch(activities, () => {
       if (y < safeArea) y = safeArea
       if (y > canvasDimensions.y - safeArea) y = canvasDimensions.y - safeArea
 
-      ctx.fillStyle = `rgb(from ${activity.color} r g b / 0.5)`
+      ctx.fillStyle = `rgb(from ${habit.habit_color} r g b / 0.5)`
       ctx.beginPath()
       ctx.arc(x, y, radius, startAngle, endAngle)
       ctx.fill()
@@ -51,16 +54,8 @@ watch(activities, () => {
 
 <template>
   <h1>Habit Pattern!</h1>
-  <section v-if="!inDevelopment">
-    <h2>This section is a work in progress...</h2>
-    <!-- <div
-      class="hexagon"
-      v-for="activity in activities"
-      :key="activity.id"
-      :style="{ backgroundColor: activity.color }"
-    /> -->
-  </section>
-  <section v-if="inDevelopment">
+
+  <section>
     <canvas ref="canvas" :height="canvasDimensions.y" :width="canvasDimensions.x"></canvas>
   </section>
 </template>

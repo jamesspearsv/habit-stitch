@@ -28,3 +28,10 @@ export interface MappedActivity {
   date: string
   color: string
 }
+
+export interface SummaryMap {
+  habit_id: string
+  habit_name: string
+  habit_color: string
+  activity_percent: number
+}
