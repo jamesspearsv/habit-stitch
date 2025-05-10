@@ -10,8 +10,8 @@ const open = ref(false)
       TODO: Fix event bubbling when clicking menu element
       -->
     <menu @click="() => (open = false)" :class="{ open: open }">
-      <RouterLink :to="{ name: 'Home' }">Home</RouterLink>
-      <RouterLink :to="{ name: 'Habit Pattern' }">Habit Patterns</RouterLink>
+      <RouterLink :to="{ name: 'Home' }">Today</RouterLink>
+      <RouterLink :to="{ name: 'Summary' }">Habit Summary</RouterLink>
       <RouterLink to="/signout">Signout</RouterLink>
     </menu>
     <div class="menu-bar">

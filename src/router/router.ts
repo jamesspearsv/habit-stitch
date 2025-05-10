@@ -5,8 +5,8 @@ import SignupView from '@/views/SignupView.vue'
 import AppView from '@/views/AppView.vue'
 import { signout } from '@/lib/auth'
 import { pb } from '@/lib/pb'
-import HabitPatternView from '@/views/AppViews/HabitPatternView.vue'
 import LandingView from '@/views/LandingView.vue'
+import SummaryView from '@/views/AppViews/SummaryView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -18,7 +18,7 @@ const router = createRouter({
       component: AppView,
       children: [
         { path: '', name: 'Home', component: HomeView },
-        { path: 'pattern', name: 'Habit Pattern', component: HabitPatternView },
+        { path: 'summary', name: 'Summary', component: SummaryView },
       ],
     },
     {
