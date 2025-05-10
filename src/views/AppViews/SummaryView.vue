@@ -29,18 +29,18 @@ watch(summary, () => {
     - Adjust the position of each circle based on the number of activities completed 
     */
     summary.value.forEach((habit) => {
-      let x = (canvasDimensions.x / 2) * habit.activity_percent
-      let y = (canvasDimensions.y / 2) * habit.activity_percent
+      const x = (canvasDimensions.x / 2) * habit.activity_percent
+      const y = (canvasDimensions.y / 2) * habit.activity_percent
       const radius = 2 / habit.activity_percent
-      const safeArea = 100
+      // const safeArea = 100
       const startAngle = 0
       const endAngle = (Math.PI / 180) * 360
 
       // Check that position is inside safe zone
-      if (x < safeArea) x = safeArea
-      if (x > canvasDimensions.x - safeArea) x = canvasDimensions.x - safeArea
-      if (y < safeArea) y = safeArea
-      if (y > canvasDimensions.y - safeArea) y = canvasDimensions.y - safeArea
+      // if (x < safeArea) x = safeArea
+      // if (x > canvasDimensions.x - safeArea) x = canvasDimensions.x - safeArea
+      // if (y < safeArea) y = safeArea
+      // if (y > canvasDimensions.y - safeArea) y = canvasDimensions.y - safeArea
 
       ctx.fillStyle = `rgb(from ${habit.habit_color} r g b / 0.4)`
       ctx.beginPath()
