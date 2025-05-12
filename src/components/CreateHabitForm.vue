@@ -86,7 +86,7 @@ async function addHabit() {
 
 @keyframes dialog-closing {
   from {
-    margin-top: 5dvh;
+    margin-top: 25dvh;
   }
 }
 
@@ -100,11 +100,12 @@ dialog {
 }
 
 dialog::backdrop {
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(8px);
 }
 
 dialog:open {
-  margin-top: 5dvh;
+  margin-top: 25dvh;
   animation-name: dialog-opening;
   animation-duration: 200ms;
   animation-timing-function: ease-in-out;

@@ -32,9 +32,6 @@ nav {
 
   background-color: var(--c-bg-alt);
 
-  transition-property: top border-top;
-  transition-duration: 200ms;
-  transition-timing-function: ease-in-out;
   z-index: 100;
 }
 
@@ -71,7 +68,7 @@ menu {
   width: 50%;
   margin: auto;
   gap: var(--sp-lg);
-  transition: height 200ms ease-in-out;
+  /* transition: height 200ms ease-in-out; */
 }
 
 menu a {
