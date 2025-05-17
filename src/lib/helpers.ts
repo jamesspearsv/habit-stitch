@@ -10,7 +10,7 @@ export function generateHexCode() {
 }
 
 export function stringToSeed(string: string) {
-  let hash = 51739517395173
+  let hash = 31
 
   for (let i = 0; i < string.length; i++) {
     hash = ((hash << 5) - hash) * string.charCodeAt(i)
@@ -33,7 +33,7 @@ export function calculatePosition(
   angle: number,
   canvasSize: { width: number; height: number },
 ) {
-  const maxRadius = Math.min(canvasSize.width, canvasSize.height) * 0.25
+  const maxRadius = Math.min(canvasSize.width, canvasSize.height) * 0.4
   const radius = percentage < 1 ? maxRadius * (1 - percentage) : 0 // Higher % = closer to center
 
   return {

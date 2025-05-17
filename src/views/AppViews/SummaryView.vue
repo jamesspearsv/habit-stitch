@@ -39,7 +39,7 @@ watch(summary, () => {
       if (habit.activity_percent > 0) {
         const seed = stringToSeed(habit.habit_name)
         const angle = getAngleFromSeed(seed)
-        const radius = calculateRadius(habit.activity_percent, 200, 25)
+        const radius = calculateRadius(habit.activity_percent, 300, 25)
         const startAngle = 0
         const endAngle = 2 * Math.PI
         const { x, y } = calculatePosition(habit.activity_percent, angle, canvasSize)
