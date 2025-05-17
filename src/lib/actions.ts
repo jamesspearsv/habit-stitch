@@ -42,7 +42,7 @@ export async function createHabit(data: { habit_name: string }): Promise<Result>
 
 export async function fetchHabits(): Promise<Result<MappedHabit[]>> {
   const today = getDateRange(new Date())
-  console.log(today)
+  // console.log(today)
 
   try {
     const habits = (await pb
@@ -94,11 +94,15 @@ export async function deleteActivity(activity_id: string): Promise<Result> {
 }
 
 export async function fetchActivities(): Promise<Result<MappedActivity[]>> {
+  const today = getDateRange(new Date())
   try {
     const activities = (await pb.collection('activities').getFullList({
       expand: 'habit_id ',
       fields: 'date,id,expand.habit_id.habit_color',
+      filter: `date >= '${today.start}' && date <= '${today.end}'`,
     })) as Activity[]
+
+    console.log(activities)
 
     const mappedActivities: MappedActivity[] = activities.map((activity) => {
       return {
@@ -119,16 +123,18 @@ export async function fetchActivities(): Promise<Result<MappedActivity[]>> {
 }
 
 export async function fetchSummary(): Promise<Result<SummaryMap[]>> {
+  const today = getDateRange(new Date())
   try {
     const [habits, activities] = await Promise.all([
       pb.collection('habits').getFullList({ fields: 'id,habit_name,habit_color' }),
-      pb.collection('activities').getFullList({ fields: 'id,habit_id,date' }),
+      pb.collection('activities').getFullList({
+        fields: 'id,habit_id,date',
+        filter: `date >= '${today.start}' && date <= '${today.end}'`,
+      }),
     ])
     console.log('*** POCKETBASE QUERIES ***')
     console.log(habits, activities)
 
-    // map habits and activities together
-    /* I need to know the activity % of total for each habit */
     const map: SummaryMap[] = []
     habits.forEach((habit) => {
       const filtered = activities.filter((activity) => activity.habit_id === habit.id)
@@ -148,33 +154,3 @@ export async function fetchSummary(): Promise<Result<SummaryMap[]>> {
     return { success: false, error: 'Unable to fetch habits summary' }
   }
 }
-
-// let colors: { [key: string]: { total: number; count: number } } = {}
-
-// mappedActivities.forEach((activity) => {
-//   const date = new Date(activity.date).toLocaleString().split(',')[0]
-//   const colorInt = parseInt(activity.color.split('#')[1], 16)
-//   if (!colors[date]) {
-//     colors = { ...colors, [date]: { total: colorInt, count: 1 } }
-//   } else {
-//     colors = {
-//       ...colors,
-//       [date]: {
-//         total: colors[date].total + colorInt,
-//         count: colors[date].count + 1,
-//       },
-//     }
-//   }
-// })
-
-// const gradientSteps: string[] = []
-// const dates = Object.keys(colors).sort()
-// dates.forEach((k) => {
-//   const c = Math.trunc(colors[k].total / colors[k].count)
-//   gradientSteps.push(`#${Number(c).toString(16)}`)
-// })
-
-// const cssGradient = tinygradient(gradientSteps).css()
-// const extended = tinygradient(mappedActivities.map((a) => a.color)).css('linear', '45deg')
-// console.log(gradientSteps)
-// console.log(cssGradient)

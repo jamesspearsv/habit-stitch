@@ -32,7 +32,7 @@ export function calculatePosition(
   angle: number,
   canvasSize: { width: number; height: number },
 ) {
-  const maxRadius = Math.min(canvasSize.width, canvasSize.height) * 0.2
+  const maxRadius = Math.min(canvasSize.width, canvasSize.height) * 0.3
   const radius = percentage < 1 ? maxRadius * (1 - percentage) : 0 // Higher % = closer to center
 
   return {
@@ -56,14 +56,8 @@ export function getDateRange(today: Date) {
   const offset = `0${(today.getTimezoneOffset() / 60).toString()}`.slice(-2)
   const date = `${year}-${month}-${day}`
 
-  console.log(day, month, year, offset)
-
-  console.log(date)
-
   const start = `${date}T00:00:00-${offset}:00`
   const end = `${date}T23:59:59-${offset}:00`
-
-  console.log(start, end)
 
   return {
     start: new Date(start).toISOString().replace('T', ' '),
