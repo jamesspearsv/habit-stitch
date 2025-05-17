@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import HeadingContainer from '@/components/HeadingContainer.vue'
 import { fetchSummary } from '@/lib/actions'
 import {
   calculateOpacity,
@@ -49,7 +50,9 @@ watch(summary, () => {
 </script>
 
 <template>
-  <h1>Habit Pattern!</h1>
+  <HeadingContainer>
+    <h1>Today's Habit Pattern!</h1>
+  </HeadingContainer>
   <section>
     <canvas ref="canvas" :height="canvasSize.height" :width="canvasSize.width"></canvas>
   </section>
