@@ -10,10 +10,9 @@ export function generateHexCode() {
 }
 
 export function stringToSeed(string: string) {
-  let hash = 31
-
+  let hash = 0
   for (let i = 0; i < string.length; i++) {
-    hash = ((hash << 5) - hash) * string.charCodeAt(i)
+    hash = hash * 359 + string.charCodeAt(i)
     hash |= 0
   }
   return hash
@@ -33,7 +32,7 @@ export function calculatePosition(
   angle: number,
   canvasSize: { width: number; height: number },
 ) {
-  const maxRadius = Math.min(canvasSize.width, canvasSize.height) * 0.4
+  const maxRadius = Math.min(canvasSize.width, canvasSize.height) * 0.2
   const radius = percentage < 1 ? maxRadius * (1 - percentage) : 0 // Higher % = closer to center
 
   return {
@@ -48,4 +47,26 @@ export function calculateRadius(percentage: number, max: number, min: number) {
 
 export function calculateOpacity(percentage: number, max: number, min: number) {
   return min + (max - min) * (1 - percentage)
+}
+
+export function getDateRange(today: Date) {
+  const day = today.getDate().toString()
+  const month = `0${(today.getMonth() + 1).toString()}`.slice(-2)
+  const year = today.getFullYear().toString()
+  const offset = `0${(today.getTimezoneOffset() / 60).toString()}`.slice(-2)
+  const date = `${year}-${month}-${day}`
+
+  console.log(day, month, year, offset)
+
+  console.log(date)
+
+  const start = `${date}T00:00:00-${offset}:00`
+  const end = `${date}T23:59:59-${offset}:00`
+
+  console.log(start, end)
+
+  return {
+    start: new Date(start).toISOString().replace('T', ' '),
+    end: new Date(end).toISOString().replace('T', ' '),
+  }
 }

@@ -1,6 +1,7 @@
 import { pb } from '@/lib/pb'
 import type { Activity, Habit, MappedActivity, MappedHabit, Result, SummaryMap } from '@/lib/types'
 import { ClientResponseError } from 'pocketbase'
+import { getDateRange } from './helpers'
 
 function mapHabits(habits: Habit[], activities: Activity[]) {
   const map: MappedHabit[] = []
@@ -40,14 +41,8 @@ export async function createHabit(data: { habit_name: string }): Promise<Result>
 }
 
 export async function fetchHabits(): Promise<Result<MappedHabit[]>> {
-  // Build start and end dates for today
-  let todayStart: Date | string = new Date()
-  todayStart.setHours(0, 0, 0, 0)
-  todayStart = todayStart.toISOString().replace('T', ' ')
-
-  let todayEnd: Date | string = new Date()
-  todayEnd.setHours(23, 59, 59, 999)
-  todayEnd = todayEnd.toISOString().replace('T', ' ')
+  const today = getDateRange(new Date())
+  console.log(today)
 
   try {
     const habits = (await pb
@@ -55,7 +50,7 @@ export async function fetchHabits(): Promise<Result<MappedHabit[]>> {
       .getFullList({ fields: 'id,habit_name,habit_color,' })) as Habit[]
 
     const activities = (await pb.collection('activities').getFullList({
-      filter: `date >= '${todayStart}' && date <= '${todayEnd}'`,
+      filter: `date >= '${today.start}' && date <= '${today.end}'`,
       fields: 'id,habit_id,date',
     })) as Activity[]
 
