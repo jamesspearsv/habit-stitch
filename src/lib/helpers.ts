@@ -59,7 +59,6 @@ function newParseDate(date: Date) {
 }
 
 export function newGetDateRange(mode: 'today' | 'month' | 'week'): { start: string; end: string } {
-  console.log(mode)
   const t = newParseDate(new Date())
   switch (mode) {
     case 'today':

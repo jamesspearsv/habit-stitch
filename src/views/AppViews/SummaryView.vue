@@ -1,4 +1,11 @@
 <script setup lang="ts">
+// TODO: Customizable pattern generation params
+
+// TODO: Reactive date range selection (last week, two weeks ago, etc.)
+
+// TODO: Summary mode (week more and month mode)
+
+// TODO: Per habit summary details for the current period
 import HeadingContainer from '@/components/HeadingContainer.vue'
 import { fetchSummary } from '@/lib/actions'
 import {
@@ -6,6 +13,7 @@ import {
   calculatePosition,
   calculateRadius,
   getAngleFromSeed,
+  newGetDateRange,
   stringToSeed,
 } from '@/lib/helpers'
 import type { SummaryMap } from '@/lib/types'
@@ -13,6 +21,7 @@ import { onMounted, ref, useTemplateRef, watch } from 'vue'
 const summary = ref<SummaryMap[] | null>(null)
 const canvas = useTemplateRef('canvas')
 const canvasSize = { width: 500, height: 500 }
+const week = newGetDateRange('week')
 
 onMounted(async () => {
   const map = await fetchSummary()
@@ -51,14 +60,32 @@ watch(summary, () => {
 
 <template>
   <HeadingContainer>
-    <h1>Today's Habit Pattern!</h1>
+    <div class="heading-content">
+      <h1>This week's pattern!</h1>
+      <p>
+        {{ new Date(week.start).toLocaleDateString() }} to
+        {{ new Date(week.end).toLocaleDateString() }}
+      </p>
+    </div>
   </HeadingContainer>
   <section>
     <canvas ref="canvas" :height="canvasSize.height" :width="canvasSize.width"></canvas>
   </section>
+  <section class="sub-content">
+    <p>Check back here to see how your pattern grows this week</p>
+  </section>
 </template>
 
 <style scoped>
+.heading-content {
+  text-align: center;
+}
+
+.sub-content {
+  text-align: center;
+  padding: var(--sp-sm);
+}
+
 canvas {
   background-color: color-mix(in srgb, var(--c-text), #000000 3%);
   border: solid 5px var(--c-secondary);
