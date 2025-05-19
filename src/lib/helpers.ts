@@ -49,18 +49,40 @@ export function calculateOpacity(percentage: number, max: number, min: number) {
   return min + (max - min) * (1 - percentage)
 }
 
-export function getDateRange(today: Date) {
-  const day = today.getDate().toString()
-  const month = `0${(today.getMonth() + 1).toString()}`.slice(-2)
-  const year = today.getFullYear().toString()
-  const offset = `0${(today.getTimezoneOffset() / 60).toString()}`.slice(-2)
-  const date = `${year}-${month}-${day}`
-
-  const start = `${date}T00:00:00-${offset}:00`
-  const end = `${date}T23:59:59-${offset}:00`
-
+function newParseDate(date: Date) {
   return {
-    start: new Date(start).toISOString().replace('T', ' '),
-    end: new Date(end).toISOString().replace('T', ' '),
+    day: date.getDate(),
+    month: date.getMonth(),
+    year: date.getFullYear(),
+    weekday: date.getDay(),
+  }
+}
+
+export function newGetDateRange(mode: 'today' | 'month' | 'week'): { start: string; end: string } {
+  const t = newParseDate(new Date())
+  switch (mode) {
+    case 'today':
+      return {
+        start: new Date(t.year, t.month, t.day, 0, 0, 0).toISOString().replace('T', ' '),
+        end: new Date(t.year, t.month, t.day, 23, 59, 59).toISOString().replace('T', ' '),
+      }
+    case 'month':
+      const daysInMonths = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+      return {
+        start: new Date(t.year, t.month, 1, 0, 0, 0).toISOString().replace('T', ' '),
+        end: new Date(t.year, t.month, daysInMonths[t.month], 23, 59, 59)
+          .toISOString()
+          .replace('T', ' '),
+      }
+    case 'week':
+      const sunday = t.day - t.weekday
+      const saturday = t.day + (6 - t.weekday)
+
+      console.log('sunday', sunday, '\n', 'saturday', saturday)
+
+      return {
+        start: new Date(t.year, t.month, sunday, 0, 0, 0).toISOString().replace('T', ' '),
+        end: new Date(t.year, t.month, saturday, 0, 0, 0).toISOString().replace('T', ' '),
+      }
   }
 }
