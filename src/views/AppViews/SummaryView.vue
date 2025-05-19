@@ -34,9 +34,9 @@ watch(summary, () => {
         const { x, y } = calculatePosition(habit.activity_percent, angle, canvasSize)
         const opacity = calculateOpacity(habit.activity_percent, 0.75, 0.2)
 
-        console.log(
-          `habit_name: ${habit.habit_name}\n%:${habit.activity_percent}\nseed: ${seed}\nangle: ${angle}\nradius: ${radius}\n{x, y}: {${x}, ${y}}\nopacity: ${opacity}`,
-        )
+        // console.log(
+        //   `habit_name: ${habit.habit_name}\n%:${habit.activity_percent}\nseed: ${seed}\nangle: ${angle}\nradius: ${radius}\n{x, y}: {${x}, ${y}}\nopacity: ${opacity}`,
+        // )
 
         ctx.fillStyle = `rgb(from ${habit.habit_color} r g b / ${opacity})`
         ctx.beginPath()

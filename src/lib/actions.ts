@@ -1,7 +1,7 @@
 import { pb } from '@/lib/pb'
 import type { Activity, Habit, MappedActivity, MappedHabit, Result, SummaryMap } from '@/lib/types'
 import { ClientResponseError } from 'pocketbase'
-import { getDateRange } from './helpers'
+import { newGetDateRange } from './helpers'
 
 function mapHabits(habits: Habit[], activities: Activity[]) {
   const map: MappedHabit[] = []
@@ -41,8 +41,7 @@ export async function createHabit(data: { habit_name: string }): Promise<Result>
 }
 
 export async function fetchHabits(): Promise<Result<MappedHabit[]>> {
-  const today = getDateRange(new Date())
-  // console.log(today)
+  const today = newGetDateRange('today')
 
   try {
     const habits = (await pb
@@ -59,6 +58,33 @@ export async function fetchHabits(): Promise<Result<MappedHabit[]>> {
   } catch (error) {
     console.error(error)
     return { success: false, error: 'Failed to fetch habits' }
+  }
+}
+
+export async function fetchActivities(): Promise<Result<MappedActivity[]>> {
+  const today = newGetDateRange('today')
+  try {
+    const activities = (await pb.collection('activities').getFullList({
+      expand: 'habit_id ',
+      fields: 'date,id,expand.habit_id.habit_color',
+      filter: `date >= '${today.start}' && date <= '${today.end}'`,
+    })) as Activity[]
+
+    const mappedActivities: MappedActivity[] = activities.map((activity) => {
+      return {
+        id: activity.id,
+        date: activity.date,
+        color: activity.expand?.habit_id.habit_color,
+      }
+    })
+
+    return {
+      success: true,
+      data: mappedActivities,
+    }
+  } catch (error) {
+    if (error instanceof ClientResponseError) console.error(error)
+    return { success: false, error: 'Unable to fetch activities' }
   }
 }
 
@@ -93,47 +119,18 @@ export async function deleteActivity(activity_id: string): Promise<Result> {
   }
 }
 
-export async function fetchActivities(): Promise<Result<MappedActivity[]>> {
-  const today = getDateRange(new Date())
-  try {
-    const activities = (await pb.collection('activities').getFullList({
-      expand: 'habit_id ',
-      fields: 'date,id,expand.habit_id.habit_color',
-      filter: `date >= '${today.start}' && date <= '${today.end}'`,
-    })) as Activity[]
-
-    console.log(activities)
-
-    const mappedActivities: MappedActivity[] = activities.map((activity) => {
-      return {
-        id: activity.id,
-        date: activity.date,
-        color: activity.expand?.habit_id.habit_color,
-      }
-    })
-
-    return {
-      success: true,
-      data: mappedActivities,
-    }
-  } catch (error) {
-    if (error instanceof ClientResponseError) console.error(error)
-    return { success: false, error: 'Unable to fetch activities' }
-  }
-}
-
 export async function fetchSummary(): Promise<Result<SummaryMap[]>> {
-  const today = getDateRange(new Date())
+  const range = newGetDateRange('week')
+  console.log(range)
+
   try {
     const [habits, activities] = await Promise.all([
       pb.collection('habits').getFullList({ fields: 'id,habit_name,habit_color' }),
       pb.collection('activities').getFullList({
         fields: 'id,habit_id,date',
-        filter: `date >= '${today.start}' && date <= '${today.end}'`,
+        filter: `date >= '${range.start}' && date <= '${range.end}'`,
       }),
     ])
-    console.log('*** POCKETBASE QUERIES ***')
-    console.log(habits, activities)
 
     const map: SummaryMap[] = []
     habits.forEach((habit) => {
@@ -146,7 +143,6 @@ export async function fetchSummary(): Promise<Result<SummaryMap[]>> {
         activity_percent: filtered.length / activities.length,
       })
     })
-    console.log(map)
 
     return { success: true, data: map }
   } catch (error) {
