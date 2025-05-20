@@ -37,11 +37,11 @@ watch(summary, () => {
       if (habit.activity_percent > 0) {
         const seed = stringToSeed(habit.habit_name)
         const angle = getAngleFromSeed(seed)
-        const radius = calculateRadius(habit.activity_percent, 300, 50)
+        const radius = calculateRadius(habit.activity_percent, 600, 100)
         const startAngle = 0
         const endAngle = 2 * Math.PI
         const { x, y } = calculatePosition(habit.activity_percent, angle, canvasSize)
-        const opacity = calculateOpacity(habit.activity_percent, 0.75, 0.2)
+        const opacity = calculateOpacity(habit.activity_percent, 0.8, 0.2)
 
         ctx.fillStyle = `rgb(from ${habit.habit_color} r g b / ${opacity})`
         ctx.beginPath()
@@ -137,6 +137,7 @@ canvas {
 }
 
 .habit > p {
+  font-size: var(--fs-0);
   width: 35%;
   font-weight: bold;
 }

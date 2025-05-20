@@ -32,8 +32,9 @@ export function calculatePosition(
   angle: number,
   canvasSize: { width: number; height: number },
 ) {
-  const maxRadius = Math.min(canvasSize.width, canvasSize.height) * 0.3
-  const radius = percentage < 1 ? maxRadius * (1 - percentage) : 0 // Higher % = closer to center
+  const maxRadius = Math.min(canvasSize.width, canvasSize.height) * 0.25
+  const minRadius = 10
+  const radius = percentage < 1 ? maxRadius * (1 - percentage) : minRadius // Higher % = closer to center
 
   return {
     x: canvasSize.width / 2 + radius * Math.cos(angle),
