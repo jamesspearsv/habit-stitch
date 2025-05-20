@@ -20,7 +20,7 @@ import type { SummaryMap } from '@/lib/types'
 import { onMounted, ref, useTemplateRef, watch } from 'vue'
 const summary = ref<SummaryMap[] | null>(null)
 const canvas = useTemplateRef('canvas')
-const canvasSize = { width: 500, height: 500 }
+const canvasSize = { width: 700, height: 500 }
 const week = newGetDateRange('week')
 
 onMounted(async () => {
@@ -67,12 +67,17 @@ watch(summary, () => {
   <section>
     <canvas ref="canvas" :height="canvasSize.height" :width="canvasSize.width"></canvas>
   </section>
-  <section class="sub-content">
-    <p>Check back here to see how your pattern grows this week</p>
+  <section class="page-buttons">
+    <button>Previous</button>
+    <button>Next</button>
   </section>
   <section>
     <div class="habit-chart">
-      <h2>This week by the numbers</h2>
+      <h2>Weekly Stats</h2>
+      <p>
+        Total Activities Completed:
+        {{ summary ? summary.reduce((t, a) => (t = t + a.activity_total), 0) : 0 }}
+      </p>
       <hr />
       <div v-for="habit in summary" :key="habit.habit_id" class="habit">
         <p>
@@ -81,7 +86,10 @@ watch(summary, () => {
         </p>
         <div
           class="habit-bar"
-          :style="{ width: `${40 * habit.activity_percent}%`, backgroundColor: habit.habit_color }"
+          :style="{
+            width: summary ? `${(60 * habit.activity_total) / summary[0].activity_total}%` : 0,
+            backgroundColor: habit.habit_color,
+          }"
         />
       </div>
     </div>
@@ -93,9 +101,14 @@ watch(summary, () => {
   text-align: center;
 }
 
-.sub-content {
-  text-align: center;
-  padding: var(--sp-sm);
+.page-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-block: var(--sp-md);
+}
+
+.page-buttons button {
+  padding-inline: 15%;
 }
 
 canvas {
@@ -124,7 +137,7 @@ canvas {
 }
 
 .habit > p {
-  width: 40%;
+  width: 35%;
   font-weight: bold;
 }
 

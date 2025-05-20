@@ -144,6 +144,8 @@ export async function fetchSummary(): Promise<Result<SummaryMap[]>> {
       })
     })
 
+    map.sort((a, b) => b.activity_percent - a.activity_percent)
+
     return { success: true, data: map }
   } catch (error) {
     if (error instanceof ClientResponseError) console.error(error)
