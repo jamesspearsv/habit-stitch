@@ -140,6 +140,7 @@ export async function fetchSummary(): Promise<Result<SummaryMap[]>> {
         habit_name: habit.habit_name,
         habit_color: habit.habit_color,
         activity_percent: filtered.length / activities.length,
+        activity_total: filtered.length,
       })
     })
 

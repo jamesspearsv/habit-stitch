@@ -43,10 +43,6 @@ watch(summary, () => {
         const { x, y } = calculatePosition(habit.activity_percent, angle, canvasSize)
         const opacity = calculateOpacity(habit.activity_percent, 0.75, 0.2)
 
-        // console.log(
-        //   `habit_name: ${habit.habit_name}\n%:${habit.activity_percent}\nseed: ${seed}\nangle: ${angle}\nradius: ${radius}\n{x, y}: {${x}, ${y}}\nopacity: ${opacity}`,
-        // )
-
         ctx.fillStyle = `rgb(from ${habit.habit_color} r g b / ${opacity})`
         ctx.beginPath()
         ctx.arc(x, y, radius, startAngle, endAngle)
@@ -74,6 +70,22 @@ watch(summary, () => {
   <section class="sub-content">
     <p>Check back here to see how your pattern grows this week</p>
   </section>
+  <section>
+    <div class="habit-chart">
+      <h2>This week by the numbers</h2>
+      <hr />
+      <div v-for="habit in summary" :key="habit.habit_id" class="habit">
+        <p>
+          {{ habit.habit_name }}
+          <span> ({{ habit.activity_total }}) </span>
+        </p>
+        <div
+          class="habit-bar"
+          :style="{ width: `${40 * habit.activity_percent}%`, backgroundColor: habit.habit_color }"
+        />
+      </div>
+    </div>
+  </section>
 </template>
 
 <style scoped>
@@ -91,5 +103,39 @@ canvas {
   border: solid 5px var(--c-secondary);
   border-radius: var(--br-lg);
   margin: auto;
+}
+
+.habit-chart {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-md);
+  /* background-color: rebeccapurple; */
+  background-color: var(--c-bg-alt);
+  padding: var(--sp-md);
+  border-radius: var(--br-lg);
+}
+
+.habit {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-sm);
+  position: relative;
+}
+
+.habit > p {
+  width: 40%;
+  font-weight: bold;
+}
+
+.habit span {
+  font-weight: 400;
+}
+
+.habit-bar {
+  height: var(--sp-xl);
+  border: none;
+  border-radius: var(--br-md);
+  background-color: red;
 }
 </style>

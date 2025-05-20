@@ -34,4 +34,5 @@ export interface SummaryMap {
   habit_name: string
   habit_color: string
   activity_percent: number
+  activity_total: number
 }
