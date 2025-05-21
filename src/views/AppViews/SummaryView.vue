@@ -3,9 +3,6 @@
 
 // TODO: Reactive date range selection (last week, two weeks ago, etc.)
 
-// TODO: Summary mode (week more and month mode)
-
-// TODO: Per habit summary details for the current period
 import HeadingContainer from '@/components/HeadingContainer.vue'
 import { fetchSummary } from '@/lib/actions'
 import {
@@ -17,22 +14,29 @@ import {
   stringToSeed,
 } from '@/lib/helpers'
 import type { SummaryMap } from '@/lib/types'
-import { onMounted, ref, useTemplateRef, watch } from 'vue'
+import { ref, useTemplateRef, watch } from 'vue'
 const summary = ref<SummaryMap[] | null>(null)
 const canvas = useTemplateRef('canvas')
 const canvasSize = { width: 700, height: 500 }
-const week = newGetDateRange('week')
+const summaryPeriod = ref<'week' | 'month' | 'today'>('week')
+const dateRange = ref(newGetDateRange('week'))
 
-onMounted(async () => {
-  const map = await fetchSummary()
-  if (map.success) summary.value = map.data
-})
+watch(
+  summaryPeriod,
+  async () => {
+    dateRange.value = newGetDateRange(summaryPeriod.value)
+    const map = await fetchSummary(summaryPeriod.value)
+    if (map.success) summary.value = map.data
+  },
+  { immediate: true },
+)
 
 watch(summary, () => {
   // Draw pattern on canvas
   if (!canvas.value || !summary.value) return
   const ctx = canvas.value.getContext('2d')
   if (ctx) {
+    ctx.clearRect(0, 0, canvasSize.width, canvasSize.height)
     summary.value.forEach((habit) => {
       if (habit.activity_percent > 0) {
         const seed = stringToSeed(habit.habit_name)
@@ -57,10 +61,10 @@ watch(summary, () => {
 <template>
   <HeadingContainer>
     <div class="heading-content">
-      <h1>This week's pattern!</h1>
+      <h1>Your habit pattern</h1>
       <p>
-        {{ new Date(week.start).toLocaleDateString() }} to
-        {{ new Date(week.end).toLocaleDateString() }}
+        {{ new Date(dateRange.start).toLocaleDateString() }} to
+        {{ new Date(dateRange.end).toLocaleDateString() }}
       </p>
     </div>
   </HeadingContainer>
@@ -69,11 +73,14 @@ watch(summary, () => {
   </section>
   <section class="page-buttons">
     <button>Previous</button>
+    <button @click="() => (summaryPeriod = summaryPeriod === 'week' ? 'month' : 'week')">
+      This {{ summaryPeriod }}
+    </button>
     <button>Next</button>
   </section>
   <section>
     <div class="habit-chart">
-      <h2>Weekly Stats</h2>
+      <h2>Stats for nerds</h2>
       <p>
         Total Activities Completed:
         {{ summary ? summary.reduce((t, a) => (t = t + a.activity_total), 0) : 0 }}
@@ -108,7 +115,8 @@ watch(summary, () => {
 }
 
 .page-buttons button {
-  padding-inline: 15%;
+  /* padding-inline: 15%; */
+  width: 30%;
 }
 
 canvas {

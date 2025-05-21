@@ -119,8 +119,10 @@ export async function deleteActivity(activity_id: string): Promise<Result> {
   }
 }
 
-export async function fetchSummary(): Promise<Result<SummaryMap[]>> {
-  const range = newGetDateRange('week')
+export async function fetchSummary(
+  period: 'week' | 'month' | 'today',
+): Promise<Result<SummaryMap[]>> {
+  const range = newGetDateRange(period)
 
   try {
     const [habits, activities] = await Promise.all([
