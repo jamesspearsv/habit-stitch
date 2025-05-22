@@ -73,7 +73,8 @@ menu {
   display: flex;
   justify-content: space-evenly;
   gap: var(--sp-lg);
-  padding-block: var(--sp-md);
+  padding-top: var(--sp-md);
+  padding-bottom: var(--sp-xl);
 }
 
 /* menu {
