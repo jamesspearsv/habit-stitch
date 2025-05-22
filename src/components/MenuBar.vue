@@ -1,5 +1,10 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
+import * as feather from 'feather-icons'
+
+onMounted(() => {
+  feather.replace()
+})
 
 const open = ref(false)
 </script>
@@ -8,16 +13,22 @@ const open = ref(false)
   <nav :class="{ open: open }">
     <!-- TODO: Fix event bubbling when clicking menu element -->
     <menu @click="() => (open = false)" :class="{ open: open }">
-      <RouterLink :to="{ name: 'Home' }">Today</RouterLink>
-      <RouterLink :to="{ name: 'Summary' }">Habit Summary</RouterLink>
-      <RouterLink to="/signout">Signout</RouterLink>
+      <RouterLink :to="{ name: 'Summary' }">
+        <i data-feather="bar-chart"></i>
+      </RouterLink>
+      <RouterLink :to="{ name: 'Home' }">
+        <i data-feather="home"></i>
+      </RouterLink>
+      <RouterLink to="/signout">
+        <i data-feather="log-out"></i>
+      </RouterLink>
     </menu>
-    <div class="menu-bar">
+    <!-- <div class="menu-bar">
       <button @click="() => (open = !open)">
         <div>Menu</div>
         <div class="menu-icon">▲</div>
       </button>
-    </div>
+    </div> -->
   </nav>
 </template>
 
@@ -57,16 +68,25 @@ nav.open .menu-icon {
 }
 
 menu {
+  border-top: solid 1px var(--c-secondary);
+
+  display: flex;
+  justify-content: space-evenly;
+  gap: var(--sp-lg);
+  padding-block: var(--sp-md);
+}
+
+/* menu {
   height: 0;
   overflow-y: hidden;
   display: flex;
-  /* align-items: center; */
+  align-items: center;
   justify-content: center;
   flex-direction: column;
   width: 50%;
   margin: auto;
   gap: var(--sp-lg);
-  /* transition: height 200ms ease-in-out; */
+  transition: height 200ms ease-in-out;
 }
 
 menu a {
@@ -81,5 +101,5 @@ menu a {
 
 menu.open {
   height: calc(100dvh - var(--menu-height));
-}
+} */
 </style>

@@ -10,7 +10,7 @@ import {
   calculatePosition,
   calculateRadius,
   getAngleFromSeed,
-  newGetDateRange,
+  getDateRange,
   stringToSeed,
 } from '@/lib/helpers'
 import type { SummaryMap } from '@/lib/types'
@@ -19,12 +19,12 @@ const summary = ref<SummaryMap[] | null>(null)
 const canvas = useTemplateRef('canvas')
 const canvasSize = { width: 700, height: 500 }
 const summaryPeriod = ref<'week' | 'month' | 'today'>('week')
-const dateRange = ref(newGetDateRange('week'))
+const dateRange = ref(getDateRange('week'))
 
 watch(
   summaryPeriod,
   async () => {
-    dateRange.value = newGetDateRange(summaryPeriod.value)
+    dateRange.value = getDateRange(summaryPeriod.value)
     const map = await fetchSummary(summaryPeriod.value)
     if (map.success) summary.value = map.data
   },

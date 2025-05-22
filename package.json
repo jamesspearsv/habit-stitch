@@ -19,6 +19,7 @@
   },
   "dependencies": {
     "@types/vue-feather-icons": "^5.0.8",
+    "feather-icons": "^4.29.2",
     "pocketbase": "^0.26.0",
     "tinygradient": "^2.0.1",
     "vue": "^3.5.13",
@@ -27,6 +28,7 @@
   },
   "devDependencies": {
     "@tsconfig/node22": "^22.0.1",
+    "@types/feather-icons": "^4.29.4",
     "@types/node": "^22.14.0",
     "@vite-pwa/assets-generator": "^1.0.0",
     "@vitejs/plugin-vue": "^5.2.3",

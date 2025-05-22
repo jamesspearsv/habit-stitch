@@ -1,7 +1,7 @@
 import { pb } from '@/lib/pb'
 import type { Activity, Habit, MappedActivity, MappedHabit, Result, SummaryMap } from '@/lib/types'
 import { ClientResponseError } from 'pocketbase'
-import { newGetDateRange } from './helpers'
+import { getDateRange } from './helpers'
 
 function mapHabits(habits: Habit[], activities: Activity[]) {
   const map: MappedHabit[] = []
@@ -41,7 +41,7 @@ export async function createHabit(data: { habit_name: string }): Promise<Result>
 }
 
 export async function fetchHabits(): Promise<Result<MappedHabit[]>> {
-  const today = newGetDateRange('today')
+  const today = getDateRange('today')
 
   try {
     const habits = (await pb
@@ -62,7 +62,7 @@ export async function fetchHabits(): Promise<Result<MappedHabit[]>> {
 }
 
 export async function fetchActivities(): Promise<Result<MappedActivity[]>> {
-  const today = newGetDateRange('today')
+  const today = getDateRange('today')
   try {
     const activities = (await pb.collection('activities').getFullList({
       expand: 'habit_id ',
@@ -122,7 +122,7 @@ export async function deleteActivity(activity_id: string): Promise<Result> {
 export async function fetchSummary(
   period: 'week' | 'month' | 'today',
 ): Promise<Result<SummaryMap[]>> {
-  const range = newGetDateRange(period)
+  const range = getDateRange(period)
 
   try {
     const [habits, activities] = await Promise.all([
