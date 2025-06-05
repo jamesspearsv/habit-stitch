@@ -11,24 +11,23 @@ const open = ref(false)
 
 <template>
   <nav :class="{ open: open }">
-    <!-- TODO: Fix event bubbling when clicking menu element -->
     <menu @click="() => (open = false)" :class="{ open: open }">
       <RouterLink :to="{ name: 'Summary' }">
-        <i data-feather="bar-chart"></i>
+        <div class="icon-container">
+          <i data-feather="bar-chart"></i>
+        </div>
       </RouterLink>
       <RouterLink :to="{ name: 'Home' }">
-        <i data-feather="home"></i>
+        <div class="icon-container">
+          <i data-feather="home"></i>
+        </div>
       </RouterLink>
       <RouterLink to="/signout">
-        <i data-feather="log-out"></i>
+        <div class="icon-container">
+          <i data-feather="log-out"></i>
+        </div>
       </RouterLink>
     </menu>
-    <!-- <div class="menu-bar">
-      <button @click="() => (open = !open)">
-        <div>Menu</div>
-        <div class="menu-icon">▲</div>
-      </button>
-    </div> -->
   </nav>
 </template>
 
@@ -44,63 +43,20 @@ nav {
   z-index: 100;
 }
 
-div.menu-bar {
-  border-top: solid 1px var(--c-secondary);
-  min-height: var(--menu-height);
-  display: flex;
-  align-items: center;
-}
-
-button {
-  background-color: inherit;
-  display: flex;
-  align-items: center;
-  gap: var(--sp-sm);
-  margin: auto;
-}
-
-.menu-icon {
-  transition: transform 200ms ease-in-out;
-}
-
-nav.open .menu-icon {
-  transform: rotate(180deg);
-}
-
 menu {
   border-top: solid 1px var(--c-secondary);
-
   display: flex;
-  justify-content: space-evenly;
-  gap: var(--sp-lg);
-  padding-top: var(--sp-md);
-  padding-bottom: var(--sp-xl);
+  width: 100%;
 }
 
-/* menu {
-  height: 0;
-  overflow-y: hidden;
+menu > * {
+  flex-grow: 1;
+}
+
+.icon-container {
+  padding-top: var(--sp-lg);
+  padding-bottom: 3rem;
   display: flex;
-  align-items: center;
   justify-content: center;
-  flex-direction: column;
-  width: 50%;
-  margin: auto;
-  gap: var(--sp-lg);
-  transition: height 200ms ease-in-out;
 }
-
-menu a {
-  background-color: var(--c-accent);
-  padding: var(--sp-lg);
-  border-radius: var(--br-lg);
-  font-size: var(--fs-2);
-  font-weight: 700;
-  text-decoration: none;
-  text-align: center;
-}
-
-menu.open {
-  height: calc(100dvh - var(--menu-height));
-} */
 </style>
