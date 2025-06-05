@@ -17,7 +17,7 @@ main {
   main {
     width: 50%;
     margin: auto;
-    margin-bottom: var(--menu-height);
+    margin-bottom: 6.5rem;
   }
 }
 </style>

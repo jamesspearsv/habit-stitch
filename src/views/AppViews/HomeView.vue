@@ -28,7 +28,7 @@ onMounted(async () => {
 <template>
   <CreateHabitForm @update="async () => await fetchData()">
     <div>
-      <h1 class="heading">What will you do today?</h1>
+      <h1>Habit<span>Stitch</span></h1>
     </div>
   </CreateHabitForm>
   <div v-if="error">Error!</div>
@@ -46,8 +46,18 @@ onMounted(async () => {
 </template>
 
 <style scoped>
-.heading {
-  font-size: var(--fs-3);
+h1 {
+  font-size: var(--fs-4);
+  font-weight: bold;
+}
+h1 > span {
+  background: linear-gradient(90deg, #17898f 0%, #f6c44b 50%, #b72a3a 100%);
+  background-size: 100%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  width: max-content;
 }
 
 .nav-section {

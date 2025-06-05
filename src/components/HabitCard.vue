@@ -87,7 +87,7 @@ button::before {
   padding: var(--sp-xs);
   border: none;
   border-radius: var(--br-md);
-  font-weight: 700;
+  font-weight: bold;
 }
 
 button.today > .habit-name {

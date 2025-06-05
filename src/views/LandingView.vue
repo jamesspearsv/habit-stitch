@@ -68,6 +68,8 @@
     hsl(29deg 96% 56%) 82%,
     hsl(37deg 90% 51%) 100%
   );
+
+  filter: blur(5px);
 }
 
 h1 {
