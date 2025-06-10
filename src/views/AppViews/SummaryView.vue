@@ -14,18 +14,21 @@ import {
   stringToSeed,
 } from '@/lib/helpers'
 import type { SummaryMap } from '@/lib/types'
-import { ref, useTemplateRef, watch } from 'vue'
+import { computed, ref, useTemplateRef, watch } from 'vue'
+
+// Component refs
 const summary = ref<SummaryMap[] | null>(null)
 const canvas = useTemplateRef('canvas')
 const canvasSize = { width: 700, height: 500 }
 const summaryPeriod = ref<'week' | 'month' | 'today'>('week')
-const dateRange = ref(getDateRange('week'))
+const offset = ref(0)
+const dateRange = computed(() => getDateRange(summaryPeriod.value, offset.value))
 
 watch(
-  summaryPeriod,
+  [summaryPeriod, offset],
   async () => {
-    dateRange.value = getDateRange(summaryPeriod.value)
-    const map = await fetchSummary(summaryPeriod.value)
+    // dateRange.value = getDateRange(summaryPeriod.value)
+    const map = await fetchSummary(summaryPeriod.value, offset.value)
     if (map.success) summary.value = map.data
   },
   { immediate: true },
@@ -72,10 +75,16 @@ watch(summary, () => {
     <canvas ref="canvas" :height="canvasSize.height" :width="canvasSize.width"></canvas>
   </section>
   <section class="page-buttons">
-    <button>Previous</button>
+    <button @click="() => offset++">Previous</button>
+    <!--
+      TODO: Changing summary view should reset the offset
+    -->
     <button @click="() => (summaryPeriod = summaryPeriod === 'week' ? 'month' : 'week')">
       This {{ summaryPeriod }}
     </button>
+    <!--
+      TODO: Add ability to decrease offset
+    -->
     <button>Next</button>
   </section>
   <section>

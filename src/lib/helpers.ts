@@ -58,7 +58,10 @@ function newParseDate(date: Date) {
   }
 }
 
-export function getDateRange(mode: 'today' | 'month' | 'week'): { start: string; end: string } {
+export function getDateRange(
+  mode: 'today' | 'month' | 'week',
+  offset?: number,
+): { start: string; end: string } {
   const t = newParseDate(new Date())
   switch (mode) {
     case 'today':
@@ -69,11 +72,21 @@ export function getDateRange(mode: 'today' | 'month' | 'week'): { start: string;
     case 'month':
       const daysInMonths = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
       return {
-        start: new Date(t.year, t.month, 1, 0, 0, 0).toISOString().replace('T', ' '),
-        end: new Date(t.year, t.month, daysInMonths[t.month], 23, 59, 59)
+        start: new Date(t.year, offset ? t.month - offset : t.month, 1, 0, 0, 0)
+          .toISOString()
+          .replace('T', ' '),
+        end: new Date(
+          t.year,
+          offset ? t.month - offset : t.month,
+          daysInMonths[t.month],
+          23,
+          59,
+          59,
+        )
           .toISOString()
           .replace('T', ' '),
       }
+      // TODO: Add week offset logic
     case 'week':
       const sunday = t.day - t.weekday
       const saturday = t.day + (6 - t.weekday)
