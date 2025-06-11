@@ -1,8 +1,6 @@
 <script setup lang="ts">
 // TODO: Customizable pattern generation params
 
-// TODO: Reactive date range selection (last week, two weeks ago, etc.)
-
 import HeadingContainer from '@/components/HeadingContainer.vue'
 import { fetchSummary } from '@/lib/actions'
 import {
@@ -82,15 +80,11 @@ function switchSummaryPeriod() {
   </section>
   <section class="page-buttons">
     <button @click="() => offset++">Previous</button>
-    <!--
-      TODO: Changing summary view should reset the offset
-    -->
+
     <button @click="switchSummaryPeriod">
       {{ stringToProperCase(summaryPeriod) }}
     </button>
-    <!--
-      TODO: Add ability to decrease offset
-    -->
+
     <button
       @click="
         () => {
