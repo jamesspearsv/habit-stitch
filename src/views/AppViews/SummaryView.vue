@@ -85,7 +85,16 @@ watch(summary, () => {
     <!--
       TODO: Add ability to decrease offset
     -->
-    <button>Next</button>
+    <button
+      @click="
+        () => {
+          if (offset > 0) offset--
+        }
+      "
+      :disabled="offset === 0"
+    >
+      Next
+    </button>
   </section>
   <section>
     <div class="habit-chart">
