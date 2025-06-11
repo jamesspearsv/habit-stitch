@@ -49,7 +49,7 @@ export function calculateOpacity(percentage: number, max: number, min: number) {
   return min + (max - min) * (1 - percentage)
 }
 
-function newParseDate(date: Date) {
+function parseDate(date: Date) {
   return {
     day: date.getDate(),
     month: date.getMonth(),
@@ -62,7 +62,18 @@ export function getDateRange(
   mode: 'today' | 'month' | 'week',
   offset?: number,
 ): { start: string; end: string } {
-  const t = newParseDate(new Date())
+  const t = parseDate(new Date())
+
+  // perform any offset operations
+  if (offset) {
+    switch (mode) {
+      case 'month':
+        t.month = t.month - offset
+      case 'week':
+        t.day = t.day - offset * 7
+    }
+  }
+
   switch (mode) {
     case 'today':
       return {
@@ -72,21 +83,12 @@ export function getDateRange(
     case 'month':
       const daysInMonths = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
       return {
-        start: new Date(t.year, offset ? t.month - offset : t.month, 1, 0, 0, 0)
-          .toISOString()
-          .replace('T', ' '),
-        end: new Date(
-          t.year,
-          offset ? t.month - offset : t.month,
-          daysInMonths[t.month],
-          23,
-          59,
-          59,
-        )
+        start: new Date(t.year, t.month, 1, 0, 0, 0).toISOString().replace('T', ' '),
+        end: new Date(t.year, t.month, daysInMonths[t.month], 23, 59, 59)
           .toISOString()
           .replace('T', ' '),
       }
-      // TODO: Add week offset logic
+    // TODO: Add week offset logic
     case 'week':
       const sunday = t.day - t.weekday
       const saturday = t.day + (6 - t.weekday)
@@ -98,4 +100,8 @@ export function getDateRange(
         end: new Date(t.year, t.month, saturday, 0, 0, 0).toISOString().replace('T', ' '),
       }
   }
+}
+
+export function stringToProperCase(string: string) {
+  return string[0].toUpperCase() + string.slice(1)
 }

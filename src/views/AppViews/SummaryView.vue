@@ -12,6 +12,7 @@ import {
   getAngleFromSeed,
   getDateRange,
   stringToSeed,
+  stringToProperCase,
 } from '@/lib/helpers'
 import type { SummaryMap } from '@/lib/types'
 import { computed, ref, useTemplateRef, watch } from 'vue'
@@ -59,6 +60,11 @@ watch(summary, () => {
     })
   }
 })
+
+function switchSummaryPeriod() {
+  offset.value = 0
+  summaryPeriod.value = summaryPeriod.value === 'week' ? 'month' : 'week'
+}
 </script>
 
 <template>
@@ -79,8 +85,8 @@ watch(summary, () => {
     <!--
       TODO: Changing summary view should reset the offset
     -->
-    <button @click="() => (summaryPeriod = summaryPeriod === 'week' ? 'month' : 'week')">
-      This {{ summaryPeriod }}
+    <button @click="switchSummaryPeriod">
+      {{ stringToProperCase(summaryPeriod) }}
     </button>
     <!--
       TODO: Add ability to decrease offset
