@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { createHabit } from '@/lib/actions'
 import { ref, watch } from 'vue'
+import FeatherIcon from './FeatherIcon.vue'
 
 const initialState = { habit_name: '' }
 const formData = ref({ ...initialState })
@@ -41,7 +42,9 @@ async function addHabit() {
 <template>
   <div class="heading">
     <slot />
-    <button @click="() => (open = true)">New Habit</button>
+    <button @click="() => (open = true)">
+      <FeatherIcon icon="plus-circle" />
+    </button>
   </div>
   <dialog ref="dialog" @close.prevent="() => (open = false)">
     <form @submit.prevent="addHabit" @reset.prevent="() => (open = false)">

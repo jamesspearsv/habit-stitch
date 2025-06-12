@@ -1,10 +1,6 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
-import * as feather from 'feather-icons'
-
-onMounted(() => {
-  feather.replace()
-})
+import { ref } from 'vue'
+import FeatherIcon from './FeatherIcon.vue'
 
 const open = ref(false)
 </script>
@@ -13,19 +9,13 @@ const open = ref(false)
   <nav :class="{ open: open }">
     <menu @click="() => (open = false)" :class="{ open: open }">
       <RouterLink :to="{ name: 'Summary' }">
-        <div class="icon-container">
-          <i data-feather="bar-chart"></i>
-        </div>
+        <FeatherIcon icon="bar-chart-2" />
       </RouterLink>
       <RouterLink :to="{ name: 'Home' }">
-        <div class="icon-container">
-          <i data-feather="home"></i>
-        </div>
+        <FeatherIcon icon="home" />
       </RouterLink>
       <RouterLink to="/signout">
-        <div class="icon-container">
-          <i data-feather="log-out"></i>
-        </div>
+        <FeatherIcon icon="log-out" />
       </RouterLink>
     </menu>
   </nav>
@@ -53,10 +43,8 @@ menu > * {
   flex-grow: 1;
 }
 
-.icon-container {
+a > div {
   padding-top: var(--sp-lg);
   padding-bottom: 3rem;
-  display: flex;
-  justify-content: center;
 }
 </style>

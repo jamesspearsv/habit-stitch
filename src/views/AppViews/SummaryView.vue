@@ -1,6 +1,7 @@
 <script setup lang="ts">
 // TODO: Customizable pattern generation params
 
+import FeatherIcon from '@/components/FeatherIcon.vue'
 import HeadingContainer from '@/components/HeadingContainer.vue'
 import { fetchSummary } from '@/lib/actions'
 import {
@@ -79,12 +80,12 @@ function switchSummaryPeriod() {
     <canvas ref="canvas" :height="canvasSize.height" :width="canvasSize.width"></canvas>
   </section>
   <section class="page-buttons">
-    <button @click="() => offset++">Previous</button>
-
+    <button @click="() => offset++">
+      <FeatherIcon icon="chevron-left" />
+    </button>
     <button @click="switchSummaryPeriod">
       {{ stringToProperCase(summaryPeriod) }}
     </button>
-
     <button
       @click="
         () => {
@@ -93,7 +94,7 @@ function switchSummaryPeriod() {
       "
       :disabled="offset === 0"
     >
-      Next
+      <FeatherIcon icon="chevron-right" />
     </button>
   </section>
   <section>

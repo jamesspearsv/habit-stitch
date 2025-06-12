@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "pb": "./pb/pocketbase serve --http=localhost:8080",
     "pb:build": "docker build -t pb ./pb",
     "pb:run": "docker run -d -it --name pocketbase -v ./pb/pb_data:/pb/pb_data -v ./pb/pb_migrations:/pb/pb_migrations -p 8080:8080 pb",
     "pb:command": "docker exec -it pocketbase /pb/pocketbase",
