@@ -1,5 +1,6 @@
 import { fileURLToPath, URL } from 'node:url'
 import { VitePWA } from 'vite-plugin-pwa'
+import { cloudflare } from '@cloudflare/vite-plugin'
 
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
@@ -10,6 +11,7 @@ export default defineConfig({
   plugins: [
     vue(),
     vueDevTools(),
+    cloudflare(),
     VitePWA({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'mask-icon.svg'],

@@ -31,7 +31,7 @@ const router = createRouter({
 })
 
 router.beforeEach(async (to) => {
-  console.log(to)
+  // console.log(to)
   const protectedPaths = ['/', '/pattern']
   // Check if the requested route is protected
   if (protectedPaths.includes(to.path)) {
