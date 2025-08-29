@@ -1,6 +1,13 @@
+<script setup lang="ts">
+async function handleClick() {
+  const res = await fetch('/api')
+  console.log(await res.json())
+}
+</script>
 <template>
   <main>
     <section class="hero-section">
+      <button @click="handleClick">Click me</button>
       <h1>Habit Stitch is a habit building app for people who hate routines!</h1>
       <RouterLink class="cta-btn" :to="{ name: 'Signup' }">Sign Up</RouterLink>
       <p>Already have an account? <RouterLink :to="{ name: 'Login' }">Login</RouterLink></p>

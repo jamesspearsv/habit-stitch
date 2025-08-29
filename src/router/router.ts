@@ -30,26 +30,26 @@ const router = createRouter({
   ],
 })
 
-router.beforeEach(async (to) => {
-  // console.log(to)
-  const protectedPaths = ['/', '/pattern']
-  // Check if the requested route is protected
-  if (protectedPaths.includes(to.path)) {
-    // Validate the current user
-    if (!pb.authStore.isValid) {
-      return { name: 'Landing' }
-    }
-  }
+// router.beforeEach(async (to) => {
+//   // console.log(to)
+//   const protectedPaths = ['/', '/pattern']
+//   // Check if the requested route is protected
+//   if (protectedPaths.includes(to.path)) {
+//     // Validate the current user
+//     if (!pb.authStore.isValid) {
+//       return { name: 'Landing' }
+//     }
+//   }
 
-  if ((to.path === '/login' || to.path === '/signup') && pb.authStore.isValid) {
-    return { name: 'Home' }
-  }
+//   if ((to.path === '/login' || to.path === '/signup') && pb.authStore.isValid) {
+//     return { name: 'Home' }
+//   }
 
-  // Temp: signout route
-  if (to.path === '/signout') {
-    await signout()
-    return { name: 'Landing' }
-  }
-})
+//   // Temp: signout route
+//   if (to.path === '/signout') {
+//     await signout()
+//     return { name: 'Landing' }
+//   }
+// })
 
 export default router
