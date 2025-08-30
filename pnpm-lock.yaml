@@ -36,9 +36,6 @@ importers:
       '@cloudflare/vite-plugin':
         specifier: ^1.12.1
         version: 1.12.1(vite@6.3.2(@types/node@22.14.1)(jiti@2.4.2)(terser@5.39.0))(workerd@1.20250823.0)(wrangler@4.33.1(@cloudflare/workers-types@4.20250829.0))
-      '@cloudflare/workers-types':
-        specifier: ^4.20250829.0
-        version: 4.20250829.0
       '@tsconfig/node22':
         specifier: ^22.0.1
         version: 22.0.1
@@ -4297,7 +4294,8 @@ snapshots:
   '@cloudflare/workerd-windows-64@1.20250823.0':
     optional: true
 
-  '@cloudflare/workers-types@4.20250829.0': {}
+  '@cloudflare/workers-types@4.20250829.0':
+    optional: true
 
   '@cspotcode/source-map-support@0.8.1':
     dependencies:

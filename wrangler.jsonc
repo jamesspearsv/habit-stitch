@@ -1,16 +1,16 @@
 {
-	"name": "habit-stitch",
-	"compatibility_date": "2025-08-28",
-	"main": "./server/index.ts",
-	"assets": {
-		// "directory": "./dist/client/",
-		"not_found_handling": "single-page-application",
-	},
-	"d1_databases": [
-		{
-			"binding": "habit_stitch_db",
-			"database_name": "habit-stitch-db",
-			"database_id": "11882afd-4698-4e74-90b9-dd0d902fb6c1"
-		}
-	],
+  "name": "habit-stitch",
+  "compatibility_date": "2025-08-28",
+  "main": "./server/index.ts",
+  "assets": {
+    // "directory": "./dist/client/",
+    "not_found_handling": "single-page-application",
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "habit-stitch-db",
+      "database_id": "11882afd-4698-4e74-90b9-dd0d902fb6c1",
+    },
+  ],
 }
