@@ -1,8 +1,12 @@
 import { Hono } from 'hono'
+import { drizzle } from 'drizzle-orm/d1'
+import { env } from 'cloudflare:workers'
 
 type Bindings = {
   DB: D1Database
 }
+
+const db = drizzle(env.DB)
 
 const app = new Hono<{ Bindings: Bindings }>()
 

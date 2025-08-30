@@ -11,10 +11,14 @@
     "build-only": "vite build",
     "type-check": "vue-tsc --build",
     "lint": "eslint . --fix",
-    "format": "prettier --write src/"
+    "format": "prettier --write src/",
+    "drizzle:generate": "pnpm drizzle-kit generate",
+    "drizzle:migrate-prod": "pnpm drizzle-kit migrate",
+    "wrangler:migrate-local": "wrangler d1 migrations apply habit-stitch-db"
   },
   "dependencies": {
     "@types/vue-feather-icons": "^5.0.8",
+    "drizzle-orm": "^0.44.5",
     "feather-icons": "^4.29.2",
     "hono": "^4.9.5",
     "pocketbase": "^0.26.0",
@@ -33,6 +37,8 @@
     "@vue/eslint-config-prettier": "^10.2.0",
     "@vue/eslint-config-typescript": "^14.5.0",
     "@vue/tsconfig": "^0.7.0",
+    "dotenv": "^17.2.1",
+    "drizzle-kit": "^0.31.4",
     "eslint": "^9.22.0",
     "eslint-plugin-vue": "~10.0.0",
     "jiti": "^2.4.2",

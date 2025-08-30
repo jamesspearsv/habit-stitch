@@ -31,3 +31,4 @@ coverage
 **/pb_data
 **/*.sqlite*
 **/*.sql
+.env
