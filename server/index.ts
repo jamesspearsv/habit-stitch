@@ -20,8 +20,26 @@ app.get('/api/createTable', async (c) => {
     await query.run()
     return c.json({ message: 'Table created' })
   } catch (error) {
-    console.error(error)
-    return c.json({ message: 'Unable to create table' })
+    if (error instanceof Error) {
+      console.error(error)
+      return c.json({ message: error.message })
+    }
+  }
+})
+
+app.get('/api/insertRow', async (c) => {
+  const query = c.env.DB.prepare(
+    `INSERT INTO habits (name, completion_goal) VALUES ('Workout', 10);`,
+  )
+
+  try {
+    await query.run()
+    return c.json({ message: 'Row inserted into habits' })
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error(error)
+      return c.json({ message: error.message })
+    }
   }
 })
 

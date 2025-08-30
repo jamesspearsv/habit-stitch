@@ -9,6 +9,7 @@ async function handleClick(route: string) {
   <main>
     <button @click="() => handleClick('/api')">Access Basic Worker Code</button>
     <button @click="() => handleClick('/api/createTable')">Create Table</button>
+    <button @click="() => handleClick('/api/insertRow')">Insert Row</button>
   </main>
 </template>
 <style>
