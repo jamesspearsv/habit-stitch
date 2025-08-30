@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { logActivity, deleteActivity } from '@/lib/actions'
+import { logActivity, deleteActivity } from '@/lib/_actions'
 import { ref } from 'vue'
 
 const props = defineProps<{

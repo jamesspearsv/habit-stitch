@@ -2,27 +2,24 @@
 import { onMounted, ref } from 'vue'
 import HabitCard from '@/components/HabitCard.vue'
 import CreateHabitForm from '@/components/CreateHabitForm.vue'
-import { fetchHabits } from '@/lib/actions'
 import type { MappedHabit } from '@/lib/types'
 
 const habits = ref<MappedHabit[] | null>(null)
 const error = ref(false)
 
 async function fetchData() {
-  const result = await fetchHabits()
-  if (result.success) {
-    habits.value = result.data
-    error.value = false
-  } else {
-    habits.value = null
-    error.value = true
-  }
+  // const result = await fetchHabits()
+  // if (result.success) {
+  //   habits.value = result.data
+  //   error.value = false
+  // } else {
+  // }
+  habits.value = null
+  error.value = true
 }
 
 // Fetch habits from backend
-onMounted(async () => {
-  await fetchData()
-})
+onMounted(async () => {})
 </script>
 
 <template>

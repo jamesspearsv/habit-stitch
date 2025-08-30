@@ -3,7 +3,7 @@
 
 import FeatherIcon from '@/components/FeatherIcon.vue'
 import HeadingContainer from '@/components/HeadingContainer.vue'
-import { fetchSummary } from '@/lib/actions'
+import { fetchSummary } from '@/lib/_actions'
 import {
   calculateOpacity,
   calculatePosition,

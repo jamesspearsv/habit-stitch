@@ -1,4 +1,3 @@
-import { pb } from '@/lib/pb'
 import type { Activity, Habit, MappedActivity, MappedHabit, Result, SummaryMap } from '@/lib/types'
 import { ClientResponseError } from 'pocketbase'
 import { getDateRange } from './helpers'

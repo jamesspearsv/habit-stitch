@@ -3,14 +3,14 @@ import HomeView from '@/views/AppViews/HomeView.vue'
 import LoginView from '@/views/LoginView.vue'
 import SignupView from '@/views/SignupView.vue'
 import AppView from '@/views/AppView.vue'
-import { signout } from '@/lib/auth'
-import { pb } from '@/lib/pb'
 import LandingView from '@/views/LandingView.vue'
 import SummaryView from '@/views/AppViews/SummaryView.vue'
+import WorkerView from '@/views/WorkerView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
+    { path: '/worker', name: 'Worker', component: WorkerView },
     { path: '/landing', name: 'Landing', component: LandingView },
     {
       path: '/',

@@ -1,10 +1,10 @@
-export default {
-  fetch(request) {
-    const url = new URL(request.url)
-    if (url.pathname.startsWith('/api')) {
-      return Response.json({ message: `Running in ${navigator.userAgent}! Visiting ${url}` })
-    }
+import { Hono } from 'hono'
+const app = new Hono()
 
-    return new Response(null, { status: 404 })
-  },
-} satisfies ExportedHandler<Env>
+// Cloudflare D1 and Hono guides
+// https://developers.cloudflare.com/d1/worker-api/d1-database/
+// https://hono.dev/docs/getting-started/cloudflare-workers#bindings
+
+app.get('/api', (c) => c.json({ message: 'Hello from Cloudflare Workers!' }))
+
+export default app
