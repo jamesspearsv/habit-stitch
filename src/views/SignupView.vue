@@ -1,14 +1,20 @@
 <script lang="ts" setup>
-import { createUser } from '@/lib/auth'
-import router from '@/router/router'
 import { ref } from 'vue'
 const formData = ref({ email: '', password: '', name: '' })
 const error = ref('')
 
 async function handleSubmit() {
-  const result = await createUser(formData.value)
-  if (result.success) router.push({ name: 'Home' })
-  else error.value = result.error
+  const res = await fetch('/api/users', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+
+    body: JSON.stringify(formData.value),
+  })
+
+  const json = await res.json()
+  console.log(json)
 }
 </script>
 

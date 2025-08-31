@@ -48,7 +48,7 @@ async function addHabit() {
   </div>
   <dialog ref="dialog" @close.prevent="() => (open = false)">
     <form @submit.prevent="addHabit" @reset.prevent="() => (open = false)">
-      <h2>Add a new habit</h2>
+      <!-- <h2>Add a new habit</h2>
       <div class="form-group">
         <label for="habit_name">Habit</label>
         <input
@@ -64,7 +64,7 @@ async function addHabit() {
       </div>
       <div class="form-group">
         <input type="reset" class="cancel-btn" value="Cancel" />
-      </div>
+      </div> -->
     </form>
   </dialog>
 </template>

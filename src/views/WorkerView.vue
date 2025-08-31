@@ -1,15 +1,17 @@
 <script setup lang="ts">
+import { handle } from 'hono/cloudflare-pages'
+
 async function handleClick(route: string) {
-  const res = await fetch(route)
-  const json = await res.json()
-  alert(JSON.stringify(json))
+  if (route) {
+    const res = await fetch(route)
+    const json = await res.json()
+    alert(JSON.stringify(json))
+  }
 }
 </script>
 <template>
   <main>
-    <button @click="() => handleClick('/api')">Access Basic Worker Code</button>
-    <button @click="() => handleClick('/api/createTable')">Create Table</button>
-    <button @click="() => handleClick('/api/insertRow')">Insert Row</button>
+    <button @click="() => handleClick('')">Placeholder</button>
   </main>
 </template>
 <style>

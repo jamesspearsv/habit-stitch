@@ -11,13 +11,12 @@
     "type-check": "vue-tsc --build",
     "lint": "eslint . --fix",
     "format": "prettier --write src/",
-    "deploy-wrangler": "pnpm build && wrangler deploy",
-    "local-d1:create": "wrangler d1 execute habit-stitch-db --local --command=\"SELECT 1\"",
-    "local-d1:reset": "",
-    "drizzle:generate": "pnpm drizzle-kit generate",
-    "drizzle:push-dev": "pnpm drizzle-kit push",
-    "drizzle:studio": "pnpm drizzle-kit studio",
-    "drizzle:migrate-prod": "pnpm drizzle-kit migrate"
+    "deploy-app": "pnpm build && wrangler deploy",
+    "db:create-local": "wrangler d1 execute habit-stitch-db --local --command=\"SELECT 1\"",
+    "db:push-changes": "pnpm drizzle-kit push",
+    "db:generate-migrations": "pnpm drizzle-kit generate",
+    "db:apply-migrations": "wrangler d1 migrations apply habit-stitch-db",
+    "drizzle:studio": "pnpm drizzle-kit studio"
   },
   "dependencies": {
     "@types/vue-feather-icons": "^5.0.8",
