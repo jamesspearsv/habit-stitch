@@ -5,13 +5,12 @@ import fs from 'fs'
 /*
  * Drizzle workflow
  * 1. Define drizzle schemas in schema.ts
- * 2. Use drizzle-kit to generate migration files
- * 3. Use wrangler to apply migration to local dev resources
- * 4. Test migrations and database
- * 5. Use wrangler to apply migration to production resources
+ * 2. Use wrangler to create local Miniflare D1
+ * 3. Use drizzle-kit to push schema changes to local D1
+ * 4. Test changes and database
+ * 5. Use drizzle-kit to generate migration files
+ * 6. Use wrangler to apply migration to production resources
  */
-
-// TODO: Add dynamic config script to handle local development.
 
 function findLocalD1DB() {
   try {
@@ -30,9 +29,6 @@ function findLocalD1DB() {
     if (error instanceof Error) console.log(`Error: ${error.message}`)
   }
 }
-
-// if env === dev use local sqlite database
-// else use remote D1 instance
 
 export default defineConfig({
   dialect: 'sqlite',

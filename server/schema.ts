@@ -1,8 +1,35 @@
-// write schemas here...
 import { integer, sqliteTable, text } from 'drizzle-orm/sqlite-core'
+
+/*
+ * TODO: Read these Drizzle resources later
+ * https://orm.drizzle.team/docs/column-types/sqlite#customizing-data-type
+ * https://orm.drizzle.team/docs/relations
+ */
+
+export const users = sqliteTable('users', {
+  id: integer().primaryKey(),
+  username: text().notNull(),
+  hashed_password: text().notNull(),
+  email: text().notNull(),
+  created_at: text().default(new Date().toISOString()), // ISO datetime
+})
 
 export const habits = sqliteTable('habits', {
   id: integer().primaryKey(),
-  name: text().notNull(),
-  completion_goal: integer().notNull(),
+  name: text().notNull(), // task name
+  description: text(), // explanation of habit
+  color: text().notNull(), // color hex code string (#rrggbb)
+  interval_days: integer().notNull(), // completion interval in number of days
+  is_active: integer({ mode: 'boolean' }).default(false),
+  created_at: text().default(new Date().toISOString()),
+  user_id: integer().references(() => users.id),
+})
+
+export const logs = sqliteTable('logs', {
+  id: integer().primaryKey(),
+  timestamp: text().notNull().default(new Date().toISOString()), // ISO datetime of log entry
+  notes: text(), // optional user notes
+  habit_id: integer().references(() => habits.id), // related habit id
+  user_id: integer().references(() => users.id), // related user id
+  created_at: text().default(new Date().toISOString()), // entry creation timestamp
 })
