@@ -8,13 +8,15 @@
     "build": "pnpm type-check && pnpm build-only",
     "preview": "pnpm build && vite preview",
     "wrangler:deploy": "pnpm build && wrangler deploy",
+    "wrangler:local-db": "wrangler d1 execute habit-stitch-db --local --command=\"SELECT 1\"",
     "build-only": "vite build",
     "type-check": "vue-tsc --build",
     "lint": "eslint . --fix",
     "format": "prettier --write src/",
     "drizzle:generate": "pnpm drizzle-kit generate",
-    "drizzle:migrate-prod": "pnpm drizzle-kit migrate",
-    "wrangler:migrate-local": "wrangler d1 migrations apply habit-stitch-db"
+    "drizzle:push-dev": "pnpm drizzle-kit push",
+    "drizzle:studio": "pnpm drizzle-kit studio",
+    "drizzle:migrate-prod": "pnpm drizzle-kit migrate"
   },
   "dependencies": {
     "@types/vue-feather-icons": "^5.0.8",
@@ -29,6 +31,7 @@
   },
   "devDependencies": {
     "@cloudflare/vite-plugin": "^1.12.1",
+    "@libsql/client": "^0.15.14",
     "@tsconfig/node22": "^22.0.1",
     "@types/feather-icons": "^4.29.4",
     "@types/node": "^22.14.0",
