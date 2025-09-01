@@ -1,3 +1,5 @@
+// TODO: Ignore config during build
+
 import { defineConfig } from 'drizzle-kit'
 import path from 'path'
 import fs from 'fs'
@@ -33,19 +35,7 @@ function findLocalD1DB() {
 export default defineConfig({
   dialect: 'sqlite',
   schema: './server/schema.ts',
-
-  ...(process.env.NODE_ENV === 'prod'
-    ? {
-        driver: 'd1-http',
-        dbCredentials: {
-          accountId: process.env.CF_ACCOUNT_ID!,
-          databaseId: process.env.CF_DATABASE_ID!,
-          token: process.env.CF_D1_TOKEN!,
-        },
-      }
-    : {
-        dbCredentials: {
-          url: findLocalD1DB()!,
-        },
-      }),
+  dbCredentials: {
+    url: findLocalD1DB()!,
+  },
 })

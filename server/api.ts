@@ -1,6 +1,7 @@
 import { Hono } from 'hono'
 import { drizzle } from 'drizzle-orm/d1'
 import { users } from './schema'
+import { insertUser } from './queries'
 
 type Bindings = {
   DB: D1Database
@@ -24,20 +25,16 @@ api.post('/users', async (c) => {
     const binding = c.env.DB
     const json = await c.req.json()
 
-    // TODO: validate new user data
+    // TODO: validate new user data with Zod
     if ('email' in json && 'password' in json && 'name' in json) {
       const user = {
         email: json.email as string,
-        hashed_password: json.password as string,
+        hashed_password: json.password as string, // TODO: hash password
         name: json.name as string,
       }
 
-      // init db connection & insert new user
-      console.log('attempting db connection...')
-      const db = drizzle(binding)
-
-      console.log('attempting insert...')
-      await db.insert(users).values(user)
+      // TODO: handle potential errors
+      await insertUser(user, binding)
     }
 
     return c.json({ message: 'work in progress' })
