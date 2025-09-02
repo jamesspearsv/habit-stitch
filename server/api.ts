@@ -1,6 +1,4 @@
 import { Hono } from 'hono'
-import { drizzle } from 'drizzle-orm/d1'
-import { users } from './schema'
 import { insertUser } from './queries'
 
 type Bindings = {
