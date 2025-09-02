@@ -1,5 +1,6 @@
 import { Hono } from 'hono'
 import { insertUser } from './queries'
+import bcryptjs from 'bcryptjs'
 
 type Bindings = {
   DB: D1Database
@@ -25,9 +26,11 @@ api.post('/users', async (c) => {
 
     // TODO: validate new user data with Zod
     if ('email' in json && 'password' in json && 'name' in json) {
+      const hashed_password = await bcryptjs.hash(json.password, 10)
+
       const user = {
         email: json.email as string,
-        hashed_password: json.password as string, // TODO: hash password
+        hashed_password,
         name: json.name as string,
       }
 

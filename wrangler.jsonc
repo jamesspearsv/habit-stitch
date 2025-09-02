@@ -1,5 +1,6 @@
 {
   "name": "habit-stitch",
+  "compatibility_flags": ["nodejs_compat"],
   "compatibility_date": "2025-08-28",
   "main": "server/index.ts",
   "assets": {
