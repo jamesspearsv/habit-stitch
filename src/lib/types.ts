@@ -12,7 +12,7 @@ export interface Activity {
   habit_id: string
   date: string
   user_id: string
-  expand?: { habit_id: { habit_color } }
+  expand?: { habit_id: { habit_color: string } }
 }
 
 export interface MappedHabit {

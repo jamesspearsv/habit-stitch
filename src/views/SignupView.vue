@@ -14,6 +14,7 @@ async function handleSubmit() {
   })
 
   if (res.ok) {
+    // TODO: handle returned authObject
     const json = await res.json()
     console.log(json)
   }

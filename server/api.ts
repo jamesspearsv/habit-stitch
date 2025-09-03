@@ -2,8 +2,9 @@ import { Hono } from 'hono'
 import { insertUser } from './queries'
 import bcryptjs from 'bcryptjs'
 import { NewUser } from './zod'
-import { decode, verify, sign } from 'hono/jwt'
+import { sign } from 'hono/jwt'
 import { ZodError } from 'zod'
+import { AuthObject } from '@shared/types'
 
 type Bindings = {
   DB: D1Database
@@ -43,17 +44,24 @@ api.post('/users', async (c) => {
     await insertUser(user, binding)
 
     // sign new JWT & return
-    // TODO: Consider using an auth library like BetterAuth
+    const timestamp = Date.now()
     const jwt = await sign(
       {
         user: { email: user.email, name: user.name },
-        exp: Date.now() + 180 * 60 * 1000,
-        iat: Date.now(),
+        exp: timestamp + 180 * 60 * 1000,
+        iat: timestamp,
       },
       c.env.SECRET_KEY,
     )
 
-    return c.json({ message: 'Successfully created new user', jwt })
+    const authObject: AuthObject = {
+      access_token: jwt,
+      user_name: user.name,
+      user_email: user.email,
+      iat: timestamp,
+    }
+
+    return c.json({ message: 'Successfully created new user', authObject })
   } catch (err) {
     // TODO: Handle error gracefully when parsing
     if (err instanceof ZodError) {
