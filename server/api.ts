@@ -1,6 +1,7 @@
 import { Hono } from 'hono'
 import { insertUser } from './queries'
 import bcryptjs from 'bcryptjs'
+import { NewUser } from './zod'
 
 type Bindings = {
   DB: D1Database
@@ -24,19 +25,19 @@ api.post('/users', async (c) => {
     const binding = c.env.DB
     const json = await c.req.json()
 
-    // TODO: validate new user data with Zod
-    if ('email' in json && 'password' in json && 'name' in json) {
-      const hashed_password = await bcryptjs.hash(json.password, 10)
+    // TODO: handle parsing safely
+    const parsedData = NewUser.parse(json)
 
-      const user = {
-        email: json.email as string,
-        hashed_password,
-        name: json.name as string,
-      }
+    const hashed_password = await bcryptjs.hash(parsedData.password, 10)
 
-      // TODO: handle potential errors
-      await insertUser(user, binding)
+    const user = {
+      email: parsedData.email,
+      hashed_password,
+      name: parsedData.name,
     }
+
+    // TODO: handle potential errors
+    await insertUser(user, binding)
 
     return c.json({ message: 'work in progress' })
   } catch (err) {
