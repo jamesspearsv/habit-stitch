@@ -13,8 +13,10 @@ async function handleSubmit() {
     body: JSON.stringify(formData.value),
   })
 
-  const json = await res.json()
-  console.log(json)
+  if (res.ok) {
+    const json = await res.json()
+    console.log(json)
+  }
 }
 </script>
 
