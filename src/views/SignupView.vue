@@ -24,7 +24,7 @@ async function handleSubmit() {
     console.log(json)
     // TODO: Create authObject schema
     storeAuth(json.auth as AuthObject) // TODO: ! json.auth is undefined
-    router.push({ name: 'Home' )
+    router.push({ name: 'Home' })
   }
 }
 </script>
