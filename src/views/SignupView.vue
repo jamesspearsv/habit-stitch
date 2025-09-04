@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { storeAuth } from '@/lib/auth'
+import { storeAuth } from '@client/lib/auth'
 import type { AuthObject } from '@shared/types'
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'

@@ -1,4 +1,4 @@
-import type { MappedActivity, MappedHabit, Result, SummaryMap } from '@/lib/types'
+import type { MappedActivity, MappedHabit, Result, SummaryMap } from '@client/lib/types'
 import { getDateRange } from './helpers'
 
 // function mapHabits(habits: Habit[], activities: Activity[]) {

@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import { onMounted, ref } from 'vue'
-import HabitCard from '@/components/HabitCard.vue'
-import CreateHabitForm from '@/components/CreateHabitForm.vue'
-import type { MappedHabit } from '@/lib/types'
+import HabitCard from '@client/components/HabitCard.vue'
+import CreateHabitForm from '@client/components/CreateHabitForm.vue'
+import type { MappedHabit } from '@client/lib/types'
 
 const habits = ref<MappedHabit[] | null>(null)
 const error = ref(false)

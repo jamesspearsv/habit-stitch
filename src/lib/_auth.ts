@@ -1,4 +1,4 @@
-import type { Result } from '@/lib/types'
+import type { Result } from '@client/lib/types'
 
 export async function signin(user: { email: string; password: string }): Promise<Result> {
   console.log(user)

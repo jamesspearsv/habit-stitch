@@ -1,9 +1,9 @@
 <script setup lang="ts">
 // TODO: Customizable pattern generation params
 
-import FeatherIcon from '@/components/FeatherIcon.vue'
-import HeadingContainer from '@/components/HeadingContainer.vue'
-import { fetchSummary } from '@/lib/_actions'
+import FeatherIcon from '@client/components/FeatherIcon.vue'
+import HeadingContainer from '@client/components/HeadingContainer.vue'
+import { fetchSummary } from '@client/lib/_actions'
 import {
   calculateOpacity,
   calculatePosition,
@@ -12,8 +12,8 @@ import {
   getDateRange,
   stringToSeed,
   stringToProperCase,
-} from '@/lib/helpers'
-import type { SummaryMap } from '@/lib/types'
+} from '@client/lib/helpers'
+import type { SummaryMap } from '@client/lib/types'
 import { computed, ref, useTemplateRef, watch } from 'vue'
 
 // Component refs

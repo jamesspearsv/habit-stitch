@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import { signin } from '@/lib/_auth'
-import router from '@/router/router'
+import { signin } from '@client/lib/_auth'
+import router from '@client/router/router'
 import { ref } from 'vue'
 
 const formData = ref({
