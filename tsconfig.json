@@ -15,8 +15,7 @@
     "types": ["./worker-configuration.d.ts"],
     "paths": {
       "@/*": ["./src/*"],
-      "@shared/*": ["./shared/*"],
-      "@worker/*": ["./server/*"]
+      "@shared/*": ["./shared/*"]
     }
   }
 }

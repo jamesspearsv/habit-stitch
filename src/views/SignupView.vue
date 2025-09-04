@@ -1,7 +1,12 @@
 <script lang="ts" setup>
+import { storeAuth } from '@/lib/auth'
+import type { AuthObject } from '@shared/types'
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+
 const formData = ref({ email: '', password: '', name: '' })
 const error = ref('')
+const router = useRouter()
 
 async function handleSubmit() {
   const res = await fetch('/api/users', {
@@ -17,6 +22,9 @@ async function handleSubmit() {
     // TODO: handle returned authObject
     const json = await res.json()
     console.log(json)
+    // TODO: Create authObject schema
+    storeAuth(json.auth as AuthObject) // TODO: ! json.auth is undefined
+    router.push({ name: 'Home' )
   }
 }
 </script>

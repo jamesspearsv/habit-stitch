@@ -1,5 +1,3 @@
-// TODO: Ignore config during build
-
 import { defineConfig } from 'drizzle-kit'
 import path from 'path'
 import fs from 'fs'

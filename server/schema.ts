@@ -2,7 +2,7 @@ import { sql } from 'drizzle-orm'
 import { integer, sqliteTable, text } from 'drizzle-orm/sqlite-core'
 
 /*
- * TODO: Read these Drizzle resources later
+ * Drizzle Resources
  * https://orm.drizzle.team/docs/column-types/sqlite#customizing-data-type
  * https://orm.drizzle.team/docs/relations
  */

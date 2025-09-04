@@ -1,10 +1,10 @@
 import { Hono } from 'hono'
 import { insertUser } from './queries'
 import bcryptjs from 'bcryptjs'
-import { NewUser } from './zod'
 import { sign } from 'hono/jwt'
 import { ZodError } from 'zod'
-import { AuthObject } from '@shared/types'
+import { NewUser } from '../shared/zod'
+import { AuthObject } from '../shared/types'
 
 type Bindings = {
   DB: D1Database
@@ -63,7 +63,6 @@ api.post('/users', async (c) => {
 
     return c.json({ message: 'Successfully created new user', authObject })
   } catch (err) {
-    // TODO: Handle error gracefully when parsing
     if (err instanceof ZodError) {
       return c.json({ message: 'Bad request' }, 400)
     }

@@ -5,3 +5,5 @@ export const NewUser = z.object({
   password: z.string(),
   email: z.email(),
 })
+
+// TODO: Create AuthObject schema

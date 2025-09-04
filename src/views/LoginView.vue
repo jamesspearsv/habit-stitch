@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { signin } from '@/lib/auth'
+import { signin } from '@/lib/_auth'
 import router from '@/router/router'
 import { ref } from 'vue'
 
