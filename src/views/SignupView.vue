@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { storeAuth } from '@client/lib/auth'
-import type { AuthObject } from '@shared/types'
+import { AuthObjectSchema } from '@shared/zod'
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 
@@ -18,14 +18,17 @@ async function handleSubmit() {
     body: JSON.stringify(formData.value),
   })
 
-  if (res.ok) {
-    // TODO: handle returned authObject
-    const json = await res.json()
-    console.log(json)
-    // TODO: Create authObject schema
-    storeAuth(json.auth as AuthObject) // TODO: ! json.auth is undefined
-    router.push({ name: 'Home' })
-  }
+  // TODO: handle returned authObject
+  if (!res.ok) return
+  const json = await res.json()
+  console.log(json)
+  // TODO: parse api response. Should have {message, authObject}
+
+  const parsedJSON = AuthObjectSchema.safeParse(json.authObject)
+  if (!parsedJSON.success) return
+
+  storeAuth(parsedJSON.data)
+  router.push({ name: 'Home' })
 }
 </script>
 

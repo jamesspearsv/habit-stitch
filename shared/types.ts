@@ -1,10 +1,7 @@
-// TODO: infer type from AuthObject schema
-export interface AuthObject {
-  access_token: string
-  user_name: string
-  user_email: string
-  iat: number
-}
+import * as z from 'zod'
+import type { AuthObjectSchema } from './zod'
+
+export type AuthObject = z.infer<typeof AuthObjectSchema>
 
 export type Result<T = string> =
   | {

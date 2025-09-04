@@ -6,4 +6,9 @@ export const NewUser = z.object({
   email: z.email(),
 })
 
-// TODO: Create AuthObject schema
+export const AuthObjectSchema = z.object({
+  access_token: z.string(),
+  user_name: z.string(),
+  user_email: z.email(),
+  iat: z.number(),
+})
