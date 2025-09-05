@@ -9,7 +9,7 @@ const formData = ref({
 const error = ref('')
 
 async function handleSubmit() {
-  await login(formData.value.email, formData.value.password)
+  await login(formData.value)
   error.value = 'Unable to login'
 }
 </script>

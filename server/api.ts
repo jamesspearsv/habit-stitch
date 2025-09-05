@@ -2,9 +2,17 @@ import { Hono } from 'hono'
 import { insertUser } from './queries'
 import bcryptjs from 'bcryptjs'
 import { sign } from 'hono/jwt'
-import { ZodError } from 'zod'
 import { NewUser } from '../shared/zod'
 import { AuthRouteResponse } from '../shared/types'
+import { DrizzleQueryError } from 'drizzle-orm'
+
+/*
+ * Using HTTP status cods with response status
+ * Success: return 201 or 200 with body { success: true, data: ... } and 204 for no-body success.
+ * Client error: return 4xx with body { success: false, error: { code, message details? } }.
+ * Server error: return 5xx with body { success: false, error: { code: 'server_error', message: 'Server error' } }.
+ * Do not return 200 with success: false for errors you can express as 4xx/5xx.
+ */
 
 type Bindings = {
   DB: D1Database
@@ -26,58 +34,58 @@ api.post('/habits', async (c) => {
 
 // User creation POST route
 api.post('/users', async (c) => {
-  try {
-    const binding = c.env.DB
-    const json = await c.req.json()
-    console.log(json)
+  const binding = c.env.DB
+  const jsonBody = await c.req.json()
 
-    // TODO: handle parsing safely
-    const parsedData = NewUser.parse(json)
-
-    const hashed_password = await bcryptjs.hash(parsedData.password, 10)
-
-    const user = {
-      email: parsedData.email,
-      hashed_password,
-      name: parsedData.name,
-    }
-
-    // TODO: handle potential errors
-    await insertUser(user, binding)
-
-    // sign new JWT & return
-    const timestamp = Date.now()
-    const jwt = await sign(
-      {
-        user: { email: user.email, name: user.name },
-        exp: timestamp + 180 * 60 * 1000,
-        iat: timestamp,
-      },
-      c.env.SECRET_KEY,
-    )
-
-    const res = {
-      success: true,
-      message: 'Successfully Created new user',
-      authObject: {
-        accessToken: jwt,
-        userName: user.name,
-        userEmail: user.email,
-        issuedAt: timestamp,
-      },
-    } satisfies AuthRouteResponse
-
-    return c.json(res)
-  } catch (err) {
-    if (err instanceof ZodError) {
-      console.log(err.message)
-      return c.json({ message: 'Bad request' }, 400)
-    }
-
-    if (err instanceof Error) {
-      return c.json({ message: err.message }, 500)
-    }
+  // Validate new user data, return if validation fails
+  const safeNewUser = NewUser.safeParse(jsonBody)
+  if (!safeNewUser.success) {
+    return c.json({ success: false, message: 'Bad request' } satisfies AuthRouteResponse, 400)
   }
+
+  const hashed_password = await bcryptjs.hash(safeNewUser.data.password, 10)
+  const user = {
+    email: safeNewUser.data.email,
+    hashed_password,
+    name: safeNewUser.data.name,
+  }
+
+  // Insert new user and handle any errors
+  try {
+    await insertUser(user, binding)
+  } catch (error) {
+    // consider decoupling this catch block from drizzle
+    // and normalizing query errors in queries.ts
+    if (error instanceof DrizzleQueryError) {
+      return c.json(
+        { success: false, message: 'Unable to create new user' } satisfies AuthRouteResponse,
+        500,
+      )
+    }
+    throw error
+  }
+
+  // sign new JWT & return
+  const timestamp = Date.now()
+  const jwt = await sign(
+    {
+      user: { email: user.email, name: user.name },
+      exp: timestamp + 180 * 60 * 1000,
+      iat: timestamp,
+    },
+    c.env.SECRET_KEY,
+  )
+
+  return c.json({
+    success: true,
+    message: 'Successfully Created new user',
+    authObject: {
+      accessToken: jwt,
+      userName: user.name,
+      userEmail: user.email,
+      issuedAt: timestamp,
+    },
+  } satisfies AuthRouteResponse)
 })
 
 // User login POST route
@@ -92,8 +100,10 @@ api.post('/login', async (c) => {
   // else return {success, message, authObject}
 
   const json = await c.req.json()
+  console.log(json)
 
-  const parsedRequest = NewUser.omit({ name: true }).safeParse(json)
+  const safeCredentials = NewUser.omit({ name: true }).safeParse(json)
+  console.log(safeCredentials)
 
   const response = { success: false, message: '' } satisfies AuthRouteResponse
   return c.json(response)

@@ -9,17 +9,19 @@ const authStoreKey = 'habitstitch_auth'
 
 /**
  * Validate user data to create a new user record
- * @param user Submitted new user data
+ * @param name
+ * @param email
+ * @param password
  * @returns `boolean` value if user creation if successful or not
  */
-export async function createUser(name: string, email: string, password: string) {
+export async function createUser(user: { name: string; email: string; password: string }) {
   const res = await fetch('/api/users', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
 
-    body: JSON.stringify({ name, email, password }),
+    body: JSON.stringify(user),
   })
 
   // Handle unexpected response errors
@@ -39,19 +41,18 @@ export async function createUser(name: string, email: string, password: string) 
 }
 
 /**
- *
- * @param email User submitted email address
- * @param password User submitted password
+ * Validate and login a user
+ * @param credentials Object containing user credentials
  * @returns `boolean` if successful or not
  */
-export async function login(email: string, password: string) {
+export async function login(credentials: { email: string; password: string }) {
   try {
     const res = await fetch('/api/login', {
       method: 'Post',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ email, password }),
+      body: JSON.stringify(credentials),
     })
 
     // TODO: Handle login response
