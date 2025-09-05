@@ -1,16 +1,11 @@
-import type { AuthObject, Result } from '@shared/types'
-import { CreateUserResponseSchema } from '@shared/zod'
+import type { AuthObject } from '@shared/types'
+import { AuthResponseSchema } from '@shared/zod'
 
 const authStoreKey = 'habitstitch_auth'
 
-/**
- * Store authObject in local storage
- * @param authObject
- * @returns `void`
+/*
+ * AUTH MANAGEMENT FUNCTIONS
  */
-export function storeAuth(authObject: AuthObject) {
-  localStorage.setItem(authStoreKey, JSON.stringify(authObject))
-}
 
 /**
  * Validate user data to create a new user record
@@ -31,7 +26,7 @@ export async function createUser(user: { name: string; email: string; password: 
   if (!res.ok) return false
 
   const json = await res.json()
-  const parsedResponse = CreateUserResponseSchema.safeParse(json)
+  const parsedResponse = AuthResponseSchema.safeParse(json)
 
   // Check validation & request success
   if (!parsedResponse.success) return false
@@ -41,6 +36,49 @@ export async function createUser(user: { name: string; email: string; password: 
   storeAuth(parsedResponse.data.authObject)
 
   return true
+}
+
+/**
+ *
+ * @param email User submitted email address
+ * @param password User submitted password
+ * @returns `boolean` if successful or not
+ */
+export async function login(email: string, password: string) {
+  try {
+    const res = await fetch('/api/login', {
+      method: 'Post',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email, password }),
+    })
+
+    // TODO: Handle login response
+    // if login fails return false
+    // if login successful store autObject, return true
+
+    console.log(res)
+    return false
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error(`Error: ${error.message}`)
+    }
+    throw new Error('Unknown error')
+  }
+}
+
+/*
+ * UTILITY AUTH FUNCTIONS
+ */
+
+/**
+ * Store authObject in local storage
+ * @param authObject
+ * @returns `void`
+ */
+export function storeAuth(authObject: AuthObject) {
+  localStorage.setItem(authStoreKey, JSON.stringify(authObject))
 }
 
 /**

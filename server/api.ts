@@ -4,7 +4,7 @@ import bcryptjs from 'bcryptjs'
 import { sign } from 'hono/jwt'
 import { ZodError } from 'zod'
 import { NewUser } from '../shared/zod'
-import { CreateUserResponse } from '../shared/types'
+import { AuthRouteResponse } from '../shared/types'
 
 type Bindings = {
   DB: D1Database
@@ -24,6 +24,7 @@ api.post('/habits', async (c) => {
   return c.json({ message: 'Work in progress' })
 })
 
+// User creation POST route
 api.post('/users', async (c) => {
   try {
     const binding = c.env.DB
@@ -63,7 +64,7 @@ api.post('/users', async (c) => {
         userEmail: user.email,
         issuedAt: timestamp,
       },
-    } satisfies CreateUserResponse
+    } satisfies AuthRouteResponse
 
     return c.json(res)
   } catch (err) {
@@ -75,4 +76,18 @@ api.post('/users', async (c) => {
       return c.json({ message: err.message }, 500)
     }
   }
+})
+
+// User login POST route
+api.post('/login', async (c) => {
+  // TODO: Implement login logic
+  // validate request body
+  // if (!valid request) return unsuccessful
+  // check for existing user
+  // if (!valid user) return unsuccessful
+  // compare password to hashed_password
+  // if (!valid password) return unsuccessful
+  // else return {success, message, authObject}
+  const response = { success: false, message: '' } satisfies AuthRouteResponse
+  return c.json(response)
 })

@@ -17,9 +17,9 @@ export const AuthObjectSchema = z.object({
 })
 
 /*
- *CF Worker Response Schemas
+ * CF Worker Response Schemas
  */
-export const CreateUserResponseSchema = z.discriminatedUnion('success', [
+export const AuthResponseSchema = z.discriminatedUnion('success', [
   z.object({ success: z.literal(true), message: z.string(), authObject: AuthObjectSchema }),
   z.object({ success: z.literal(false), message: z.string() }),
 ])
