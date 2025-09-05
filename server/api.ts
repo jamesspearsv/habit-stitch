@@ -29,6 +29,7 @@ api.post('/users', async (c) => {
   try {
     const binding = c.env.DB
     const json = await c.req.json()
+    console.log(json)
 
     // TODO: handle parsing safely
     const parsedData = NewUser.parse(json)
@@ -69,6 +70,7 @@ api.post('/users', async (c) => {
     return c.json(res)
   } catch (err) {
     if (err instanceof ZodError) {
+      console.log(err.message)
       return c.json({ message: 'Bad request' }, 400)
     }
 
@@ -88,6 +90,11 @@ api.post('/login', async (c) => {
   // compare password to hashed_password
   // if (!valid password) return unsuccessful
   // else return {success, message, authObject}
+
+  const json = await c.req.json()
+
+  const parsedRequest = NewUser.omit({ name: true }).safeParse(json)
+
   const response = { success: false, message: '' } satisfies AuthRouteResponse
   return c.json(response)
 })

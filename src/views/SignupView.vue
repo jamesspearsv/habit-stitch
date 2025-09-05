@@ -8,7 +8,11 @@ const error = ref('')
 const router = useRouter()
 
 async function handleSubmit() {
-  const result = await createUser(formData.value)
+  const result = await createUser(
+    formData.value.name,
+    formData.value.email,
+    formData.value.password,
+  )
   if (result) router.push({ name: 'Home' })
   error.value = 'Unable to create new user'
 }

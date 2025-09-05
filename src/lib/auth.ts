@@ -12,14 +12,14 @@ const authStoreKey = 'habitstitch_auth'
  * @param user Submitted new user data
  * @returns `boolean` value if user creation if successful or not
  */
-export async function createUser(user: { name: string; email: string; password: string }) {
+export async function createUser(name: string, email: string, password: string) {
   const res = await fetch('/api/users', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
 
-    body: JSON.stringify(user),
+    body: JSON.stringify({ name, email, password }),
   })
 
   // Handle unexpected response errors
