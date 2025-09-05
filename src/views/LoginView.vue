@@ -10,7 +10,7 @@ const formData = ref({
 const error = ref('')
 
 async function handleSubmit() {
-  if (result.success) router.push({ name: 'Home' })
+  if (false) router.push({ name: 'Home' })
   else error.value = 'Unable to login'
 }
 </script>
