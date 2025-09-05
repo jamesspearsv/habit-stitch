@@ -1,15 +1,46 @@
 import type { AuthObject, Result } from '@shared/types'
+import { CreateUserResponseSchema } from '@shared/zod'
 
 const authStoreKey = 'habitstitch_auth'
 
 /**
  * Store authObject in local storage
  * @param authObject
- * @returns Result
+ * @returns `void`
  */
-export function storeAuth(authObject: AuthObject): Result {
+export function storeAuth(authObject: AuthObject) {
   localStorage.setItem(authStoreKey, JSON.stringify(authObject))
-  return { success: true, data: 'hs_authStore' }
+}
+
+/**
+ * Validate user data to create a new user record
+ * @param user Submitted new user data
+ * @returns `boolean` value if user creation if successful or not
+ */
+export async function createUser(user: { name: string; email: string; password: string }) {
+  const res = await fetch('/api/users', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+
+    body: JSON.stringify(user),
+  })
+
+  // Handle unexpected response errors
+  if (!res.ok) return false
+
+  const json = await res.json()
+  const parsedResponse = CreateUserResponseSchema.safeParse(json)
+
+  // Check validation & request success
+  if (!parsedResponse.success) return false
+  if (!parsedResponse.data.success) return false
+
+  // Store validated authObject
+  storeAuth(parsedResponse.data.authObject)
+
+  return true
 }
 
 /**
@@ -17,5 +48,11 @@ export function storeAuth(authObject: AuthObject): Result {
  * @returns null | authObject
  */
 export function isLoggedIn() {
-  return localStorage.getItem(authStoreKey)
+  const value = localStorage.getItem(authStoreKey)
+  if (value) {
+    return JSON.parse(value)
+  }
+
+  console.log('No user is logged in')
+  return null
 }

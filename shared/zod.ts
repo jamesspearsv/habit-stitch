@@ -1,5 +1,8 @@
 import * as z from 'zod'
 
+/*
+ * Data Struct Schemas
+ */
 export const NewUser = z.object({
   name: z.string(),
   password: z.string(),
@@ -7,8 +10,16 @@ export const NewUser = z.object({
 })
 
 export const AuthObjectSchema = z.object({
-  access_token: z.string(),
-  user_name: z.string(),
-  user_email: z.email(),
-  iat: z.number(),
+  accessToken: z.string(),
+  userName: z.string(),
+  userEmail: z.email(),
+  issuedAt: z.number(), // unix timestamp in seconds
 })
+
+/*
+ *CF Worker Response Schemas
+ */
+export const CreateUserResponseSchema = z.discriminatedUnion('success', [
+  z.object({ success: z.literal(true), message: z.string(), authObject: AuthObjectSchema }),
+  z.object({ success: z.literal(false), message: z.string() }),
+])

@@ -1,6 +1,5 @@
 <script lang="ts" setup>
-import { storeAuth } from '@client/lib/auth'
-import { AuthObjectSchema } from '@shared/zod'
+import { createUser } from '@client/lib/auth'
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 
@@ -9,26 +8,9 @@ const error = ref('')
 const router = useRouter()
 
 async function handleSubmit() {
-  const res = await fetch('/api/users', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-
-    body: JSON.stringify(formData.value),
-  })
-
-  // TODO: handle returned authObject
-  if (!res.ok) return
-  const json = await res.json()
-  console.log(json)
-  // TODO: parse api response. Should have {message, authObject}
-
-  const parsedJSON = AuthObjectSchema.safeParse(json.authObject)
-  if (!parsedJSON.success) return
-
-  storeAuth(parsedJSON.data)
-  router.push({ name: 'Home' })
+  const result = await createUser(formData.value)
+  if (result) router.push({ name: 'Home' })
+  error.value = 'Unable to create new user'
 }
 </script>
 

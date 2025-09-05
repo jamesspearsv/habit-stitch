@@ -4,7 +4,7 @@ import bcryptjs from 'bcryptjs'
 import { sign } from 'hono/jwt'
 import { ZodError } from 'zod'
 import { NewUser } from '../shared/zod'
-import { AuthObject } from '../shared/types'
+import { CreateUserResponse } from '../shared/types'
 
 type Bindings = {
   DB: D1Database
@@ -54,14 +54,18 @@ api.post('/users', async (c) => {
       c.env.SECRET_KEY,
     )
 
-    const authObject: AuthObject = {
-      access_token: jwt,
-      user_name: user.name,
-      user_email: user.email,
-      iat: timestamp,
-    }
+    const res = {
+      success: true,
+      message: 'Successfully Created new user',
+      authObject: {
+        accessToken: jwt,
+        userName: user.name,
+        userEmail: user.email,
+        issuedAt: timestamp,
+      },
+    } satisfies CreateUserResponse
 
-    return c.json({ message: 'Successfully created new user', authObject })
+    return c.json(res)
   } catch (err) {
     if (err instanceof ZodError) {
       return c.json({ message: 'Bad request' }, 400)
