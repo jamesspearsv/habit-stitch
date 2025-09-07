@@ -4,7 +4,9 @@ import { AuthResponseSchema } from '@shared/zod'
 const authStoreKey = 'habitstitch_auth'
 
 /*
+ * *************************
  * AUTH MANAGEMENT FUNCTIONS
+ * **************************
  */
 
 /**
@@ -56,6 +58,8 @@ export async function login(credentials: { email: string; password: string }): P
       body: JSON.stringify(credentials),
     })
 
+    // console.log(await res.json())
+
     // Handle unsuccessful login attempt
     if (!res.ok) {
       if (res.status === 400 || res.status === 401) {
@@ -66,8 +70,9 @@ export async function login(credentials: { email: string; password: string }): P
     }
 
     // Handle successful login attempt
-    console.log(res)
     const json = await res.json()
+    console.log(res)
+    console.log(json)
     const safeJSON = AuthResponseSchema.safeParse(json)
     if (safeJSON.success && safeJSON.data.success) {
       storeAuth(safeJSON.data.authObject)
@@ -85,7 +90,9 @@ export async function login(credentials: { email: string; password: string }): P
 }
 
 /*
+ * ***********************
  * UTILITY AUTH FUNCTIONS
+ * ***********************
  */
 
 /**
@@ -111,4 +118,6 @@ export function isLoggedIn() {
   return null
 }
 
-// TODO: Write logout function
+export function logOut() {
+  localStorage.removeItem(authStoreKey)
+}

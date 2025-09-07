@@ -1,6 +1,4 @@
 <script setup lang="ts">
-// TODO: Customizable pattern generation params
-
 import FeatherIcon from '@client/components/FeatherIcon.vue'
 import HeadingContainer from '@client/components/HeadingContainer.vue'
 import { fetchSummary } from '@client/lib/_actions'

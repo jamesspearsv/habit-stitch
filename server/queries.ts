@@ -1,6 +1,7 @@
 import { drizzle } from 'drizzle-orm/d1'
 import { users } from './schema'
-import { eq } from 'drizzle-orm'
+import { DrizzleQueryError, eq } from 'drizzle-orm'
+import { Result } from '@shared/types'
 
 export async function insertUser(
   user: {
@@ -9,19 +10,38 @@ export async function insertUser(
     email: string
   },
   binding: D1Database,
-) {
-  // init db connection & insert new user
-  const db = drizzle(binding)
-  await db.insert(users).values(user)
+): Promise<Result> {
+  try {
+    // init db connection & insert new user
+    const db = drizzle(binding)
+    await db.insert(users).values(user)
+    return { success: true, data: 'New user created!' }
+  } catch (error) {
+    if (error instanceof DrizzleQueryError) {
+      return { success: false, message: 'Database error' }
+    }
+
+    throw error
+  }
 }
 
-export async function selectUser(email: string, binding: D1Database) {
-  const db = drizzle(binding)
+export async function selectUser(
+  email: string,
+  binding: D1Database,
+): Promise<Result<typeof users.$inferSelect>> {
+  try {
+    const db = drizzle(binding)
+    const user = await db.select().from(users).where(eq(users.email, email))
 
-  const user = await db.select().from(users).where(eq(users.email, email))
+    if (user.length < 1) return { success: false, message: 'No user found' }
+    else return { success: true, data: user[0] }
+  } catch (error) {
+    if (error instanceof DrizzleQueryError) {
+      return { success: false, message: 'Database error' }
+    }
 
-  if (user.length < 1) return false
-  else return user[0]
+    throw error
+  }
 }
 
 /*

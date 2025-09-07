@@ -2,9 +2,11 @@ import { sql } from 'drizzle-orm'
 import { integer, sqliteTable, text } from 'drizzle-orm/sqlite-core'
 
 /*
+ * *************************************************************************
  * Drizzle Resources
  * https://orm.drizzle.team/docs/column-types/sqlite#customizing-data-type
  * https://orm.drizzle.team/docs/relations
+ * *************************************************************************
  */
 
 export const users = sqliteTable('users', {

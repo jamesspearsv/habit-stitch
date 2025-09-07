@@ -88,7 +88,6 @@ export function getDateRange(
           .toISOString()
           .replace('T', ' '),
       }
-    // TODO: Add week offset logic
     case 'week':
       const sunday = t.day - t.weekday
       const saturday = t.day + (6 - t.weekday)

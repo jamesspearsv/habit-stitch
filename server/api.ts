@@ -35,6 +35,11 @@ async function signJWT(user: { email: string; name: string }, secretKey: string)
 
 export const api = new Hono<{ Bindings: Bindings }>()
 
+/*
+ * ***********
+ * API Routes
+ * ***********
+ */
 api.get('/habits', async (c) => {
   return c.json({ message: 'Work in progress' })
 })
@@ -54,7 +59,7 @@ api.post('/users', async (c) => {
   // Validate new user data, return if validation fails
   const safeNewUser = NewUser.safeParse(jsonBody)
   if (!safeNewUser.success) {
-    return c.json({ success: false, message: 'Bad request' } satisfies AuthRouteResponse, 400)
+    return c.json({ success: false, message: 'Invalid request' } satisfies AuthRouteResponse, 400)
   }
 
   const hashed_password = await bcryptjs.hash(safeNewUser.data.password, 10)
@@ -71,8 +76,12 @@ api.post('/users', async (c) => {
     // consider decoupling this catch block from drizzle
     // and normalizing query errors in queries.ts
     if (error instanceof DrizzleQueryError) {
+      console.error(`====> Error\n`, error)
       return c.json(
-        { success: false, message: 'Unable to create new user' } satisfies AuthRouteResponse,
+        {
+          success: false,
+          message: 'Unable to create account. Try again.',
+        } satisfies AuthRouteResponse,
         500,
       )
     }
@@ -96,15 +105,6 @@ api.post('/users', async (c) => {
 
 // User login POST route
 api.post('/login', async (c) => {
-  // TODO: Implement login logic
-  // validate request body
-  // if (!valid request) return unsuccessful
-  // check for existing user
-  // if (!valid user) return unsuccessful
-  // compare password to hashed_password
-  // if (!valid password) return unsuccessful
-  // else return {success, message, authObject}
-
   const json = await c.req.json()
   console.log(json)
 
@@ -121,14 +121,18 @@ api.post('/login', async (c) => {
 
   // Attempt to select user record from database
   const user = await selectUser(safeCredentials.data.email, c.env.DB)
-  if (!user)
+
+  if (!user.success)
     return c.json(
       { success: false, message: 'Invalid email or password' } satisfies AuthRouteResponse,
       401,
     )
 
   // Compare user's hashed_password to submitted password
-  const passwordsMatch = await bcryptjs.compare(safeCredentials.data.password, user.hashed_password)
+  const passwordsMatch = await bcryptjs.compare(
+    safeCredentials.data.password,
+    user.data.hashed_password,
+  )
   if (!passwordsMatch)
     return c.json(
       {
@@ -139,15 +143,18 @@ api.post('/login', async (c) => {
     )
 
   // Sign JWT and create AuthObject
-  const { jwt, timestamp } = await signJWT({ email: user.email, name: user.name }, c.env.SECRET_KEY)
+  const { jwt, timestamp } = await signJWT(
+    { email: user.data.email, name: user.data.name },
+    c.env.SECRET_KEY,
+  )
 
   return c.json({
     success: true,
     message: 'User logged in',
     authObject: {
       accessToken: jwt,
-      userName: user.name,
-      userEmail: user.email,
+      userName: user.data.name,
+      userEmail: user.data.email,
       issuedAt: timestamp,
     },
   } satisfies AuthRouteResponse)

@@ -6,7 +6,7 @@ import AppView from '@client/views/AppView.vue'
 import LandingView from '@client/views/LandingView.vue'
 import SummaryView from '@client/views/AppViews/SummaryView.vue'
 import WorkerView from '@client/views/WorkerView.vue'
-import { isLoggedIn } from '@client/lib/auth'
+import { isLoggedIn, logOut } from '@client/lib/auth'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -55,9 +55,13 @@ const router = createRouter({
 
 router.beforeEach(async (to) => {
   const protectedViews = ['Home', 'Summary']
-
   if (protectedViews.includes(to.name as string)) {
     if (!isLoggedIn()) return { name: 'Landing' }
+  }
+
+  if (to.path === '/signout') {
+    logOut()
+    router.push({ name: 'Landing' })
   }
 })
 
