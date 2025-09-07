@@ -1,4 +1,4 @@
-import type { AuthObject } from '@shared/types'
+import type { AuthObject, Result } from '@shared/types'
 import { AuthResponseSchema } from '@shared/zod'
 
 const authStoreKey = 'habitstitch_auth'
@@ -15,6 +15,7 @@ const authStoreKey = 'habitstitch_auth'
  * @returns `boolean` value if user creation if successful or not
  */
 export async function createUser(user: { name: string; email: string; password: string }) {
+  // TODO: Move function to a response pattern return value
   const res = await fetch('/api/users', {
     method: 'POST',
     headers: {
@@ -43,9 +44,9 @@ export async function createUser(user: { name: string; email: string; password: 
 /**
  * Validate and login a user
  * @param credentials Object containing user credentials
- * @returns `boolean` if successful or not
+ * @returns `Result` indicating the result status
  */
-export async function login(credentials: { email: string; password: string }) {
+export async function login(credentials: { email: string; password: string }): Promise<Result> {
   try {
     const res = await fetch('/api/login', {
       method: 'Post',
@@ -55,12 +56,26 @@ export async function login(credentials: { email: string; password: string }) {
       body: JSON.stringify(credentials),
     })
 
-    // TODO: Handle login response
-    // if login fails return false
-    // if login successful store autObject, return true
+    // Handle unsuccessful login attempt
+    if (!res.ok) {
+      if (res.status === 400 || res.status === 401) {
+        const json = await res.json()
+        const safeJSON = AuthResponseSchema.safeParse(json)
+        if (safeJSON.success) return { success: false, message: safeJSON.data.message }
+      }
+    }
 
+    // Handle successful login attempt
     console.log(res)
-    return false
+    const json = await res.json()
+    const safeJSON = AuthResponseSchema.safeParse(json)
+    if (safeJSON.success && safeJSON.data.success) {
+      storeAuth(safeJSON.data.authObject)
+      return { success: true, data: 'User logged in' }
+    }
+
+    // Return unsuccessful result as a fallback
+    return { success: false, message: 'Server error' }
   } catch (error) {
     if (error instanceof Error) {
       console.error(`Error: ${error.message}`)
@@ -95,3 +110,5 @@ export function isLoggedIn() {
   console.log('No user is logged in')
   return null
 }
+
+// TODO: Write logout function

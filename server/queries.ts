@@ -1,5 +1,6 @@
 import { drizzle } from 'drizzle-orm/d1'
 import { users } from './schema'
+import { eq } from 'drizzle-orm'
 
 export async function insertUser(
   user: {
@@ -12,6 +13,15 @@ export async function insertUser(
   // init db connection & insert new user
   const db = drizzle(binding)
   await db.insert(users).values(user)
+}
+
+export async function selectUser(email: string, binding: D1Database) {
+  const db = drizzle(binding)
+
+  const user = await db.select().from(users).where(eq(users.email, email))
+
+  if (user.length < 1) return false
+  else return user[0]
 }
 
 /*
