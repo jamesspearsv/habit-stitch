@@ -11,10 +11,11 @@ const error = ref('')
 
 async function handleSubmit() {
   const loginAttempt = await login(formData.value)
-  console.log(loginAttempt)
-  if (!loginAttempt.success) error.value = loginAttempt.message
-
-  router.push({ name: 'Home' })
+  if (!loginAttempt.success) {
+    error.value = loginAttempt.message
+  } else {
+    router.push({ name: 'Home' })
+  }
 }
 </script>
 

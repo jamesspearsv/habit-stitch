@@ -10,8 +10,12 @@ const router = useRouter()
 async function handleSubmit() {
   // TODO: better handle user creation failures
   const result = await createUser(formData.value)
-  if (result) router.push({ name: 'Home' })
-  error.value = 'Unable to create new user'
+
+  if (!result.success) {
+    error.value = result.message
+  } else {
+    router.push({ name: 'Home' })
+  }
 }
 </script>
 

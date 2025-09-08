@@ -6,14 +6,6 @@ import { NewUser } from '../shared/zod'
 import { AuthRouteResponse } from '../shared/types'
 import { DrizzleQueryError } from 'drizzle-orm'
 
-/*
- * Using HTTP status cods with response status
- * Success: return 201 or 200 with body { success: true, data: ... } and 204 for no-body success.
- * Client error: return 4xx with body { success: false, error: { code, message details? } }.
- * Server error: return 5xx with body { success: false, error: { code: 'server_error', message: 'Server error' } }.
- * Do not return 200 with success: false for errors you can express as 4xx/5xx.
- */
-
 type Bindings = {
   DB: D1Database
   SECRET_KEY: string
@@ -51,10 +43,18 @@ api.post('/habits', async (c) => {
   return c.json({ message: 'Work in progress' })
 })
 
-// User creation POST route
+/*
+ * **************************
+ * New user creation: POST
+ * Returns `AuthRouteResponse`.
+ * Status 400 if invalid
+ * **************************
+ */
 api.post('/users', async (c) => {
   const binding = c.env.DB
   const jsonBody = await c.req.json()
+
+  // TODO: Verify that email is unique
 
   // Validate new user data, return if validation fails
   const safeNewUser = NewUser.safeParse(jsonBody)
@@ -103,7 +103,14 @@ api.post('/users', async (c) => {
   } satisfies AuthRouteResponse)
 })
 
-// User login POST route
+/*
+ * **************************
+ * User login: POST
+ * Returns `AuthRouteResponse`.
+ * Status 400, 401 if invalid
+ * or unsuccessful
+ * **************************
+ */
 api.post('/login', async (c) => {
   const json = await c.req.json()
   console.log(json)

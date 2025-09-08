@@ -16,76 +16,83 @@ const authStoreKey = 'habitstitch_auth'
  * @param password
  * @returns `boolean` value if user creation if successful or not
  */
-export async function createUser(user: { name: string; email: string; password: string }) {
-  // TODO: Move function to a response pattern return value
-  const res = await fetch('/api/users', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
+export async function createUser(user: {
+  name: string
+  email: string
+  password: string
+}): Promise<Result> {
+  try {
+    const res = await fetch('/api/users', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
 
-    body: JSON.stringify(user),
-  })
+      body: JSON.stringify(user),
+    })
 
-  // Handle unexpected response errors
-  if (!res.ok) return false
+    // Attempt to parse, validate response body
+    const json = await res.json().catch(() => null)
+    const safeJSON = AuthResponseSchema.safeParse(json)
 
-  const json = await res.json()
-  const parsedResponse = AuthResponseSchema.safeParse(json)
+    // Handle unsuccessful user creation
+    if (!res.ok) {
+      if (res.status === 400) {
+        if (safeJSON.success) return { success: false, message: safeJSON.data.message }
+      }
+    }
 
-  // Check validation & request success
-  if (!parsedResponse.success) return false
-  if (!parsedResponse.data.success) return false
+    // Handle successful user creation
+    if (safeJSON.success && safeJSON.data.success) {
+      // Store validated authObject
+      storeAuth(safeJSON.data.authObject)
+      return { success: true, data: 'User created successfully' }
+    }
 
-  // Store validated authObject
-  storeAuth(parsedResponse.data.authObject)
-
-  return true
+    // Return unsuccessful result as a fallback
+    return { success: false, message: `HTTP Error: status ${res.status}` }
+  } catch (error) {
+    console.error(`Error:\n`, error)
+    return { success: false, message: error instanceof Error ? error.message : 'Unknown error' }
+  }
 }
 
 /**
  * Validate and login a user
  * @param credentials Object containing user credentials
- * @returns `Result` indicating the result status
+ * @returns `Result` indicating if login is successful
  */
 export async function login(credentials: { email: string; password: string }): Promise<Result> {
   try {
     const res = await fetch('/api/login', {
-      method: 'Post',
+      method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(credentials),
     })
 
-    // console.log(await res.json())
+    // Attempt to parse, validate response body
+    const json = await res.json().catch(() => null)
+    const safeJSON = AuthResponseSchema.safeParse(json)
 
     // Handle unsuccessful login attempt
     if (!res.ok) {
       if (res.status === 400 || res.status === 401) {
-        const json = await res.json()
-        const safeJSON = AuthResponseSchema.safeParse(json)
         if (safeJSON.success) return { success: false, message: safeJSON.data.message }
       }
     }
 
     // Handle successful login attempt
-    const json = await res.json()
-    console.log(res)
-    console.log(json)
-    const safeJSON = AuthResponseSchema.safeParse(json)
     if (safeJSON.success && safeJSON.data.success) {
       storeAuth(safeJSON.data.authObject)
-      return { success: true, data: 'User logged in' }
+      return { success: true, data: 'User logged in!' }
     }
 
     // Return unsuccessful result as a fallback
-    return { success: false, message: 'Server error' }
+    return { success: false, message: `HTTP Error: Status ${res.status}` }
   } catch (error) {
-    if (error instanceof Error) {
-      console.error(`Error: ${error.message}`)
-    }
-    throw new Error('Unknown error')
+    return { success: false, message: error instanceof Error ? error.message : 'Unknown error' }
   }
 }
 
