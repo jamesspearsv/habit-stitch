@@ -4,7 +4,6 @@ import bcryptjs from 'bcryptjs'
 import { sign } from 'hono/jwt'
 import { NewUser } from '../shared/zod'
 import { AuthRouteResponse } from '../shared/types'
-import { DrizzleQueryError } from 'drizzle-orm'
 
 type Bindings = {
   DB: D1Database
@@ -54,12 +53,16 @@ api.post('/users', async (c) => {
   const binding = c.env.DB
   const jsonBody = await c.req.json()
 
-  // TODO: Verify that email is unique
-
   // Validate new user data, return if validation fails
   const safeNewUser = NewUser.safeParse(jsonBody)
   if (!safeNewUser.success) {
     return c.json({ success: false, message: 'Invalid request' } satisfies AuthRouteResponse, 400)
+  }
+
+  // Verify if user already exists
+  const existingUser = await selectUser(safeNewUser.data.email, c.env.DB)
+  if (existingUser.success) {
+    return c.json({ success: false, message: 'Email in use' } as AuthRouteResponse, 401)
   }
 
   const hashed_password = await bcryptjs.hash(safeNewUser.data.password, 10)
@@ -70,22 +73,12 @@ api.post('/users', async (c) => {
   }
 
   // Insert new user and handle any errors
-  try {
-    await insertUser(user, binding)
-  } catch (error) {
-    // consider decoupling this catch block from drizzle
-    // and normalizing query errors in queries.ts
-    if (error instanceof DrizzleQueryError) {
-      console.error(`====> Error\n`, error)
-      return c.json(
-        {
-          success: false,
-          message: 'Unable to create account. Try again.',
-        } satisfies AuthRouteResponse,
-        500,
-      )
-    }
-    throw error
+  const insertResult = await insertUser(user, binding)
+  if (!insertResult.success) {
+    return c.json(
+      { success: false, message: 'Unable to create new account' } as AuthRouteResponse,
+      500,
+    )
   }
 
   // sign new JWT & return

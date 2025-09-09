@@ -22,6 +22,7 @@
     "@types/vue-feather-icons": "^5.0.8",
     "bcryptjs": "^3.0.2",
     "drizzle-orm": "^0.44.5",
+    "drizzle-seed": "^0.3.1",
     "feather-icons": "^4.29.2",
     "hono": "^4.9.5",
     "pocketbase": "^0.26.2",

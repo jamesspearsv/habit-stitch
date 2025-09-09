@@ -37,7 +37,7 @@ export async function createUser(user: {
 
     // Handle unsuccessful user creation
     if (!res.ok) {
-      if (res.status === 400) {
+      if (res.status === 400 || res.status === 401) {
         if (safeJSON.success) return { success: false, message: safeJSON.data.message }
       }
     }

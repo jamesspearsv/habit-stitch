@@ -37,6 +37,7 @@ export async function selectUser(
     else return { success: true, data: user[0] }
   } catch (error) {
     if (error instanceof DrizzleQueryError) {
+      // todo: consider throwing a normalized error vs using Result type
       return { success: false, message: 'Database error' }
     }
 
