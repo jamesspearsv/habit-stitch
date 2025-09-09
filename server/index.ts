@@ -16,5 +16,6 @@ app.onError((error, c) => {
     return c.json({ message: 'Unknown error' }, 500)
   }
 })
+
 app.route('/api', api)
 export default app

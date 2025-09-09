@@ -1,5 +1,5 @@
 import { Hono } from 'hono'
-import { insertUser, selectUser } from './queries'
+import { insertUser, resetAndSeedDB, selectUser } from './queries'
 import bcryptjs from 'bcryptjs'
 import { sign } from 'hono/jwt'
 import { NewUser } from '../shared/zod'
@@ -31,6 +31,13 @@ export const api = new Hono<{ Bindings: Bindings }>()
  * API Routes
  * ***********
  */
+api.get('/seed', async (c) => {
+  if (import.meta.env.DEV) {
+    await resetAndSeedDB(c.env.DB)
+  }
+  return c.json({ message: 'Action complete' })
+})
+
 api.get('/habits', async (c) => {
   return c.json({ message: 'Work in progress' })
 })

@@ -1,7 +1,50 @@
 import { drizzle } from 'drizzle-orm/d1'
-import { users } from './schema'
+import { habits, users } from './schema'
 import { DrizzleQueryError, eq } from 'drizzle-orm'
 import { Result } from '@shared/types'
+import { reset, seed } from 'drizzle-seed'
+import bcryptjs from 'bcryptjs'
+
+export async function resetAndSeedDB(binding: D1Database) {
+  const db = drizzle(binding)
+  console.log('resetting database tables...')
+  await reset(db, { habits, users })
+
+  console.log('seeding users table...')
+  await seed(db, { users }).refine((f) => ({
+    users: {
+      count: 1,
+      columns: {
+        hashed_password: f.default({ defaultValue: bcryptjs.hashSync('savanna12', 10) }),
+        email: f.default({ defaultValue: 'demo1@demo.com' }),
+        // created_at: f.default({
+        //   defaultValue: new Date()
+        //     .toISOString()
+        //     .replace('T', ' ')
+        //     .replace('Z', '')
+        //     .slice(0, this.length - 4),
+        // }),
+      },
+    },
+  }))
+
+  console.log('seeding habits table...')
+  await seed(db, { habits }).refine((f) => ({
+    habits: {
+      count: 5,
+      columns: {
+        user_id: f.valuesFromArray({ values: [1] }),
+        // created_at: f.default({
+        //   defaultValue: new Date()
+        //     .toISOString()
+        //     .replace('T', ' ')
+        //     .replace('Z', '')
+        //     .slice(0, this.length - 4),
+        // }),
+      },
+    },
+  }))
+}
 
 export async function insertUser(
   user: {
