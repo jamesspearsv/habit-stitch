@@ -4,6 +4,7 @@ import { DrizzleQueryError, eq } from 'drizzle-orm'
 import { Result } from '@shared/types'
 import { reset, seed } from 'drizzle-seed'
 import bcryptjs from 'bcryptjs'
+import { generateHexCode } from '../src/lib/helpers'
 
 export async function resetAndSeedDB(binding: D1Database) {
   const db = drizzle(binding)
@@ -15,15 +16,9 @@ export async function resetAndSeedDB(binding: D1Database) {
     users: {
       count: 1,
       columns: {
-        hashed_password: f.default({ defaultValue: bcryptjs.hashSync('savanna12', 10) }),
+        hashed_password: f.default({ defaultValue: bcryptjs.hashSync('password12', 10) }),
         email: f.default({ defaultValue: 'demo1@demo.com' }),
-        // created_at: f.default({
-        //   defaultValue: new Date()
-        //     .toISOString()
-        //     .replace('T', ' ')
-        //     .replace('Z', '')
-        //     .slice(0, this.length - 4),
-        // }),
+        created_at: f.datetime(),
       },
     },
   }))
@@ -31,16 +26,16 @@ export async function resetAndSeedDB(binding: D1Database) {
   console.log('seeding habits table...')
   await seed(db, { habits }).refine((f) => ({
     habits: {
-      count: 5,
+      count: 10,
       columns: {
         user_id: f.valuesFromArray({ values: [1] }),
-        // created_at: f.default({
-        //   defaultValue: new Date()
-        //     .toISOString()
-        //     .replace('T', ' ')
-        //     .replace('Z', '')
-        //     .slice(0, this.length - 4),
-        // }),
+        created_at: f.datetime(),
+        interval_days: f.valuesFromArray({ values: [1, 2, 7, 30] }),
+        description: f.loremIpsum(),
+        name: f.jobTitle(),
+        color: f.default({
+          defaultValue: generateHexCode(),
+        }),
       },
     },
   }))

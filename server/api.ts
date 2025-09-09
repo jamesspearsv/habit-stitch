@@ -26,17 +26,18 @@ async function signJWT(user: { email: string; name: string }, secretKey: string)
 
 export const api = new Hono<{ Bindings: Bindings }>()
 
-/*
- * ***********
- * API Routes
- * ***********
- */
 api.get('/seed', async (c) => {
   if (import.meta.env.DEV) {
     await resetAndSeedDB(c.env.DB)
   }
   return c.json({ message: 'Action complete' })
 })
+
+/*
+ * ***********
+ * API Routes
+ * ***********
+ */
 
 api.get('/habits', async (c) => {
   return c.json({ message: 'Work in progress' })
