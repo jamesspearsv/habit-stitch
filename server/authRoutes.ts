@@ -1,49 +1,22 @@
-import { Hono } from 'hono'
-import { insertUser, resetAndSeedDB, selectUser } from './queries'
+import { insertUser, selectUser } from './queries'
 import bcryptjs from 'bcryptjs'
-import { sign } from 'hono/jwt'
 import { NewUser } from '../shared/zod'
 import { AuthRouteResponse } from '../shared/types'
+import { newHono, signJWT } from './utils'
 
-type Bindings = {
-  DB: D1Database
-  SECRET_KEY: string
-}
-
-async function signJWT(user: { email: string; name: string }, secretKey: string) {
-  const timestamp = Date.now()
-  const jwt = await sign(
-    {
-      user: { email: user.email, name: user.name },
-      exp: timestamp + 180 * 60 * 1000,
-      iat: timestamp,
-    },
-    secretKey,
-  )
-
-  return { jwt, timestamp }
-}
-
-export const api = new Hono<{ Bindings: Bindings }>()
-
-api.get('/seed', async (c) => {
-  if (import.meta.env.DEV) {
-    await resetAndSeedDB(c.env.DB)
-  }
-  return c.json({ message: 'Action complete' })
-})
+export const auth = newHono()
 
 /*
  * ***********
- * API Routes
+ * Auth Routes
  * ***********
  */
 
-api.get('/habits', async (c) => {
+auth.get('/habits', async (c) => {
   return c.json({ message: 'Work in progress' })
 })
 
-api.post('/habits', async (c) => {
+auth.post('/habits', async (c) => {
   const json = await c.req.json()
 
   console.log(json)
@@ -51,13 +24,14 @@ api.post('/habits', async (c) => {
 })
 
 /*
- * **************************
- * New user creation: POST
- * Returns `AuthRouteResponse`.
- * Status 400 if invalid
- * **************************
+ * *****************************
+ * New user creation
+ * method: POST
+ * returns: `AuthRouteResponse`.
+ * status: 400 if invalid
+ * *****************************
  */
-api.post('/users', async (c) => {
+auth.post('/users', async (c) => {
   const binding = c.env.DB
   const jsonBody = await c.req.json()
 
@@ -90,29 +64,33 @@ api.post('/users', async (c) => {
   }
 
   // sign new JWT & return
-  const { jwt, timestamp } = await signJWT({ email: user.email, name: user.name }, c.env.SECRET_KEY)
+  const { jwt, timestamp } = await signJWT(
+    { email: insertResult.data.email, name: insertResult.data.name },
+    c.env.SECRET_KEY,
+  )
 
   return c.json({
     success: true,
     message: 'Successfully Created new user',
     authObject: {
       accessToken: jwt,
-      userName: user.name,
-      userEmail: user.email,
+      userName: insertResult.data.name,
+      userEmail: insertResult.data.email,
       issuedAt: timestamp,
+      userID: insertResult.data.id,
     },
   } satisfies AuthRouteResponse)
 })
 
 /*
- * **************************
- * User login: POST
- * Returns `AuthRouteResponse`.
- * Status 400, 401 if invalid
- * or unsuccessful
- * **************************
+ * ********************************************
+ * User login
+ * method: POST
+ * Returns: `AuthRouteResponse`
+ * Status: 400, 401 if unsuccessful
+ * ********************************************
  */
-api.post('/login', async (c) => {
+auth.post('/login', async (c) => {
   const json = await c.req.json()
   console.log(json)
 
@@ -164,6 +142,7 @@ api.post('/login', async (c) => {
       userName: user.data.name,
       userEmail: user.data.email,
       issuedAt: timestamp,
+      userID: user.data.id,
     },
   } satisfies AuthRouteResponse)
 })

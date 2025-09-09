@@ -22,7 +22,7 @@ export async function createUser(user: {
   password: string
 }): Promise<Result> {
   try {
-    const res = await fetch('/api/users', {
+    const res = await fetch('/auth/users', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -64,7 +64,7 @@ export async function createUser(user: {
  */
 export async function login(credentials: { email: string; password: string }): Promise<Result> {
   try {
-    const res = await fetch('/api/login', {
+    const res = await fetch('/auth/login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

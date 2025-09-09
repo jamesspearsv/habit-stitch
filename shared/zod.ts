@@ -14,6 +14,7 @@ export const AuthObjectSchema = z.object({
   userName: z.string(),
   userEmail: z.email(),
   issuedAt: z.number(), // unix timestamp in seconds
+  userID: z.number()
 })
 
 /*
