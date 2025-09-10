@@ -3,25 +3,25 @@ import { onMounted, ref } from 'vue'
 import HabitCard from '@client/components/HabitCard.vue'
 import CreateHabitForm from '@client/components/CreateHabitForm.vue'
 import type { MappedHabit } from '@client/lib/types'
-import { getJWT } from '@client/lib/auth'
+import { getJWT, logOut } from '@client/lib/auth'
+import router from '@client/router/router'
 
 const habits = ref<MappedHabit[] | null>(null)
 const error = ref('')
 
 async function fetchData() {
-  // const result = await fetchHabits()
-  // if (result.success) {
-  //   habits.value = result.data
-  //   error.value = false
-  // } else {
-  // }
-
-  const res = await fetch('/api/hello/world', {
+  const res = await fetch('/api/hello-world', {
     method: 'GET',
     headers: {
       Authorization: `Bearer ${getJWT()}`,
     },
   })
+
+  if (res.status === 500) {
+    logOut()
+    return router.push({ name: 'Landing' })
+  }
+
   const json = await res.json()
   console.log(json)
 
