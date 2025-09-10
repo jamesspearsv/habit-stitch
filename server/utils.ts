@@ -1,10 +1,13 @@
 import { Hono } from 'hono'
-import { sign } from 'hono/jwt'
+import { sign, type JwtVariables } from 'hono/jwt'
+import { users } from './schema'
 
-export type Bindings = {
+type Bindings = {
   DB: D1Database
   SECRET_KEY: string
 }
+
+type Variables = JwtVariables
 
 /**
  * Utility function to sign and create JWT
@@ -12,14 +15,14 @@ export type Bindings = {
  * @param secretKey
  * @returns JWT token and creation timestamp
  */
-export async function signJWT(user: { email: string; name: string }, secretKey: string) {
+export async function signJWT(
+  user: Omit<typeof users.$inferSelect, 'hashed_password'>,
+  secretKey: string,
+) {
   const timestamp = Math.trunc(Date.now() / 1000)
+  const { id, email, name, created_at } = user
   const jwt = await sign(
-    {
-      user: { email: user.email, name: user.name },
-      exp: timestamp + 3 * 3600,
-      iat: timestamp,
-    },
+    { user: { id, email, name, created_at }, exp: timestamp + 3 * 3600, iat: timestamp },
     secretKey,
   )
 
@@ -31,5 +34,5 @@ export async function signJWT(user: { email: string; name: string }, secretKey: 
  * @returns New Hono instance
  */
 export function newHono() {
-  return new Hono<{ Bindings: Bindings }>()
+  return new Hono<{ Bindings: Bindings; Variables: Variables }>()
 }

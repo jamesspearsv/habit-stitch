@@ -71,7 +71,22 @@ export async function selectUser(
     else return { success: true, data: user[0] }
   } catch (error) {
     if (error instanceof DrizzleQueryError) {
-      // todo: consider throwing a normalized error vs using Result type
+      return { success: false, message: 'Database error' }
+    }
+
+    throw error
+  }
+}
+
+export async function selectHabits(options: {
+  option1?: boolean
+}): Promise<Result<(typeof habits.$inferSelect)[]>> {
+  console.log(options)
+  try {
+    return { success: false, message: '' }
+  } catch (error) {
+    if (error instanceof DrizzleQueryError) {
+      console.error(error.message)
       return { success: false, message: 'Database error' }
     }
 

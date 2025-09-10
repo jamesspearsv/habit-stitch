@@ -19,3 +19,9 @@ api.use(async (c, next) => {
 api.get('/hello-world', (c) => {
   return c.json({ hello: 'world!' })
 })
+
+api.get('habits', async (c) => {
+  // Get jwt payload
+  const payload = c.get('jwtPayload')
+  return c.json(payload)
+})

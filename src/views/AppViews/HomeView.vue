@@ -10,7 +10,7 @@ const habits = ref<MappedHabit[] | null>(null)
 const error = ref('')
 
 async function fetchData() {
-  const res = await fetch('/api/hello-world', {
+  const res = await fetch('/api/habits', {
     method: 'GET',
     headers: {
       Authorization: `Bearer ${getJWT()}`,

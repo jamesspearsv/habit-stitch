@@ -44,10 +44,7 @@ auth.post('/users', async (c) => {
   }
 
   // sign new JWT & return
-  const { jwt, timestamp } = await signJWT(
-    { email: insertResult.data.email, name: insertResult.data.name },
-    c.env.SECRET_KEY,
-  )
+  const { jwt, timestamp } = await signJWT(insertResult.data, c.env.SECRET_KEY)
 
   return c.json({
     success: true,
@@ -109,10 +106,7 @@ auth.post('/login', async (c) => {
     )
 
   // Sign JWT and create AuthObject
-  const { jwt, timestamp } = await signJWT(
-    { email: user.data.email, name: user.data.name },
-    c.env.SECRET_KEY,
-  )
+  const { jwt, timestamp } = await signJWT(user.data, c.env.SECRET_KEY)
 
   return c.json({
     success: true,

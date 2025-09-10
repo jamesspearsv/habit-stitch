@@ -9,12 +9,14 @@ export const NewUser = z.object({
   email: z.email(),
 })
 
+// TODO: Update AuthObjectSchema
+// i.e. { accessToken: string, user: user.$inferSelect }
 export const AuthObjectSchema = z.object({
   accessToken: z.string(),
   userName: z.string(),
   userEmail: z.email(),
   issuedAt: z.number(), // unix timestamp in seconds
-  userID: z.number()
+  userID: z.number(),
 })
 
 /*
