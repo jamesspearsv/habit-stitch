@@ -1,5 +1,5 @@
 import type { AuthObject, Result } from '@shared/types'
-import { AuthResponseSchema } from '@shared/zod'
+import { AuthObjectSchema, AuthResponseSchema } from '@shared/zod'
 
 const authStoreKey = 'habitstitch_auth'
 
@@ -109,6 +109,17 @@ export async function login(credentials: { email: string; password: string }): P
  */
 export function storeAuth(authObject: AuthObject) {
   localStorage.setItem(authStoreKey, JSON.stringify(authObject))
+}
+
+export function getJWT() {
+  const authStore = localStorage.getItem(authStoreKey)
+  if (authStore) {
+    const authObject = JSON.parse(authStore)
+    const safeAuthObject = AuthObjectSchema.safeParse(authObject)
+    console.log(safeAuthObject.success)
+    if (!safeAuthObject.success) return null
+    return safeAuthObject.data.accessToken
+  }
 }
 
 /**

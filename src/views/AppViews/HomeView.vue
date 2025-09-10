@@ -3,6 +3,7 @@ import { onMounted, ref } from 'vue'
 import HabitCard from '@client/components/HabitCard.vue'
 import CreateHabitForm from '@client/components/CreateHabitForm.vue'
 import type { MappedHabit } from '@client/lib/types'
+import { getJWT } from '@client/lib/auth'
 
 const habits = ref<MappedHabit[] | null>(null)
 const error = ref(false)
@@ -14,12 +15,24 @@ async function fetchData() {
   //   error.value = false
   // } else {
   // }
+
+  const res = await fetch('/api/hello/world', {
+    method: 'GET',
+    headers: {
+      Authorization: `Bearer ${getJWT()}`,
+    },
+  })
+  const json = await res.json()
+  console.log(json)
+
   habits.value = null
   error.value = true
 }
 
 // Fetch habits from backend
-onMounted(async () => {})
+onMounted(async () => {
+  await fetchData()
+})
 </script>
 
 <template>

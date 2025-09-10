@@ -17,8 +17,9 @@ export async function signJWT(user: { email: string; name: string }, secretKey: 
   const jwt = await sign(
     {
       user: { email: user.email, name: user.name },
-      exp: timestamp + 180 * 60 * 1000,
-      iat: timestamp,
+      exp: timestamp + 180 * 60 * 1000, //! TODO: Change to a Unix timestamp in seconds
+
+      iat: timestamp, //! TODO: Change to a Unix timestamp in seconds
     },
     secretKey,
   )

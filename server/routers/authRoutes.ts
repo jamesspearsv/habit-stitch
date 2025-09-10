@@ -1,27 +1,10 @@
-import { insertUser, selectUser } from './queries'
+import { insertUser, selectUser } from '../queries'
 import bcryptjs from 'bcryptjs'
-import { NewUser } from '../shared/zod'
-import { AuthRouteResponse } from '../shared/types'
-import { newHono, signJWT } from './utils'
+import { NewUser } from '../../shared/zod'
+import { AuthResponse } from '../../shared/types'
+import { newHono, signJWT } from '../utils'
 
 export const auth = newHono()
-
-/*
- * ***********
- * Auth Routes
- * ***********
- */
-
-auth.get('/habits', async (c) => {
-  return c.json({ message: 'Work in progress' })
-})
-
-auth.post('/habits', async (c) => {
-  const json = await c.req.json()
-
-  console.log(json)
-  return c.json({ message: 'Work in progress' })
-})
 
 /*
  * *****************************
@@ -38,13 +21,13 @@ auth.post('/users', async (c) => {
   // Validate new user data, return if validation fails
   const safeNewUser = NewUser.safeParse(jsonBody)
   if (!safeNewUser.success) {
-    return c.json({ success: false, message: 'Invalid request' } satisfies AuthRouteResponse, 400)
+    return c.json({ success: false, message: 'Invalid request' } satisfies AuthResponse, 400)
   }
 
   // Verify if user already exists
   const existingUser = await selectUser(safeNewUser.data.email, c.env.DB)
   if (existingUser.success) {
-    return c.json({ success: false, message: 'Email in use' } as AuthRouteResponse, 401)
+    return c.json({ success: false, message: 'Email in use' } as AuthResponse, 401)
   }
 
   const hashed_password = await bcryptjs.hash(safeNewUser.data.password, 10)
@@ -57,10 +40,7 @@ auth.post('/users', async (c) => {
   // Insert new user and handle any errors
   const insertResult = await insertUser(user, binding)
   if (!insertResult.success) {
-    return c.json(
-      { success: false, message: 'Unable to create new account' } as AuthRouteResponse,
-      500,
-    )
+    return c.json({ success: false, message: 'Unable to create new account' } as AuthResponse, 500)
   }
 
   // sign new JWT & return
@@ -79,7 +59,7 @@ auth.post('/users', async (c) => {
       issuedAt: timestamp,
       userID: insertResult.data.id,
     },
-  } satisfies AuthRouteResponse)
+  } satisfies AuthResponse)
 })
 
 /*
@@ -101,7 +81,7 @@ auth.post('/login', async (c) => {
       {
         success: false,
         message: 'Invalid request',
-      } satisfies AuthRouteResponse,
+      } satisfies AuthResponse,
       400,
     )
 
@@ -110,7 +90,7 @@ auth.post('/login', async (c) => {
 
   if (!user.success)
     return c.json(
-      { success: false, message: 'Invalid email or password' } satisfies AuthRouteResponse,
+      { success: false, message: 'Invalid email or password' } satisfies AuthResponse,
       401,
     )
 
@@ -124,7 +104,7 @@ auth.post('/login', async (c) => {
       {
         success: false,
         message: 'Invalid email or password',
-      } satisfies AuthRouteResponse,
+      } satisfies AuthResponse,
       401,
     )
 
@@ -144,5 +124,5 @@ auth.post('/login', async (c) => {
       issuedAt: timestamp,
       userID: user.data.id,
     },
-  } satisfies AuthRouteResponse)
+  } satisfies AuthResponse)
 })

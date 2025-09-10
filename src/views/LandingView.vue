@@ -5,7 +5,7 @@ const DEV = import.meta.env.DEV
 const seedStatus = ref('Reset & Seed')
 
 async function handleSeed() {
-  const res = await fetch('/api/seed')
+  const res = await fetch('/seed')
 
   if (res.ok) seedStatus.value = 'Database seeded!'
   else seedStatus.value = 'Error...'
