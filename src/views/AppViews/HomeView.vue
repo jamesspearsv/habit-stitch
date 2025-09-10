@@ -6,7 +6,7 @@ import type { MappedHabit } from '@client/lib/types'
 import { getJWT } from '@client/lib/auth'
 
 const habits = ref<MappedHabit[] | null>(null)
-const error = ref(false)
+const error = ref('')
 
 async function fetchData() {
   // const result = await fetchHabits()
@@ -26,7 +26,7 @@ async function fetchData() {
   console.log(json)
 
   habits.value = null
-  error.value = true
+  error.value = JSON.stringify(json)
 }
 
 // Fetch habits from backend
@@ -41,7 +41,7 @@ onMounted(async () => {
       <h1>Habit<span>Stitch</span></h1>
     </div>
   </CreateHabitForm>
-  <div v-if="error">Error!</div>
+  <div v-if="error">{{ error }}</div>
   <section v-else>
     <HabitCard
       @update="async () => await fetchData()"

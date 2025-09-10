@@ -13,13 +13,12 @@ export type Bindings = {
  * @returns JWT token and creation timestamp
  */
 export async function signJWT(user: { email: string; name: string }, secretKey: string) {
-  const timestamp = Date.now()
+  const timestamp = Math.trunc(Date.now() / 1000)
   const jwt = await sign(
     {
       user: { email: user.email, name: user.name },
-      exp: timestamp + 180 * 60 * 1000, //! TODO: Change to a Unix timestamp in seconds
-
-      iat: timestamp, //! TODO: Change to a Unix timestamp in seconds
+      exp: timestamp + 3 * 3600,
+      iat: timestamp,
     },
     secretKey,
   )
