@@ -78,12 +78,16 @@ export async function selectUser(
   }
 }
 
-export async function selectHabits(options: {
-  option1?: boolean
-}): Promise<Result<(typeof habits.$inferSelect)[]>> {
-  console.log(options)
+export async function selectHabits(
+  userID: number,
+  binding: D1Database,
+): Promise<Result<(typeof habits.$inferSelect)[]>> {
   try {
-    return { success: false, message: '' }
+    const db = drizzle(binding)
+
+    const data = await db.select().from(habits).where(eq(habits.user_id, userID))
+
+    return { success: true, data: data }
   } catch (error) {
     if (error instanceof DrizzleQueryError) {
       console.error(error.message)
