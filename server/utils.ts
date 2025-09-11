@@ -1,7 +1,8 @@
-import { Hono } from 'hono'
+import { Context, Hono } from 'hono'
 import { sign, type JwtVariables } from 'hono/jwt'
 import { users } from './schema'
-import { type JWTPayload } from '@shared/types'
+import { Result, type JWTPayload } from '@shared/types'
+import { JWTPayloadSchema } from '@shared/zod'
 
 type Bindings = {
   DB: D1Database
@@ -32,6 +33,17 @@ export async function signJWT(
   )
 
   return { jwt, timestamp }
+}
+
+export function parseJWT(c: Context): Result<JWTPayload> {
+  const payload = c.get('jwtPayload')
+
+  const safePayload = JWTPayloadSchema.safeParse(payload)
+  if (!safePayload.success) {
+    return { success: false, message: 'Invalid payload' }
+  }
+
+  return { success: true, data: safePayload.data }
 }
 
 /**
