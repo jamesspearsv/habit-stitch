@@ -1,6 +1,7 @@
 import { Hono } from 'hono'
 import { sign, type JwtVariables } from 'hono/jwt'
 import { users } from './schema'
+import { type JWTPayload } from '@shared/types'
 
 type Bindings = {
   DB: D1Database
@@ -22,7 +23,11 @@ export async function signJWT(
   const timestamp = Math.trunc(Date.now() / 1000)
   const { id, email, name, created_at } = user
   const jwt = await sign(
-    { user: { id, email, name, created_at }, exp: timestamp + 3 * 3600, iat: timestamp },
+    {
+      exp: timestamp + 3 * 3600,
+      iat: timestamp,
+      user: { id, email, name, created_at },
+    } satisfies JWTPayload,
     secretKey,
   )
 

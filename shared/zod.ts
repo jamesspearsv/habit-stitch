@@ -9,14 +9,22 @@ export const NewUser = z.object({
   email: z.email(),
 })
 
-// TODO: Update AuthObjectSchema
-// i.e. { accessToken: string, user: user.$inferSelect }
+const UserSchema = z.object({
+  id: z.number(),
+  name: z.string(),
+  email: z.email(),
+  created_at: z.string(),
+})
+
 export const AuthObjectSchema = z.object({
   accessToken: z.string(),
-  userName: z.string(),
-  userEmail: z.email(),
-  issuedAt: z.number(), // unix timestamp in seconds
-  userID: z.number(),
+  user: UserSchema,
+})
+
+export const JWTPayloadSchema = z.object({
+  exp: z.number(),
+  iat: z.number(),
+  user: UserSchema,
 })
 
 /*

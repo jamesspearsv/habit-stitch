@@ -14,7 +14,9 @@ export const users = sqliteTable('users', {
   name: text().notNull(),
   hashed_password: text().notNull(),
   email: text().notNull(),
-  created_at: text().default(sql`CURRENT_TIMESTAMP`), // ISO datetime in UTC
+  created_at: text()
+    .notNull()
+    .default(sql`CURRENT_TIMESTAMP`), // ISO datetime in UTC
 })
 
 export const habits = sqliteTable('habits', {

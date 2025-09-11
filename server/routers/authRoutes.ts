@@ -44,17 +44,15 @@ auth.post('/users', async (c) => {
   }
 
   // sign new JWT & return
-  const { jwt, timestamp } = await signJWT(insertResult.data, c.env.SECRET_KEY)
+  const { jwt } = await signJWT(insertResult.data, c.env.SECRET_KEY)
+  const { id, email, name, created_at } = insertResult.data
 
   return c.json({
     success: true,
     message: 'Successfully Created new user',
     authObject: {
       accessToken: jwt,
-      userName: insertResult.data.name,
-      userEmail: insertResult.data.email,
-      issuedAt: timestamp,
-      userID: insertResult.data.id,
+      user: { id, email, name, created_at },
     },
   } satisfies AuthResponse)
 })
@@ -106,17 +104,20 @@ auth.post('/login', async (c) => {
     )
 
   // Sign JWT and create AuthObject
-  const { jwt, timestamp } = await signJWT(user.data, c.env.SECRET_KEY)
+  const { jwt } = await signJWT(user.data, c.env.SECRET_KEY)
+  const { id, email, name, created_at } = user.data
 
   return c.json({
     success: true,
     message: 'User logged in',
     authObject: {
       accessToken: jwt,
-      userName: user.data.name,
-      userEmail: user.data.email,
-      issuedAt: timestamp,
-      userID: user.data.id,
+      user: {
+        id,
+        email,
+        name,
+        created_at,
+      },
     },
   } satisfies AuthResponse)
 })

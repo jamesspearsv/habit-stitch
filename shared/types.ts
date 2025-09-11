@@ -1,7 +1,10 @@
 import * as z from 'zod'
-import type { AuthObjectSchema, AuthResponseSchema } from './zod'
+import type { AuthObjectSchema, AuthResponseSchema, JWTPayloadSchema } from './zod'
 
 export type AuthObject = z.infer<typeof AuthObjectSchema>
+
 export type AuthResponse = z.infer<typeof AuthResponseSchema>
 
 export type Result<T = string> = { success: true; data: T } | { success: false; message: string }
+
+export type JWTPayload = z.infer<typeof JWTPayloadSchema>
