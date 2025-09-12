@@ -1,8 +1,20 @@
 import * as z from 'zod'
-import type { AuthObjectSchema, AuthResponseSchema, JWTPayloadSchema } from './zod'
+import {
+  type AuthObjectSchema,
+  type AuthResponseSchema,
+  type JWTPayloadSchema,
+  type HabitSchema,
+  UserSchema,
+  LogSchema,
+} from './zod'
 
+//* Database Types
+export type User = z.infer<typeof UserSchema>
+export type Habit = z.infer<typeof HabitSchema>
+export type Log = z.infer<typeof LogSchema>
 export type AuthObject = z.infer<typeof AuthObjectSchema>
 
+//* Data Exchange Types
 export type AuthResponse = z.infer<typeof AuthResponseSchema>
 
 export type Result<T = string> = { success: true; data: T } | { success: false; message: string }

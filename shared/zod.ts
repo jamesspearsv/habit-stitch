@@ -1,8 +1,28 @@
 import * as z from 'zod'
+import { createSelectSchema } from 'drizzle-zod'
+import { habits, logs } from '../server/schema'
 
-/*
- * Data Struct Schemas
- */
+//* Data Structure Schemas
+export const HabitSchema = createSelectSchema(habits, {
+  id: z.number(),
+  name: z.string(),
+  description: z.string(),
+  color: z.string(),
+  interval_days: z.number(),
+  is_active: z.boolean(),
+  created_at: z.string(),
+  user_id: z.number(),
+})
+
+export const LogSchema = createSelectSchema(logs, {
+  id: z.number(),
+  timestamp: z.string(),
+  notes: z.string().nullable(),
+  habit_id: z.number(),
+  user_id: z.number(),
+  created_at: z.string(),
+})
+
 // Incoming new user data from client
 export const NewUser = z.object({
   name: z.string(),
@@ -11,7 +31,7 @@ export const NewUser = z.object({
 })
 
 // Auth, JWT user data
-const UserSchema = z.object({
+export const UserSchema = z.object({
   id: z.number(),
   name: z.string(),
   email: z.email(),
@@ -31,9 +51,7 @@ export const JWTPayloadSchema = z.object({
   user: UserSchema,
 })
 
-/*
- * CF Worker Response Schemas
- */
+//* Response Schemas
 export const AuthResponseSchema = z.discriminatedUnion('success', [
   z.object({ success: z.literal(true), message: z.string(), authObject: AuthObjectSchema }),
   z.object({ success: z.literal(false), message: z.string() }),
