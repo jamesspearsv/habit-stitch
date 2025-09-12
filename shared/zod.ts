@@ -3,6 +3,8 @@ import { createSelectSchema } from 'drizzle-zod'
 import { habits, logs } from '../server/schema'
 
 //* Data Structure Schemas
+
+// TODO: Replace inferred schemas with manual schemas based on db tables
 export const HabitSchema = createSelectSchema(habits, {
   id: z.number(),
   name: z.string(),
