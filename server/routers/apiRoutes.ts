@@ -1,6 +1,7 @@
 import { selectHabits } from '../queries'
 import { newHono, parseJWT } from '../utils'
 import { jwt } from 'hono/jwt'
+import { APIResponse, HabitsResponse } from '../../shared/types'
 
 export const api = newHono()
 
@@ -34,5 +35,5 @@ api.get('habits', async (c) => {
     return c.json({ success: false, message: 'Unable to select habits' })
   }
 
-  return c.json({ success: true, data: habits.data })
+  return c.json({ success: true, data: habits.data } satisfies HabitsResponse)
 })

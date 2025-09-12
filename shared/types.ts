@@ -6,6 +6,7 @@ import {
   type HabitSchema,
   UserSchema,
   LogSchema,
+  HabitsResponseSchema,
 } from './zod'
 
 //* Database Types
@@ -16,6 +17,7 @@ export type AuthObject = z.infer<typeof AuthObjectSchema>
 
 //* Data Exchange Types
 export type AuthResponse = z.infer<typeof AuthResponseSchema>
+export type HabitsResponse = z.infer<typeof HabitsResponseSchema>
 
 export type Result<T = string> = { success: true; data: T } | { success: false; message: string }
 

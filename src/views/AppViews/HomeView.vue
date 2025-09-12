@@ -1,12 +1,11 @@
 <script lang="ts" setup>
 import { onMounted, ref } from 'vue'
-import HabitCard from '@client/components/HabitCard.vue'
 import CreateHabitForm from '@client/components/CreateHabitForm.vue'
-import type { MappedHabit } from '@client/lib/types'
 import { getJWT, logOut } from '@client/lib/auth'
 import router from '@client/router/router'
+import { json } from 'zod'
 
-const habits = ref<MappedHabit[] | null>(null)
+const habits = ref<unknown[] | null>(null)
 const error = ref('')
 
 async function fetchData() {
@@ -25,8 +24,7 @@ async function fetchData() {
   const json = await res.json()
   console.log(json)
 
-  habits.value = null
-  error.value = JSON.stringify(json)
+  habits.value = json.data
 }
 
 // Fetch habits from backend
@@ -43,15 +41,21 @@ onMounted(async () => {
   </CreateHabitForm>
   <div v-if="error">{{ error }}</div>
   <section v-else>
+    <div v-for="habit in habits" v-bind:key="JSON.stringify(habit)">
+      <p>{{ JSON.stringify(habit) }}</p>
+      <br />
+    </div>
+    <!--
     <HabitCard
-      @update="async () => await fetchData()"
-      v-for="habit in habits"
-      :key="habit.id"
-      :id="habit.id"
-      :habit_name="habit.habit_name"
-      :activity_id="habit.activity_id"
-      :habit_color="habit.habit_color"
+    @update="async () => await fetchData()"
+    v-for="habit in habits"
+    :key="habit.id"
+    :id="habit.id"
+    :habit_name="habit.habit_name"
+    :activity_id="habit.activity_id"
+    :habit_color="habit.habit_color"
     />
+    -->
   </section>
 </template>
 

@@ -15,7 +15,7 @@ main {
 
 @media screen and (min-width: 768px) {
   main {
-    width: 50%;
+    /* width: 50%; */
     margin: auto;
     margin-bottom: 6.5rem;
   }

@@ -57,14 +57,16 @@ export const AuthResponseSchema = z.discriminatedUnion('success', [
   z.object({ success: z.literal(false), message: z.string() }),
 ])
 
-// function createPaginatedResponseSchema<ItemType extends z.ZodTypeAny>(
-//   itemSchema: ItemType,
-// ) {
-//   return z.object({
-//     pageIndex: z.number(),
-//     pageSize: z.number(),
-//     totalCount: z.number(),
-//     totalPages: z.number(),
-//     items: z.array(itemSchema),
-//   });
-// }
+export const APIResponseSchema = z.discriminatedUnion('success', [
+  z.object({ success: true, data: z.unknown() }),
+  z.object({ success: false, message: z.string() }),
+])
+
+function createResponseSchema<DataSchema extends z.ZodType>(dataSchema: DataSchema) {
+  return z.discriminatedUnion('success', [
+    z.object({ success: true, data: dataSchema }),
+    z.object({ success: false, message: z.string() }),
+  ])
+}
+
+export const HabitsResponseSchema = createResponseSchema(z.array(HabitSchema))
