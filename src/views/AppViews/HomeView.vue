@@ -3,12 +3,15 @@ import { onMounted, ref } from 'vue'
 import CreateHabitForm from '@client/components/CreateHabitForm.vue'
 import { getJWT, logOut } from '@client/lib/auth'
 import router from '@client/router/router'
-import { json } from 'zod'
+import { HabitsResponseSchema } from '@shared/zod'
+import type { Habit } from '@shared/types'
+import HabitList from '@client/components/HabitList.vue'
 
-const habits = ref<unknown[] | null>(null)
+const habits = ref<Habit[] | null>(null)
 const error = ref('')
 
 async function fetchData() {
+  // TODO: extract all API calls into an independent function
   const res = await fetch('/api/habits', {
     method: 'GET',
     headers: {
@@ -22,9 +25,17 @@ async function fetchData() {
   }
 
   const json = await res.json()
-  console.log(json)
 
-  habits.value = json.data
+  // Validate API response
+  const safeJSON = HabitsResponseSchema.safeParse(json)
+  if (!safeJSON.success) {
+    return (error.value = safeJSON.error.flatten.toString())
+  }
+
+  // Parse and use response data
+  if (safeJSON.data.success) {
+    habits.value = safeJSON.data.data
+  }
 }
 
 // Fetch habits from backend
@@ -40,22 +51,9 @@ onMounted(async () => {
     </div>
   </CreateHabitForm>
   <div v-if="error">{{ error }}</div>
-  <section v-else>
-    <div v-for="habit in habits" v-bind:key="JSON.stringify(habit)">
-      <p>{{ JSON.stringify(habit) }}</p>
-      <br />
-    </div>
-    <!--
-    <HabitCard
-    @update="async () => await fetchData()"
-    v-for="habit in habits"
-    :key="habit.id"
-    :id="habit.id"
-    :habit_name="habit.habit_name"
-    :activity_id="habit.activity_id"
-    :habit_color="habit.habit_color"
-    />
-    -->
+  <section v-if="habits && !error">
+    <HabitList :habits="habits" />
+    <br />
   </section>
 </template>
 

@@ -25,9 +25,13 @@ export const habits = sqliteTable('habits', {
   description: text(), // explanation of habit
   color: text().notNull(), // color hex code string (#rrggbb)
   interval_days: integer().notNull(), // completion interval in number of days
-  is_active: integer({ mode: 'boolean' }).default(false),
-  created_at: text().default(sql`CURRENT_TIMESTAMP`), // ISO datetime in UTC
-  user_id: integer().references(() => users.id),
+  is_active: integer({ mode: 'boolean' }).notNull().default(false),
+  created_at: text()
+    .notNull()
+    .default(sql`CURRENT_TIMESTAMP`), // ISO datetime in UTC
+  user_id: integer()
+    .notNull()
+    .references(() => users.id),
 })
 
 export const logs = sqliteTable('logs', {

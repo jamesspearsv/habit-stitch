@@ -1,14 +1,18 @@
 import * as z from 'zod'
-import { createSelectSchema } from 'drizzle-zod'
-import { habits, logs } from '../server/schema'
 
 //* Data Structure Schemas
+// Incoming new user data from client
+export const NewUser = z.object({
+  name: z.string(),
+  password: z.string(),
+  email: z.email(),
+})
 
-// TODO: Replace inferred schemas with manual schemas based on db tables
-export const HabitSchema = createSelectSchema(habits, {
+// Database table schemas
+export const HabitSchema = z.object({
   id: z.number(),
   name: z.string(),
-  description: z.string(),
+  description: z.nullable(z.string()),
   color: z.string(),
   interval_days: z.number(),
   is_active: z.boolean(),
@@ -16,20 +20,13 @@ export const HabitSchema = createSelectSchema(habits, {
   user_id: z.number(),
 })
 
-export const LogSchema = createSelectSchema(logs, {
+export const LogSchema = z.object({
   id: z.number(),
   timestamp: z.string(),
-  notes: z.string().nullable(),
+  notes: z.string(),
   habit_id: z.number(),
   user_id: z.number(),
   created_at: z.string(),
-})
-
-// Incoming new user data from client
-export const NewUser = z.object({
-  name: z.string(),
-  password: z.string(),
-  email: z.email(),
 })
 
 // Auth, JWT user data
@@ -40,6 +37,7 @@ export const UserSchema = z.object({
   created_at: z.string(),
 })
 
+// authentication schemas
 // Client side auth data
 export const AuthObjectSchema = z.object({
   accessToken: z.string(),
@@ -59,16 +57,11 @@ export const AuthResponseSchema = z.discriminatedUnion('success', [
   z.object({ success: z.literal(false), message: z.string() }),
 ])
 
-export const APIResponseSchema = z.discriminatedUnion('success', [
-  z.object({ success: true, data: z.unknown() }),
-  z.object({ success: false, message: z.string() }),
-])
-
-function createResponseSchema<DataSchema extends z.ZodType>(dataSchema: DataSchema) {
+function ResponseSchema<DataSchema extends z.ZodType>(dataSchema: DataSchema) {
   return z.discriminatedUnion('success', [
-    z.object({ success: true, data: dataSchema }),
-    z.object({ success: false, message: z.string() }),
+    z.object({ success: z.literal(true), data: dataSchema }),
+    z.object({ success: z.literal(false), message: z.string() }),
   ])
 }
 
-export const HabitsResponseSchema = createResponseSchema(z.array(HabitSchema))
+export const HabitsResponseSchema = ResponseSchema(z.array(HabitSchema))

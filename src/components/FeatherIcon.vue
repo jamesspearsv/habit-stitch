@@ -2,7 +2,7 @@
 import { onMounted } from 'vue'
 import * as feather from 'feather-icons'
 
-const props = defineProps<{ icon: keyof typeof feather.icons }>()
+const props = defineProps<{ icon: keyof typeof feather.icons; size?: number }>()
 
 onMounted(() => {
   feather.replace()
@@ -11,7 +11,7 @@ onMounted(() => {
 
 <template>
   <div class="icon-container">
-    <i v-bind:data-feather="props.icon"></i>
+    <i :data-feather="props.icon"></i>
   </div>
 </template>
 
@@ -19,5 +19,9 @@ onMounted(() => {
 .icon-container {
   display: flex;
   justify-content: center;
+}
+
+svg {
+  height: v-bind('size ? `${size}px`: `1.375rem`');
 }
 </style>
