@@ -25,8 +25,8 @@ export async function signJWT(
   const { id, email, name, created_at } = user
   const jwt = await sign(
     {
-      exp: timestamp + 3 * 3600,
-      iat: timestamp,
+      // exp: timestamp + 3 * 3600,
+      // iat: timestamp,
       user: { id, email, name, created_at },
     } satisfies JWTPayload,
     secretKey,

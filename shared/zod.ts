@@ -46,8 +46,8 @@ export const AuthObjectSchema = z.object({
 
 // JWT payload and server-side auth data
 export const JWTPayloadSchema = z.object({
-  exp: z.number(),
-  iat: z.number(),
+  // exp: z.number(),
+  // iat: z.number(),
   user: UserSchema,
 })
 

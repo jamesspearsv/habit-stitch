@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { handle } from 'hono/cloudflare-pages'
-
 async function handleClick(route: string) {
   if (route) {
     const res = await fetch(route)
@@ -14,7 +12,7 @@ async function handleClick(route: string) {
     <button @click="() => handleClick('')">Placeholder</button>
   </main>
 </template>
-<style>
+<style scoped>
 main {
   display: flex;
   flex-direction: column;

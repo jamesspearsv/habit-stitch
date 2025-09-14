@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { Habit } from '@shared/types'
-import FeatherIcon from './FeatherIcon.vue'
 
 defineProps<{
   habits: Habit[]
@@ -9,24 +8,60 @@ defineProps<{
 
 <template>
   <article v-for="habit in habits" :key="habit.id">
-    <input type="checkbox" name="completionStatus" id="completionStatus" />
+    <input class="checkbox" type="checkbox" :id="`habit-${habit.id}`" />
     <p>{{ habit.name }}</p>
-    <button>
-      <FeatherIcon icon="settings" :size="14" />
-    </button>
   </article>
 </template>
 
 <style scoped>
 article {
+  width: fit-content;
   display: flex;
   gap: 0.5rem;
   /* justify-content: space-between; */
   align-items: center;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.75rem;
 }
 
 p {
   flex: 2;
+  position: relative;
+}
+
+.checkbox:checked + p::before {
+  content: '';
+  position: absolute;
+  background-color: var(--c-text);
+  top: 50%;
+  width: 100%;
+  height: 1px;
+
+  /* TODO: add strikethrough starting style */
+}
+
+.checkbox {
+  --checkbox-size: 1.25rem;
+  --checkbox-offset: calc((var(--checkbox-size) - 1rem) / 2 * -1);
+  appearance: none;
+  position: relative;
+}
+
+.checkbox::before {
+  transition-property: background-color;
+  transition-duration: 200ms;
+  transition-timing-function: ease-in-out;
+  position: absolute;
+  top: var(--checkbox-offset);
+  left: 0;
+  content: '';
+  height: var(--checkbox-size);
+  width: var(--checkbox-size);
+  background-color: transparent;
+  border: solid 1px var(--c-text);
+  border-radius: 10px;
+}
+
+.checkbox:checked::before {
+  background-color: var(--c-accent);
 }
 </style>
