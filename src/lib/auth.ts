@@ -105,20 +105,21 @@ export async function login(credentials: { email: string; password: string }): P
 /**
  * Store authObject in local storage
  * @param authObject
- * @returns `void`
+ * @returns Destructured accessToken and user data
  */
 export function storeAuth(authObject: AuthObject) {
   localStorage.setItem(authStoreKey, JSON.stringify(authObject))
 }
 
-export function getJWT() {
+export function getAuthObject() {
   const authStore = localStorage.getItem(authStoreKey)
   if (authStore) {
     const authObject = JSON.parse(authStore)
     const safeAuthObject = AuthObjectSchema.safeParse(authObject)
     console.log(safeAuthObject.success)
     if (!safeAuthObject.success) return null
-    return safeAuthObject.data.accessToken
+    const { accessToken, user } = safeAuthObject.data
+    return { accessToken, user }
   }
 }
 

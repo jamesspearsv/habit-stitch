@@ -40,7 +40,11 @@ export const logs = sqliteTable('logs', {
     .notNull()
     .default(sql`CURRENT_TIMESTAMP`), // ISO datetime of log entry in UTC
   notes: text(), // optional user notes
-  habit_id: integer().references(() => habits.id), // related habit id
-  user_id: integer().references(() => users.id), // related user id
+  habit_id: integer()
+    .notNull()
+    .references(() => habits.id), // related habit id
+  user_id: integer()
+    .notNull()
+    .references(() => users.id), // related user id
   created_at: text().default(sql`CURRENT_TIMESTAMP`), // entry creation timestamp
 })

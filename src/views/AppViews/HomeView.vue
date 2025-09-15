@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { onMounted, ref } from 'vue'
 import CreateHabitForm from '@client/components/CreateHabitForm.vue'
-import { getJWT, logOut } from '@client/lib/auth'
+import { getAuthObject, logOut } from '@client/lib/auth'
 import router from '@client/router/router'
 import { HabitsResponseSchema } from '@shared/zod'
 import type { Habit } from '@shared/types'
@@ -15,7 +15,7 @@ async function fetchData() {
   const res = await fetch('/api/habits', {
     method: 'GET',
     headers: {
-      Authorization: `Bearer ${getJWT()}`,
+      Authorization: `Bearer ${getAuthObject()?.accessToken}`,
     },
   })
 

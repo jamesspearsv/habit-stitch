@@ -65,3 +65,4 @@ function ResponseSchema<DataSchema extends z.ZodType>(dataSchema: DataSchema) {
 }
 
 export const HabitsResponseSchema = ResponseSchema(z.array(HabitSchema))
+export const LogResponseSchema = ResponseSchema(z.string())

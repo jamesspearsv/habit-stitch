@@ -1,14 +1,35 @@
 <script setup lang="ts">
+import { getAuthObject } from '@client/lib/auth'
 import type { Habit } from '@shared/types'
 
 defineProps<{
   habits: Habit[]
 }>()
+
+async function updateCompletionStatus(id: number, event: Event) {
+  const checkbox = event.currentTarget as HTMLInputElement
+  if (checkbox.checked) {
+    const res = await fetch(`/api/habits/${id}/log`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${getAuthObject()?.accessToken}`,
+      },
+    })
+
+    const json = await res.json()
+    console.log(json)
+  }
+}
 </script>
 
 <template>
   <article v-for="habit in habits" :key="habit.id">
-    <input class="checkbox" type="checkbox" :id="`habit-${habit.id}`" />
+    <input
+      class="checkbox"
+      type="checkbox"
+      :id="`habit-${habit.id}`"
+      @change="(e) => updateCompletionStatus(habit.id, e)"
+    />
     <p>{{ habit.name }}</p>
   </article>
 </template>
