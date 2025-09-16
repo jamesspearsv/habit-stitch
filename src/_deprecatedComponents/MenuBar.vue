@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import FeatherIcon from './FeatherIcon.vue'
+import FeatherIcon from '@client/components/FeatherIcon.vue'
 
 const open = ref(false)
 </script>
@@ -8,9 +8,6 @@ const open = ref(false)
 <template>
   <nav :class="{ open: open }">
     <menu @click="() => (open = false)" :class="{ open: open }">
-      <RouterLink :to="{ name: 'Summary' }">
-        <FeatherIcon icon="bar-chart-2" />
-      </RouterLink>
       <RouterLink :to="{ name: 'Home' }">
         <FeatherIcon icon="home" />
       </RouterLink>

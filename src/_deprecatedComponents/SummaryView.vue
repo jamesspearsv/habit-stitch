@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import FeatherIcon from '@client/components/FeatherIcon.vue'
 import HeadingContainer from '@client/components/HeadingContainer.vue'
-import { fetchSummary } from '@client/lib/_actions'
+import { fetchSummary } from '@client/_deprecatedComponents/_actions'
 import {
   calculateOpacity,
   calculatePosition,

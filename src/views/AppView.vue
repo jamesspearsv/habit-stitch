@@ -1,11 +1,7 @@
-<script setup lang="ts">
-import MenuBar from '@client/components/MenuBar.vue'
-</script>
 <template>
   <main>
     <RouterView />
   </main>
-  <MenuBar />
 </template>
 <style scoped>
 main {

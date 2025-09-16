@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { createHabit } from '@client/lib/_actions'
+import { createHabit } from '@client/_deprecatedComponents/_actions'
 import { ref, watch } from 'vue'
 import FeatherIcon from './FeatherIcon.vue'
 
