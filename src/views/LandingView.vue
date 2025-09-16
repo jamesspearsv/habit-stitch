@@ -1,6 +1,21 @@
+<script setup lang="ts">
+import { ref } from 'vue'
+
+const DEV = import.meta.env.DEV
+const seedStatus = ref('Reset & Seed')
+
+async function handleSeed() {
+  const res = await fetch('/seed')
+
+  if (res.ok) seedStatus.value = 'Database seeded!'
+  else seedStatus.value = 'Error...'
+}
+</script>
+
 <template>
   <main>
     <section class="hero-section">
+      <button v-if="DEV" @click="handleSeed">{{ seedStatus }}</button>
       <h1>Habit Stitch is a habit building app for people who hate routines!</h1>
       <RouterLink class="cta-btn" :to="{ name: 'Signup' }">Sign Up</RouterLink>
       <p>Already have an account? <RouterLink :to="{ name: 'Login' }">Login</RouterLink></p>
@@ -23,6 +38,10 @@
   </main>
 </template>
 <style lang="css" scoped>
+main {
+  padding: 0;
+}
+
 .hero-section {
   width: 100%;
   height: 100vh;

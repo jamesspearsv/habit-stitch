@@ -1,14 +1,21 @@
 <script lang="ts" setup>
-import { createUser } from '@/lib/auth'
-import router from '@/router/router'
+import { createUser } from '@client/lib/auth'
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+
 const formData = ref({ email: '', password: '', name: '' })
 const error = ref('')
+const router = useRouter()
 
 async function handleSubmit() {
+  // TODO: better handle user creation failures
   const result = await createUser(formData.value)
-  if (result.success) router.push({ name: 'Home' })
-  else error.value = result.error
+
+  if (!result.success) {
+    error.value = result.message
+  } else {
+    router.push({ name: 'Home' })
+  }
 }
 </script>
 

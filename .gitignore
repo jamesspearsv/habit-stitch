@@ -29,3 +29,6 @@ coverage
 
 *.tsbuildinfo
 **/pb_data
+**/*.sqlite*
+**/*.sql
+.env

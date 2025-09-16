@@ -1,21 +1,40 @@
 <script lang="ts" setup>
 import { onMounted, ref } from 'vue'
-import HabitCard from '@/components/HabitCard.vue'
-import CreateHabitForm from '@/components/CreateHabitForm.vue'
-import { fetchHabits } from '@/lib/actions'
-import type { MappedHabit } from '@/lib/types'
+import CreateHabitForm from '@client/components/CreateHabitForm.vue'
+import { getAuthObject, logOut } from '@client/lib/auth'
+import router from '@client/router/router'
+import { HabitsResponseSchema } from '@shared/zod'
+import type { Habit } from '@shared/types'
+import HabitList from '@client/components/HabitList.vue'
 
-const habits = ref<MappedHabit[] | null>(null)
-const error = ref(false)
+const habits = ref<Habit[] | null>(null)
+const error = ref('')
 
 async function fetchData() {
-  const result = await fetchHabits()
-  if (result.success) {
-    habits.value = result.data
-    error.value = false
-  } else {
-    habits.value = null
-    error.value = true
+  // TODO: extract all API calls into an independent function
+  const res = await fetch('/api/habits', {
+    method: 'GET',
+    headers: {
+      Authorization: `Bearer ${getAuthObject()?.accessToken}`,
+    },
+  })
+
+  if (res.status === 500) {
+    logOut()
+    return router.push({ name: 'Landing' })
+  }
+
+  const json = await res.json()
+
+  // Validate API response
+  const safeJSON = HabitsResponseSchema.safeParse(json)
+  if (!safeJSON.success) {
+    return (error.value = safeJSON.error.flatten.toString())
+  }
+
+  // Parse and use response data
+  if (safeJSON.data.success) {
+    habits.value = safeJSON.data.data
   }
 }
 
@@ -31,17 +50,10 @@ onMounted(async () => {
       <h1>Habit<span>Stitch</span></h1>
     </div>
   </CreateHabitForm>
-  <div v-if="error">Error!</div>
-  <section v-else>
-    <HabitCard
-      @update="async () => await fetchData()"
-      v-for="habit in habits"
-      :key="habit.id"
-      :id="habit.id"
-      :habit_name="habit.habit_name"
-      :activity_id="habit.activity_id"
-      :habit_color="habit.habit_color"
-    />
+  <div v-if="error">{{ error }}</div>
+  <section v-if="habits && !error">
+    <HabitList :habits="habits" />
+    <br />
   </section>
 </template>
 

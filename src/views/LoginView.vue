@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import { signin } from '@/lib/auth'
-import router from '@/router/router'
+import { login } from '@client/lib/auth'
+import router from '@client/router/router'
 import { ref } from 'vue'
 
 const formData = ref({
@@ -10,10 +10,12 @@ const formData = ref({
 const error = ref('')
 
 async function handleSubmit() {
-  const result = await signin(formData.value)
-
-  if (result.success) router.push({ name: 'Home' })
-  else error.value = result.error
+  const loginAttempt = await login(formData.value)
+  if (!loginAttempt.success) {
+    error.value = loginAttempt.message
+  } else {
+    router.push({ name: 'Home' })
+  }
 }
 </script>
 
