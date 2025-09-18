@@ -6,6 +6,7 @@ import router from '@client/router/router'
 import { HabitsResponseSchema } from '@shared/zod'
 import type { Habit } from '@shared/types'
 import HabitList from '@client/components/HabitList.vue'
+import { db } from '@client/db'
 
 const habits = ref<Habit[] | null>(null)
 const error = ref('')
@@ -37,10 +38,26 @@ async function fetchData() {
     habits.value = safeJSON.data.data
   }
 }
+async function fetchDexie() {
+  const data = await db.habits.toArray()
+  habits.value = data
+}
 
 // Fetch habits from backend
 onMounted(async () => {
-  await fetchData()
+  // await fetchData()
+  db.habits.add({
+    id: 1,
+    name: 'Learn Dexie',
+    description: null,
+    color: '#eeeeee',
+    interval_days: 0,
+    is_active: true,
+    created_at: '2025-09-17',
+    user_id: 1,
+  })
+
+  await fetchDexie()
 })
 </script>
 

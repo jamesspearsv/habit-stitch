@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { createHabit } from '@client/_deprecatedComponents/_actions'
 import { ref, watch } from 'vue'
 import FeatherIcon from './FeatherIcon.vue'
 
@@ -30,12 +29,8 @@ function closeDialog() {
 }
 
 async function addHabit() {
-  if (!dialog.value) return
-  const result = await createHabit(formData.value)
-  if (result.success) {
-    open.value = false
-    emit('update')
-  }
+  emit('update')
+  return
 }
 </script>
 
