@@ -20,7 +20,7 @@ export const users = sqliteTable('users', {
 })
 
 export const habits = sqliteTable('habits', {
-  id: integer().primaryKey(),
+  id: text().primaryKey().notNull().default(crypto.randomUUID()),
   name: text().notNull(), // task name
   description: text(), // explanation of habit
   color: text().notNull(), // color hex code string (#rrggbb)
@@ -35,7 +35,7 @@ export const habits = sqliteTable('habits', {
 })
 
 export const logs = sqliteTable('logs', {
-  id: integer().primaryKey(),
+  id: text().primaryKey().notNull().default(crypto.randomUUID()),
   timestamp: text()
     .notNull()
     .default(sql`CURRENT_TIMESTAMP`), // ISO datetime of log entry in UTC

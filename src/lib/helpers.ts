@@ -104,3 +104,9 @@ export function getDateRange(
 export function stringToProperCase(string: string) {
   return string[0].toUpperCase() + string.slice(1)
 }
+
+export function getCurrentDate() {
+  const date = new Date().toISOString()
+  date.replace('T', ' ')
+  return date.slice(0, date.length - 1)
+}

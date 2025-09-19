@@ -64,7 +64,9 @@ body {
   font-size: 16px;
 }
 
-input {
+input,
+textarea,
+select {
   background-color: var(--c-bg-alt);
   border: none;
   border-radius: var(--br-md);
@@ -77,6 +79,11 @@ input {
   &[type='submit']:hover {
     background-color: var(--c-tertiary);
   }
+}
+
+textarea {
+  max-width: 100%;
+  min-width: 100%;
 }
 
 button {

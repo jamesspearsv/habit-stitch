@@ -10,7 +10,7 @@ export const NewUser = z.object({
 
 // Database table schemas
 export const HabitSchema = z.object({
-  id: z.number(),
+  id: z.uuid(),
   name: z.string(),
   description: z.nullable(z.string()),
   color: z.string(),
@@ -21,7 +21,7 @@ export const HabitSchema = z.object({
 })
 
 export const LogSchema = z.object({
-  id: z.number(),
+  id: z.uuid(),
   timestamp: z.string(),
   notes: z.string(),
   habit_id: z.number(),

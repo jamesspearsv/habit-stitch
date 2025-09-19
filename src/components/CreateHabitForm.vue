@@ -1,12 +1,19 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import FeatherIcon from './FeatherIcon.vue'
+import type { Habit } from '@shared/types'
+import { db } from '@client/db'
+import { getAuthObject } from '@client/lib/auth'
+import { getCurrentDate } from '@client/lib/helpers'
 
-const initialState = { habit_name: '' }
+const initialState: Pick<Habit, 'name' | 'description' | 'interval_days'> = {
+  name: '',
+  description: null,
+  interval_days: 1,
+}
 const formData = ref({ ...initialState })
 const dialog = ref<HTMLDialogElement | null>(null)
 const open = ref(false)
-const emit = defineEmits(['update'])
 
 watch(open, () => {
   if (!dialog.value) return
@@ -29,37 +36,56 @@ function closeDialog() {
 }
 
 async function addHabit() {
-  emit('update')
-  return
+  const user = getAuthObject()
+  if (!user) return
+
+  await db.habits.add({
+    ...formData.value,
+    color: '#123456',
+    is_active: true,
+    created_at: getCurrentDate(),
+    user_id: user.user.id,
+    id: crypto.randomUUID(),
+  })
+
+  closeDialog()
 }
 </script>
 
 <template>
-  <div class="heading">
-    <slot />
-    <button @click="() => (open = true)">
-      <FeatherIcon icon="plus-circle" />
-    </button>
-  </div>
+  <button @click="() => (open = true)">
+    <FeatherIcon icon="plus-circle" />
+  </button>
   <dialog ref="dialog" @close.prevent="() => (open = false)">
     <form @submit.prevent="addHabit" @reset.prevent="() => (open = false)">
-      <!-- <h2>Add a new habit</h2>
+      <h2>Add a new habit</h2>
       <div class="form-group">
-        <label for="habit_name">Habit</label>
-        <input
+        <label for="name">Habit</label>
+        <input type="text" name="name" id="habit_name" v-model="formData.name" required />
+      </div>
+      <div class="form-group">
+        <label for="description">Description</label>
+        <textarea
           type="text"
-          name="habit_name"
-          id="habit_name"
-          v-model="formData.habit_name"
-          required
+          name="description"
+          id="habit_description"
+          v-model="formData.description"
         />
+      </div>
+      <div class="form-group">
+        <label for="Interval">Interval</label>
+        <select name="interval" id="habit_interval" v-model="formData.interval_days">
+          <option value="1">Daily</option>
+          <option value="7">Weekly</option>
+          <option value="30">Monthly</option>
+        </select>
       </div>
       <div class="form-group">
         <input type="submit" value="Add" class="submit-btn" />
       </div>
       <div class="form-group">
         <input type="reset" class="cancel-btn" value="Cancel" />
-      </div> -->
+      </div>
     </form>
   </dialog>
 </template>
@@ -97,13 +123,28 @@ dialog {
   margin-inline: auto;
 }
 
-dialog::backdrop {
-  background-color: rgba(0, 0, 0, 0.25);
+dialog:open::backdrop {
+  /* background-color: rgba(0, 0, 0, 0.25); */
   backdrop-filter: blur(8px);
+  transition: backdrop-filter 200ms ease-in-out;
+
+  @starting-style {
+    backdrop-filter: blur(0);
+  }
+}
+
+dialog.closing::backdrop {
+  /* background-color: rgba(0, 0, 0, 0); */
+  backdrop-filter: blur(0);
+  transition: backdrop-filter 200ms ease-in-out;
+
+  @starting-style {
+    backdrop-filter: blur(8px);
+  }
 }
 
 dialog:open {
-  margin-top: 25dvh;
+  margin-top: 10dvh;
   animation-name: dialog-opening;
   animation-duration: 200ms;
   animation-timing-function: ease-in-out;
