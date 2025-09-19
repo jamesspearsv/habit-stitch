@@ -1,5 +1,8 @@
 <script setup lang="ts">
-import type { Habit } from '@shared/types'
+import { db } from '@client/db'
+import { getAuthObject } from '@client/lib/auth'
+import { getCurrentDate } from '@client/lib/helpers'
+import type { Habit, Log } from '@shared/types'
 
 defineProps<{
   habits: Habit[]
@@ -19,11 +22,41 @@ defineProps<{
 //     console.log(json)
 //   }
 // }
+
+async function updateHabitCheckmark(e: Event) {
+  const user_id = getAuthObject()?.user.id
+  if (!user_id) return
+
+  const checkbox = e.currentTarget as HTMLInputElement
+  const habit_id = checkbox.id
+
+  if (checkbox.checked) {
+    // add new log to local indexDB
+    const log: Log = {
+      id: crypto.randomUUID(),
+      habit_id,
+      timestamp: getCurrentDate(),
+      notes: '',
+      user_id,
+      created_at: getCurrentDate(),
+    }
+
+    db.log.add(log)
+  } else {
+    const result = await db.log.where('habit_id').equals(habit_id).sortBy('timestamp')
+    console.log(result)
+  }
+}
 </script>
 
 <template>
   <article v-for="habit in habits" :key="habit.id">
-    <input class="checkbox" type="checkbox" :id="`habit-${habit.id}`" />
+    <input
+      class="checkbox"
+      type="checkbox"
+      :id="habit.id"
+      @change="async (e) => await updateHabitCheckmark(e)"
+    />
     <p>{{ habit.name }}</p>
   </article>
 </template>

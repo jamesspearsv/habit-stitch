@@ -58,6 +58,13 @@ function parseDate(date: Date) {
   }
 }
 
+export function getTodayBounds() {
+  const t = parseDate(new Date())
+
+  const tStart = new Date(t.year, t.month, t.day, 0, 0, 0)
+  const tEnd = new Date(t.year, t.month, t.day, 23, 59, 59)
+}
+
 export function getDateRange(
   mode: 'today' | 'month' | 'week',
   offset?: number,
@@ -106,7 +113,5 @@ export function stringToProperCase(string: string) {
 }
 
 export function getCurrentDate() {
-  const date = new Date().toISOString()
-  date.replace('T', ' ')
-  return date.slice(0, date.length - 1)
+  return new Date().toISOString()
 }

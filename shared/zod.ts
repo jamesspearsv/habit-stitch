@@ -24,7 +24,7 @@ export const LogSchema = z.object({
   id: z.uuid(),
   timestamp: z.string(),
   notes: z.string(),
-  habit_id: z.number(),
+  habit_id: z.uuid(),
   user_id: z.number(),
   created_at: z.string(),
 })

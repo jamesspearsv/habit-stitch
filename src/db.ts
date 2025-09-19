@@ -6,7 +6,7 @@ const db = new Dexie('HabitStitchDB') as Dexie & {
   log: EntityTable<Log, 'id'>
 }
 
-db.version(1).stores({ habits: 'id, name' })
+db.version(1).stores({ habits: 'id, name', log: 'id, habit_id, timestamp, user_id' })
 
 // Load initial data
 db.habits.add({

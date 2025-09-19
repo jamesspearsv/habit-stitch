@@ -1,12 +1,15 @@
 <script lang="ts" setup>
 import { onMounted, onUnmounted, ref } from 'vue'
 import CreateHabitForm from '@client/components/CreateHabitForm.vue'
-import type { Habit } from '@shared/types'
+import { type Log, type Habit } from '@shared/types'
 import HabitList from '@client/components/HabitList.vue'
-import { db } from '@client/db'
 import { liveQuery, type Subscription } from 'dexie'
+import { getHabits } from '@client/lib/queries'
+import { getAuthObject } from '@client/lib/auth'
 
+// TODO: Add a derived reference that maps habits to completed logs.
 const habits = ref<Habit[] | null>(null)
+const log = ref<Log[] | null>(null)
 const error = ref('')
 const subscription = ref<Subscription | null>(null)
 
@@ -14,14 +17,18 @@ const subscription = ref<Subscription | null>(null)
 // to data changes from DB
 onMounted(async () => {
   // await fetchDexie()
+  const uid = getAuthObject()?.user.id
+  if (!uid) return
+
   console.log('Subscribing to query...')
   const query = liveQuery(() => {
-    return db.habits.orderBy('name').toArray()
+    return getHabits(uid)
   })
 
   subscription.value = query.subscribe({
     next: (result) => {
-      habits.value = result
+      habits.value = result.habits
+      log.value = result.log
     },
     error: (error) => {
       habits.value = null
