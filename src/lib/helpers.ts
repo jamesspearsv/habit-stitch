@@ -49,22 +49,44 @@ export function calculateOpacity(percentage: number, max: number, min: number) {
   return min + (max - min) * (1 - percentage)
 }
 
+/**
+ * Parse a date object into the component parts
+ * @param date
+ * @returns `{ day, month, year, weekday }`
+ */
 function parseDate(date: Date) {
   return {
-    day: date.getDate(),
-    month: date.getMonth(),
-    year: date.getFullYear(),
-    weekday: date.getDay(),
+    day: date.getUTCDate(),
+    month: date.getUTCMonth(),
+    year: date.getUTCFullYear(),
+    weekday: date.getUTCDay(),
   }
 }
 
 export function getToday() {
   const t = parseDate(new Date())
 
-  const start = new Date(t.year, t.month, t.day, 0, 0, 0)
-  const end = new Date(t.year, t.month, t.day, 23, 59, 59)
+  const start = new Date(Date.UTC(t.year, t.month, t.day, 0, 0, 0))
+  const end = new Date(Date.UTC(t.year, t.month, t.day, 23, 59, 59))
+
+  // console.log(t)
+  // console.log('start: ', start.toISOString())
+  // console.log('end:', end.toISOString())
 
   return { start, end }
+}
+
+export function isDateToday(date: Date) {
+  const timestamp = date.getTime()
+  const t = getToday()
+
+  // Before (less than) the start of today
+  if (timestamp < t.start.getTime()) return false
+
+  // After (greater than) the end of today
+  if (timestamp > t.end.getTime()) return false
+
+  return true
 }
 
 export function getDateRange(

@@ -6,10 +6,11 @@ import HabitList from '@client/components/HabitList.vue'
 import { liveQuery, type Subscription } from 'dexie'
 import { getAuthObject } from '@client/lib/auth'
 import { db } from '@client/db'
+import { isDateToday } from '@client/lib/helpers'
 
 // TODO: Add a derived reference that maps habits to completed logs.
-const habits = ref<Habit[] | null>(null)
-const log = ref<Log[] | null>(null)
+const habits = ref<Habit[]>([])
+const logs = ref<Log[]>([])
 
 const error = ref('')
 const habitSub = ref<Subscription | null>(null)
@@ -19,12 +20,15 @@ const logSub = ref<Subscription | null>(null)
 // to data changes from DB
 onMounted(async () => {
   // await fetchDexie()
+
   const uid = getAuthObject()?.user.id
   if (!uid) return
 
   console.log('Subscribing to query...')
   const habitQuery = liveQuery(() => db.habits.orderBy('name').toArray())
-  const logQuery = liveQuery(() => db.log.toArray())
+  const logQuery = liveQuery(() =>
+    db.log.filter((log) => isDateToday(new Date(log.timestamp))).toArray(),
+  )
 
   habitSub.value = habitQuery.subscribe({
     next: (result) => {
@@ -32,18 +36,18 @@ onMounted(async () => {
       error.value = ''
     },
     error: () => {
-      habits.value = null
+      habits.value = []
       error.value = 'Unable to find habits'
     },
   })
 
   logSub.value = logQuery.subscribe({
     next: (result) => {
-      log.value = result
+      logs.value = result
       error.value = ''
     },
     error: () => {
-      log.value = null
+      logs.value = []
       error.value = 'Unable to find log'
     },
   })
@@ -67,6 +71,10 @@ onUnmounted(() => {
   <section v-if="habits && !error">
     <HabitList :habits="habits" />
     <br />
+    <div v-for="log in logs" :key="log.id">
+      <p>{{ log.id }} | {{ log.timestamp }}</p>
+      <br />
+    </div>
   </section>
 </template>
 
