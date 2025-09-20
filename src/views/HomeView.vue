@@ -4,14 +4,16 @@ import CreateHabitForm from '@client/components/CreateHabitForm.vue'
 import { type Log, type Habit } from '@shared/types'
 import HabitList from '@client/components/HabitList.vue'
 import { liveQuery, type Subscription } from 'dexie'
-import { getHabits } from '@client/lib/queries'
 import { getAuthObject } from '@client/lib/auth'
+import { db } from '@client/db'
 
 // TODO: Add a derived reference that maps habits to completed logs.
 const habits = ref<Habit[] | null>(null)
 const log = ref<Log[] | null>(null)
+
 const error = ref('')
-const subscription = ref<Subscription | null>(null)
+const habitSub = ref<Subscription | null>(null)
+const logSub = ref<Subscription | null>(null)
 
 // Init live query and subscribe
 // to data changes from DB
@@ -21,18 +23,28 @@ onMounted(async () => {
   if (!uid) return
 
   console.log('Subscribing to query...')
-  const query = liveQuery(() => {
-    return getHabits(uid)
-  })
+  const habitQuery = liveQuery(() => db.habits.orderBy('name').toArray())
+  const logQuery = liveQuery(() => db.log.toArray())
 
-  subscription.value = query.subscribe({
+  habitSub.value = habitQuery.subscribe({
     next: (result) => {
-      habits.value = result.habits
-      log.value = result.log
+      habits.value = result
+      error.value = ''
     },
-    error: (error) => {
+    error: () => {
       habits.value = null
       error.value = 'Unable to find habits'
+    },
+  })
+
+  logSub.value = logQuery.subscribe({
+    next: (result) => {
+      log.value = result
+      error.value = ''
+    },
+    error: () => {
+      log.value = null
+      error.value = 'Unable to find log'
     },
   })
 })
@@ -41,7 +53,8 @@ onMounted(async () => {
 // component is unmounted
 onUnmounted(() => {
   console.log('Unsubscribing from query...')
-  subscription.value?.unsubscribe()
+  habitSub.value?.unsubscribe()
+  logSub.value?.unsubscribe()
 })
 </script>
 

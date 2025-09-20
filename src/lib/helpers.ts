@@ -58,11 +58,13 @@ function parseDate(date: Date) {
   }
 }
 
-export function getTodayBounds() {
+export function getToday() {
   const t = parseDate(new Date())
 
-  const tStart = new Date(t.year, t.month, t.day, 0, 0, 0)
-  const tEnd = new Date(t.year, t.month, t.day, 23, 59, 59)
+  const start = new Date(t.year, t.month, t.day, 0, 0, 0)
+  const end = new Date(t.year, t.month, t.day, 23, 59, 59)
+
+  return { start, end }
 }
 
 export function getDateRange(
