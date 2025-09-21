@@ -2,9 +2,9 @@
 import { ref, watch } from 'vue'
 import FeatherIcon from './FeatherIcon.vue'
 import type { Habit } from '@shared/types'
-import { db } from '@client/db'
+import { db } from '@client/dexie/db'
 import { getAuthObject } from '@client/lib/auth'
-import { getCurrentDate } from '@client/lib/helpers'
+import { getCurrentDate } from '@client/lib/_helpers'
 
 const initialState: Pick<Habit, 'name' | 'description' | 'interval_days'> = {
   name: '',

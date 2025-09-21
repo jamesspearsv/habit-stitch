@@ -16,17 +16,16 @@ export const HabitSchema = z.object({
   color: z.string(),
   interval_days: z.number(),
   is_active: z.boolean(),
-  created_at: z.string(),
+  created_on: z.string(), // ISO formatted calendar date
   user_id: z.number(),
 })
 
 export const LogSchema = z.object({
   id: z.uuid(),
-  timestamp: z.string(),
   notes: z.string(),
   habit_id: z.uuid(),
   user_id: z.number(),
-  created_at: z.string(),
+  created_on: z.string(), // ISO formatted calendar date
 })
 
 // Auth, JWT user data

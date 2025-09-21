@@ -1,14 +1,17 @@
-import type { Habit, Log } from '@shared/types'
 import Dexie, { type EntityTable } from 'dexie'
+import type { Habit, Log } from '@shared/types'
 
 const db = new Dexie('HabitStitchDB') as Dexie & {
   habits: EntityTable<Habit, 'id'>
   log: EntityTable<Log, 'id'>
 }
 
-db.version(1).stores({ habits: 'id, name', log: 'id, habit_id, timestamp, user_id' })
+db.version(1).stores({
+  habits: '&id, name',
+  log: '&id, created_on, user_id, habit_id',
+})
 
-// Load initial data
+// Seed initial data
 db.habits.add({
   id: 'b4484a6a-8990-41d1-b3d3-c4ec9f134964',
   name: 'Learn Dexie',
@@ -16,8 +19,16 @@ db.habits.add({
   color: '#eeeeee',
   interval_days: 0,
   is_active: true,
-  created_at: '2025-09-17',
+  created_on: '2025-09-20',
   user_id: 1,
+})
+
+db.log.add({
+  id: '4c8f95ba-e320-439f-bd4b-10c01f7cdcce',
+  created_on: '2025-09-21',
+  user_id: 1,
+  notes: '',
+  habit_id: 'b4484a6a-8990-41d1-b3d3-c4ec9f134964',
 })
 
 export { db }

@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { db } from '@client/db'
+import { db } from '@client/dexie/db'
 import { getAuthObject } from '@client/lib/auth'
-import { getCurrentDate } from '@client/lib/helpers'
 import type { Habit, Log } from '@shared/types'
+import { parseDate } from '@client/lib/helpers'
 
 defineProps<{
-  habits: Habit[] & { completed: boolean }[]
+  habits: Habit[]
 }>()
 
 async function updateHabitCheckmark(e: Event) {
@@ -20,10 +20,9 @@ async function updateHabitCheckmark(e: Event) {
     const log: Log = {
       id: crypto.randomUUID(),
       habit_id,
-      timestamp: getCurrentDate(),
+      created_on: parseDate(new Date()),
       notes: '',
       user_id,
-      created_at: getCurrentDate(),
     }
 
     db.log.add(log)
@@ -40,7 +39,6 @@ async function updateHabitCheckmark(e: Event) {
       class="checkbox"
       type="checkbox"
       :id="habit.id"
-      :checked="habit.completed"
       @change="async (e) => await updateHabitCheckmark(e)"
     />
     <p>{{ habit.name }}</p>

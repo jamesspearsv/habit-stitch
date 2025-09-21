@@ -1,88 +1,60 @@
 <script lang="ts" setup>
-import { computed, onMounted, onUnmounted, ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import CreateHabitForm from '@client/components/CreateHabitForm.vue'
-import { type Log, type Habit } from '@shared/types'
+import ListDayChanger from '@client/components/ListDayChanger.vue'
+import { db } from '@client/dexie/db'
+import type { Habit } from '@shared/types'
+import { liveQuery } from 'dexie'
 import HabitList from '@client/components/HabitList.vue'
-import { liveQuery, type Subscription } from 'dexie'
-import { db } from '@client/db'
-import { isDateToday } from '@client/lib/helpers'
 
-const habitSub = ref<Subscription | null>(null)
-const logSub = ref<Subscription | null>(null)
-const error = ref('')
-
+const current_day = ref(new Date())
 const habits = ref<Habit[]>([])
-const logs = ref<Log[]>([])
-// Verify the completion status of each habit
-const dailyHabits = computed(() => {
-  // TODO: Improve log filtering and mapping
-  const dailyHabits = habits.value.map((habit) => {
-    const filteredLogs = logs.value.filter((log) => log.habit_id === habit.id)
-    if (filteredLogs.length > 0) return { ...habit, completed: true }
-    return { ...habit, completed: false }
-  })
 
-  return dailyHabits
-})
+function changeDay(action: 'next' | 'previous') {
+  let date = current_day.value.getDate()
+  if (action === 'previous') date -= 1
+  if (action === 'next') date += 1
+  current_day.value = new Date(current_day.value.setDate(date))
+}
 
-// Init live query and subscribe
-// to data changes from DB
-onMounted(async () => {
-  console.log('Subscribing to query...')
-  const habitQuery = liveQuery(() => db.habits.orderBy('name').toArray())
-  const logQuery = liveQuery(() =>
-    db.log.filter((log) => isDateToday(new Date(log.timestamp))).toArray(),
-  )
-
-  habitSub.value = habitQuery.subscribe({
-    next: (result) => {
+onMounted(() => {
+  const observable = liveQuery(() => db.habits.orderBy('name').toArray())
+  observable.subscribe({
+    next(result) {
       habits.value = result
-      error.value = ''
     },
-    error: () => {
+    error(error) {
       habits.value = []
-      error.value = 'Unable to find habits'
+      console.error(error)
     },
   })
-
-  logSub.value = logQuery.subscribe({
-    next: (result) => {
-      logs.value = result
-      error.value = ''
-    },
-    error: () => {
-      logs.value = []
-      error.value = 'Unable to find log'
-    },
-  })
-})
-
-// Close DB subscription when
-// component is unmounted
-onUnmounted(() => {
-  console.log('Unsubscribing from query...')
-  habitSub.value?.unsubscribe()
-  logSub.value?.unsubscribe()
 })
 </script>
 
 <template>
-  <div>
+  <section class="home_heading">
     <h1>Habit<span>Stitch</span></h1>
-  </div>
-  <CreateHabitForm />
-  <div v-if="error">{{ error }}</div>
-  <section v-if="habits && !error">
-    <HabitList :habits="dailyHabits" />
-    <br />
-    <div v-for="log in logs" :key="log.id">
-      <p>{{ log.id }} | {{ log.timestamp }}</p>
-      <br />
-    </div>
+    <CreateHabitForm />
+  </section>
+  <section>
+    <p>{{ current_day.toLocaleDateString() }}</p>
+    <ListDayChanger
+      @go-to-previous-day="changeDay('previous')"
+      @go-to-next-day="changeDay('next')"
+    />
+  </section>
+  <section>
+    <HabitList :habits="habits" />
   </section>
 </template>
 
 <style scoped>
+.home_heading {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
 h1 {
   font-size: var(--fs-4);
   font-weight: bold;
