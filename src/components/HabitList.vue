@@ -5,23 +5,8 @@ import { getCurrentDate } from '@client/lib/helpers'
 import type { Habit, Log } from '@shared/types'
 
 defineProps<{
-  habits: Habit[]
+  habits: Habit[] & { completed: boolean }[]
 }>()
-
-// async function updateCompletionStatus(id: string, event: Event) {
-//   const checkbox = event.currentTarget as HTMLInputElement
-//   if (checkbox.checked) {
-//     const res = await fetch(`/api/habits/${id}/log`, {
-//       method: 'POST',
-//       headers: {
-//         Authorization: `Bearer ${getAuthObject()?.accessToken}`,
-//       },
-//     })
-
-//     const json = await res.json()
-//     console.log(json)
-//   }
-// }
 
 async function updateHabitCheckmark(e: Event) {
   const user_id = getAuthObject()?.user.id
@@ -55,6 +40,7 @@ async function updateHabitCheckmark(e: Event) {
       class="checkbox"
       type="checkbox"
       :id="habit.id"
+      :checked="habit.completed"
       @change="async (e) => await updateHabitCheckmark(e)"
     />
     <p>{{ habit.name }}</p>

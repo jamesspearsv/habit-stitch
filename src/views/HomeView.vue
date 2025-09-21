@@ -1,29 +1,33 @@
 <script lang="ts" setup>
-import { onMounted, onUnmounted, ref } from 'vue'
+import { computed, onMounted, onUnmounted, ref } from 'vue'
 import CreateHabitForm from '@client/components/CreateHabitForm.vue'
 import { type Log, type Habit } from '@shared/types'
 import HabitList from '@client/components/HabitList.vue'
 import { liveQuery, type Subscription } from 'dexie'
-import { getAuthObject } from '@client/lib/auth'
 import { db } from '@client/db'
 import { isDateToday } from '@client/lib/helpers'
 
-// TODO: Add a derived reference that maps habits to completed logs.
-const habits = ref<Habit[]>([])
-const logs = ref<Log[]>([])
-
-const error = ref('')
 const habitSub = ref<Subscription | null>(null)
 const logSub = ref<Subscription | null>(null)
+const error = ref('')
+
+const habits = ref<Habit[]>([])
+const logs = ref<Log[]>([])
+// Verify the completion status of each habit
+const dailyHabits = computed(() => {
+  // TODO: Improve log filtering and mapping
+  const dailyHabits = habits.value.map((habit) => {
+    const filteredLogs = logs.value.filter((log) => log.habit_id === habit.id)
+    if (filteredLogs.length > 0) return { ...habit, completed: true }
+    return { ...habit, completed: false }
+  })
+
+  return dailyHabits
+})
 
 // Init live query and subscribe
 // to data changes from DB
 onMounted(async () => {
-  // await fetchDexie()
-
-  const uid = getAuthObject()?.user.id
-  if (!uid) return
-
   console.log('Subscribing to query...')
   const habitQuery = liveQuery(() => db.habits.orderBy('name').toArray())
   const logQuery = liveQuery(() =>
@@ -69,7 +73,7 @@ onUnmounted(() => {
   <CreateHabitForm />
   <div v-if="error">{{ error }}</div>
   <section v-if="habits && !error">
-    <HabitList :habits="habits" />
+    <HabitList :habits="dailyHabits" />
     <br />
     <div v-for="log in logs" :key="log.id">
       <p>{{ log.id }} | {{ log.timestamp }}</p>
@@ -99,11 +103,3 @@ h1 > span {
   justify-content: center;
 }
 </style>
-
-// async function fetchData() { // // TODO: extract all API calls into an independent function //
-const res = await fetch('/api/habits', { // method: 'GET', // headers: { // Authorization: `Bearer
-${getAuthObject()?.accessToken}`, // }, // }) // if (res.status === 500) { // logOut() // return
-router.push({ name: 'Landing' }) // } // const json = await res.json() // // Validate API response
-// const safeJSON = HabitsResponseSchema.safeParse(json) // if (!safeJSON.success) { // return
-(error.value = safeJSON.error.flatten.toString()) // } // // Parse and use response data // if
-(safeJSON.data.success) { // habits.value = safeJSON.data.data // } // }
