@@ -3,12 +3,12 @@ import type { Habit, Log } from '@shared/types'
 
 const db = new Dexie('HabitStitchDB') as Dexie & {
   habits: EntityTable<Habit, 'id'>
-  log: EntityTable<Log, 'id'>
+  logs: EntityTable<Log, 'id'>
 }
 
 db.version(1).stores({
   habits: '&id, name',
-  log: '&id, created_on, user_id, habit_id',
+  logs: '&id, created_on, user_id, habit_id',
 })
 
 // Seed initial data
@@ -23,7 +23,7 @@ db.habits.add({
   user_id: 1,
 })
 
-db.log.add({
+db.logs.add({
   id: '4c8f95ba-e320-439f-bd4b-10c01f7cdcce',
   created_on: '2025-09-21',
   user_id: 1,

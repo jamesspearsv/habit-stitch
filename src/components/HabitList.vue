@@ -3,10 +3,48 @@ import { db } from '@client/dexie/db'
 import { getAuthObject } from '@client/lib/auth'
 import type { Habit, Log } from '@shared/types'
 import { parseDate } from '@client/lib/helpers'
+import { onMounted, ref, watch } from 'vue'
+import { selectLogs } from '@client/dexie/queries'
+import { liveQuery } from 'dexie'
 
-defineProps<{
-  habits: Habit[]
+const props = defineProps<{
+  current_day: Date
 }>()
+
+const habits = ref<Habit[]>([])
+const logs = ref<Log[]>([])
+
+// Open a live query for the local
+// habits table and update the state
+// accordingly when there are changes
+onMounted(async () => {
+  const observable = liveQuery(() => db.habits.orderBy('name').toArray())
+  observable.subscribe({
+    next(result) {
+      habits.value = result
+    },
+    error(error) {
+      habits.value = []
+      console.error(error)
+    },
+  })
+})
+
+// Get logs the current day immediately
+// and watch the property value for updates
+watch(
+  [() => props.current_day, habits],
+  async () => {
+    try {
+      const result = await selectLogs(parseDate(props.current_day))
+      logs.value = result
+    } catch (error) {
+      console.error(error)
+      logs.value = []
+    }
+  },
+  { immediate: true },
+)
 
 async function updateHabitCheckmark(e: Event) {
   const user_id = getAuthObject()?.user.id
@@ -20,14 +58,14 @@ async function updateHabitCheckmark(e: Event) {
     const log: Log = {
       id: crypto.randomUUID(),
       habit_id,
-      created_on: parseDate(new Date()),
+      created_on: parseDate(props.current_day),
       notes: '',
       user_id,
     }
 
-    db.log.add(log)
+    db.logs.add(log)
   } else {
-    const result = await db.log.where('habit_id').equals(habit_id).sortBy('timestamp')
+    const result = await db.logs.where('habit_id').equals(habit_id).sortBy('timestamp')
     console.log(result)
   }
 }
@@ -43,6 +81,7 @@ async function updateHabitCheckmark(e: Event) {
     />
     <p>{{ habit.name }}</p>
   </article>
+  <p v-for="log in logs" :key="log.id">{{ log.habit_id }} on {{ log.created_on }}</p>
 </template>
 
 <style scoped>

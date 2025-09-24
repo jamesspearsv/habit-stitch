@@ -1,14 +1,10 @@
 <script lang="ts" setup>
-import { onMounted, ref } from 'vue'
+import { ref } from 'vue'
 import CreateHabitForm from '@client/components/CreateHabitForm.vue'
 import ListDayChanger from '@client/components/ListDayChanger.vue'
-import { db } from '@client/dexie/db'
-import type { Habit } from '@shared/types'
-import { liveQuery } from 'dexie'
 import HabitList from '@client/components/HabitList.vue'
 
 const current_day = ref(new Date())
-const habits = ref<Habit[]>([])
 
 function changeDay(action: 'next' | 'previous') {
   let date = current_day.value.getDate()
@@ -16,19 +12,6 @@ function changeDay(action: 'next' | 'previous') {
   if (action === 'next') date += 1
   current_day.value = new Date(current_day.value.setDate(date))
 }
-
-onMounted(() => {
-  const observable = liveQuery(() => db.habits.orderBy('name').toArray())
-  observable.subscribe({
-    next(result) {
-      habits.value = result
-    },
-    error(error) {
-      habits.value = []
-      console.error(error)
-    },
-  })
-})
 </script>
 
 <template>
@@ -44,7 +27,7 @@ onMounted(() => {
     />
   </section>
   <section>
-    <HabitList :habits="habits" />
+    <HabitList :current_day="current_day" />
   </section>
 </template>
 
