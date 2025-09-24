@@ -14,6 +14,8 @@ const props = defineProps<{
 const habits = ref<Habit[]>([])
 const logs = ref<Log[]>([])
 
+// TODO: Map habits and logs together to derive completed habits
+
 // Open a live query for the local
 // habits table and update the state
 // accordingly when there are changes
