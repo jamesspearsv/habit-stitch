@@ -3,9 +3,9 @@ import { db } from '@client/dexie/db'
 import { getAuthObject } from '@client/lib/auth'
 import type { Habit, Log } from '@shared/types'
 import { parseDate } from '@client/lib/helpers'
-import { onMounted, ref, watch } from 'vue'
-import { selectLogs } from '@client/dexie/queries'
-import { liveQuery } from 'dexie'
+import { computed, onMounted, ref, watch } from 'vue'
+import { deleteLog, selectLogs } from '@client/dexie/queries'
+import { liveQuery, type Subscription } from 'dexie'
 
 const props = defineProps<{
   current_day: Date
@@ -14,41 +14,51 @@ const props = defineProps<{
 const habits = ref<Habit[]>([])
 const logs = ref<Log[]>([])
 
-// TODO: Map habits and logs together to derive completed habits
+const subscriptions = ref<{ habits: Subscription; logs: Subscription }>()
 
-// Open a live query for the local
-// habits table and update the state
-// accordingly when there are changes
-onMounted(async () => {
-  const observable = liveQuery(() => db.habits.orderBy('name').toArray())
-  observable.subscribe({
-    next(result) {
-      habits.value = result
-    },
-    error(error) {
-      habits.value = []
-      console.error(error)
-    },
-  })
-})
+// Map any logs for the current day to
+// their related habit using habit_id
+const logged_habits = computed(() =>
+  habits.value.map((habit) => {
+    console.log(habit)
+    const filteredLogs = logs.value.filter((l) => l.habit_id === habit.id)
+    console.log(filteredLogs)
+    return { ...habit, related_log: filteredLogs[0]?.id }
+  }),
+)
 
-// Get logs the current day immediately
-// and watch the property value for updates
+// Open subscriptions for habits and logs and then
+// watch the current_day property value for updates
+
+//! REMEMBER TO CLOSE THE SUBSCRIPTIONS AS SOME POINT
 watch(
-  [() => props.current_day, habits],
+  [() => props.current_day],
   async () => {
-    try {
-      const result = await selectLogs(parseDate(props.current_day))
-      logs.value = result
-    } catch (error) {
-      console.error(error)
-      logs.value = []
-    }
+    const habits_query = liveQuery(() => db.habits.orderBy('name').toArray())
+    const habit_subscription = habits_query.subscribe({
+      next(result) {
+        habits.value = result
+      },
+      error(error) {
+        habits.value = []
+        console.error(error)
+      },
+    })
+
+    const logs_query = liveQuery(() =>
+      db.logs.where('created_on').equals(parseDate(props.current_day)).toArray(),
+    )
+    const logs_subscription = logs_query.subscribe({
+      next: (result) => (logs.value = result),
+      error: () => (logs.value = []),
+    })
+
+    subscriptions.value = { habits: habit_subscription, logs: logs_subscription }
   },
   { immediate: true },
 )
 
-async function updateHabitCheckmark(e: Event) {
+async function updateHabitCheckmark(e: Event, log_id?: string) {
   const user_id = getAuthObject()?.user.id
   if (!user_id) return
 
@@ -65,21 +75,25 @@ async function updateHabitCheckmark(e: Event) {
       user_id,
     }
 
-    db.logs.add(log)
+    await db.logs.add(log)
   } else {
-    const result = await db.logs.where('habit_id').equals(habit_id).sortBy('timestamp')
-    console.log(result)
+    if (log_id) {
+      await deleteLog(log_id)
+    }
   }
+
+  await selectLogs(parseDate(props.current_day))
 }
 </script>
 
 <template>
-  <article v-for="habit in habits" :key="habit.id">
+  <article v-for="habit in logged_habits" :key="habit.id">
     <input
       class="checkbox"
       type="checkbox"
       :id="habit.id"
-      @change="async (e) => await updateHabitCheckmark(e)"
+      :checked="habit.related_log ? true : false"
+      @change="async (e) => await updateHabitCheckmark(e, habit.related_log)"
     />
     <p>{{ habit.name }}</p>
   </article>
