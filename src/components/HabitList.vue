@@ -75,6 +75,7 @@ async function updateHabitCheckmark(e: Event, log_id?: string) {
       created_on: parseDate(props.current_day),
       notes: '',
       user_id,
+      sync_status: false,
     }
 
     await db.logs.add(log)
