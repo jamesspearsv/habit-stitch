@@ -3,7 +3,7 @@ import { db } from '@client/dexie/db'
 import { getAuthObject } from '@client/lib/auth'
 import type { Habit, Log } from '@shared/types'
 import { parseDate } from '@client/lib/helpers'
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { deleteLog, selectLogs } from '@client/dexie/queries'
 import { liveQuery, type Subscription } from 'dexie'
 
@@ -20,20 +20,22 @@ const subscriptions = ref<{ habits: Subscription; logs: Subscription }>()
 // their related habit using habit_id
 const logged_habits = computed(() =>
   habits.value.map((habit) => {
-    console.log(habit)
     const filteredLogs = logs.value.filter((l) => l.habit_id === habit.id)
-    console.log(filteredLogs)
     return { ...habit, related_log: filteredLogs[0]?.id }
   }),
 )
 
 // Open subscriptions for habits and logs and then
 // watch the current_day property value for updates
-
-//! REMEMBER TO CLOSE THE SUBSCRIPTIONS AS SOME POINT
 watch(
   [() => props.current_day],
   async () => {
+    // Unsubscribe from any existing subscriptions
+    if (subscriptions.value) {
+      subscriptions.value.habits.unsubscribe()
+      subscriptions.value.logs.unsubscribe()
+    }
+
     const habits_query = liveQuery(() => db.habits.orderBy('name').toArray())
     const habit_subscription = habits_query.subscribe({
       next(result) {
@@ -97,7 +99,6 @@ async function updateHabitCheckmark(e: Event, log_id?: string) {
     />
     <p>{{ habit.name }}</p>
   </article>
-  <p v-for="log in logs" :key="log.id">{{ log.habit_id }} on {{ log.created_on }}</p>
 </template>
 
 <style scoped>

@@ -19,14 +19,14 @@ function changeDay(action: 'next' | 'previous') {
     <h1>Habit<span>Stitch</span></h1>
     <CreateHabitForm />
   </section>
-  <section>
-    <p>{{ current_day.toLocaleDateString() }}</p>
+  <section class="date_display">
+    <h2>{{ current_day.toDateString() }}</h2>
     <ListDayChanger
       @go-to-previous-day="changeDay('previous')"
       @go-to-next-day="changeDay('next')"
     />
   </section>
-  <section>
+  <section class="habit_list">
     <HabitList :current_day="current_day" />
   </section>
 </template>
@@ -36,6 +36,15 @@ function changeDay(action: 'next' | 'previous') {
   display: flex;
   gap: 1rem;
   align-items: center;
+  justify-content: space-between;
+}
+
+.date_display {
+  margin-block: 1rem;
+}
+
+.habit_list {
+  margin: 2rem;
 }
 
 h1 {

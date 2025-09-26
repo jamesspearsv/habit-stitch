@@ -1,9 +1,15 @@
 <script setup lang="ts">
+import FeatherIcon from './FeatherIcon.vue'
+
 defineEmits(['goToPreviousDay', 'goToNextDay'])
 </script>
 <template>
-  <button id="previous_day_button" @click="$emit('goToPreviousDay')"></button>
-  <button id="next_day_button" @click="$emit('goToNextDay')"></button>
+  <button id="previous_day_button" @click="$emit('goToPreviousDay')">
+    <FeatherIcon icon="chevron-left" />
+  </button>
+  <button id="next_day_button" @click="$emit('goToNextDay')">
+    <FeatherIcon icon="chevron-right" />
+  </button>
 </template>
 <style lang="css" scoped>
 button {
