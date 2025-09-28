@@ -1,34 +1,93 @@
 <script setup lang="ts">
+import { db } from '@client/dexie/db'
 import { getAuthObject } from '@client/lib/auth'
-import type { Habit } from '@shared/types'
+import type { Habit, Log } from '@shared/types'
+import { parseDate } from '@client/lib/helpers'
+import { computed, ref, watch } from 'vue'
+import { deleteLog, insertLog, selectLogs } from '@client/dexie/queries'
+import { liveQuery, type Subscription } from 'dexie'
 
-defineProps<{
-  habits: Habit[]
+const props = defineProps<{
+  current_day: Date
 }>()
 
-async function updateCompletionStatus(id: number, event: Event) {
-  const checkbox = event.currentTarget as HTMLInputElement
-  if (checkbox.checked) {
-    const res = await fetch(`/api/habits/${id}/log`, {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${getAuthObject()?.accessToken}`,
+const habits = ref<Habit[]>([])
+const logs = ref<Log[]>([])
+
+const subscriptions = ref<{ habits: Subscription; logs: Subscription }>()
+
+// Map any logs for the current day to
+// their related habit using habit_id
+const logged_habits = computed(() =>
+  habits.value.map((habit) => {
+    const filteredLogs = logs.value.filter((l) => l.habit_id === habit.id)
+    return { ...habit, related_log: filteredLogs[0]?.id }
+  }),
+)
+
+// Open subscriptions for habits and logs and then
+// watch the current_day property value for updates
+watch(
+  [() => props.current_day],
+  async () => {
+    // Unsubscribe from any existing subscriptions
+    if (subscriptions.value) {
+      subscriptions.value.habits.unsubscribe()
+      subscriptions.value.logs.unsubscribe()
+    }
+
+    const habits_query = liveQuery(() => db.habits.orderBy('name').toArray())
+    const habit_subscription = habits_query.subscribe({
+      next(result) {
+        habits.value = result
+      },
+      error(error) {
+        habits.value = []
+        console.error(error)
       },
     })
 
-    const json = await res.json()
-    console.log(json)
+    const logs_query = liveQuery(() =>
+      db.logs.where('created_on').equals(parseDate(props.current_day)).toArray(),
+    )
+    const logs_subscription = logs_query.subscribe({
+      next: (result) => (logs.value = result),
+      error: () => (logs.value = []),
+    })
+
+    subscriptions.value = { habits: habit_subscription, logs: logs_subscription }
+  },
+  { immediate: true },
+)
+
+async function updateHabitCheckmark(e: Event, log_id?: string) {
+  const user_id = getAuthObject()?.user.id
+  if (!user_id) return
+
+  const checkbox = e.currentTarget as HTMLInputElement
+  const habit_id = checkbox.id
+
+  if (checkbox.checked) {
+    // add new log to local indexDB
+    await insertLog(user_id, habit_id, parseDate(props.current_day))
+  } else {
+    if (log_id) {
+      await deleteLog(log_id)
+    }
   }
+
+  await selectLogs(parseDate(props.current_day))
 }
 </script>
 
 <template>
-  <article v-for="habit in habits" :key="habit.id">
+  <article v-for="habit in logged_habits" :key="habit.id">
     <input
       class="checkbox"
       type="checkbox"
-      :id="`habit-${habit.id}`"
-      @change="(e) => updateCompletionStatus(habit.id, e)"
+      :id="habit.id"
+      :checked="habit.related_log ? true : false"
+      @change="async (e) => await updateHabitCheckmark(e, habit.related_log)"
     />
     <p>{{ habit.name }}</p>
   </article>

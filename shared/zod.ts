@@ -10,23 +10,24 @@ export const NewUser = z.object({
 
 // Database table schemas
 export const HabitSchema = z.object({
-  id: z.number(),
+  id: z.uuid(),
   name: z.string(),
   description: z.nullable(z.string()),
   color: z.string(),
   interval_days: z.number(),
   is_active: z.boolean(),
-  created_at: z.string(),
+  created_on: z.string(), // ISO formatted calendar date
   user_id: z.number(),
+  sync_status: z.boolean(),
 })
 
 export const LogSchema = z.object({
-  id: z.number(),
-  timestamp: z.string(),
+  id: z.uuid(),
   notes: z.string(),
-  habit_id: z.number(),
+  habit_id: z.uuid(),
   user_id: z.number(),
-  created_at: z.string(),
+  created_on: z.string(), // ISO formatted calendar date
+  sync_status: z.boolean(),
 })
 
 // Auth, JWT user data

@@ -10,7 +10,7 @@ import {
   getDateRange,
   stringToSeed,
   stringToProperCase,
-} from '@client/lib/helpers'
+} from '@client/_deprecated/_helpers'
 import type { SummaryMap } from '@client/lib/types'
 import { computed, ref, useTemplateRef, watch } from 'vue'
 
