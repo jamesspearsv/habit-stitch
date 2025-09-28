@@ -1,10 +1,30 @@
 import { db } from '@client/dexie/db'
+import type { SyncQueue } from '@shared/types'
 
-export async function checkSyncStatus(): Promise<'fresh' | 'stale' | 'undefined'> {
-  const now = Date.now()
-  const result = await db.sync.orderBy('timestamp').last()
+// TODO: Add syncing push and pull functions
 
-  if (!result) return 'undefined'
-  if (now - result.timestamp > 60000) return 'stale'
-  return 'fresh'
+export async function insertIntoSyncQueue(
+  sync: Pick<SyncQueue, 'action' | 'table' | 'payload_id' | 'payload'>,
+) {
+  // Search sync queue for existing changes to the given row
+  const row = await db.sync.where('payload_id').equals(sync.payload_id).first()
+
+  if (row) {
+    await db.sync.update(row.id, {
+      action: sync.action,
+      timestamp: Date.now(),
+      payload_id: sync.payload_id,
+      payload: sync.payload,
+    })
+  } else {
+    await db.sync.add({
+      id: crypto.randomUUID(),
+      timestamp: Date.now(),
+      status: false,
+      action: sync.action,
+      table: sync.table,
+      payload_id: sync.payload_id,
+      payload: sync.payload,
+    })
+  }
 }

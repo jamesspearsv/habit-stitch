@@ -2,9 +2,8 @@
 import { ref, watch } from 'vue'
 import FeatherIcon from './FeatherIcon.vue'
 import type { Habit } from '@shared/types'
-import { db } from '@client/dexie/db'
 import { getAuthObject } from '@client/lib/auth'
-import { getCurrentDate } from '@client/_deprecated/_helpers'
+import { insertHabit } from '@client/dexie/queries'
 
 const initialState: Pick<Habit, 'name' | 'description' | 'interval_days'> = {
   name: '',
@@ -39,15 +38,7 @@ async function addHabit() {
   const user = getAuthObject()
   if (!user) return
 
-  await db.habits.add({
-    ...formData.value,
-    color: '#123456',
-    is_active: true,
-    created_on: getCurrentDate(),
-    user_id: user.user.id,
-    id: crypto.randomUUID(),
-    sync_status: false,
-  })
+  await insertHabit(user.user.id, formData.value)
 
   closeDialog()
 }

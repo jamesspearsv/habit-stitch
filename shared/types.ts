@@ -10,6 +10,16 @@ import {
   LogResponseSchema,
 } from './zod'
 
+export type SyncQueue = {
+  id: string
+  timestamp: number
+  status: boolean
+  action: 'create' | 'delete' | 'update'
+  table: 'habits' | 'logs'
+  payload_id: string
+  payload: Habit | Log | string
+}
+
 //* Database Types
 export type User = z.infer<typeof UserSchema>
 export type Habit = z.infer<typeof HabitSchema>

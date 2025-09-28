@@ -4,7 +4,7 @@ import { getAuthObject } from '@client/lib/auth'
 import type { Habit, Log } from '@shared/types'
 import { parseDate } from '@client/lib/helpers'
 import { computed, ref, watch } from 'vue'
-import { deleteLog, selectLogs } from '@client/dexie/queries'
+import { deleteLog, insertLog, selectLogs } from '@client/dexie/queries'
 import { liveQuery, type Subscription } from 'dexie'
 
 const props = defineProps<{
@@ -69,16 +69,7 @@ async function updateHabitCheckmark(e: Event, log_id?: string) {
 
   if (checkbox.checked) {
     // add new log to local indexDB
-    const log: Log = {
-      id: crypto.randomUUID(),
-      habit_id,
-      created_on: parseDate(props.current_day),
-      notes: '',
-      user_id,
-      sync_status: false,
-    }
-
-    await db.logs.add(log)
+    await insertLog(user_id, habit_id, parseDate(props.current_day))
   } else {
     if (log_id) {
       await deleteLog(log_id)
