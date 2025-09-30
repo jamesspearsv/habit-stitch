@@ -1,10 +1,11 @@
 import { drizzle } from 'drizzle-orm/d1'
 import { habits, logs, users } from './schema'
 import { and, DrizzleQueryError, eq } from 'drizzle-orm'
-import { Result } from '@shared/types'
+import { Result, SyncOperation } from '@shared/types'
 import { reset, seed } from 'drizzle-seed'
 import bcryptjs from 'bcryptjs'
 import { generateHexCode } from '../src/lib/helpers'
+import { SQLiteTableWithColumns } from 'drizzle-orm/sqlite-core'
 
 export async function resetAndSeedDB(binding: D1Database) {
   const db = drizzle(binding)
@@ -124,4 +125,9 @@ export async function selectHabits(
 
     throw error
   }
+}
+
+export async function composeSyncQuery(operation: SyncOperation, binding: D1Database) {
+  // TODO: Figure out how to build a dynamic and scalable query to process sync operations.
+  // This might be better as multiple function, queries
 }

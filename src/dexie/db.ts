@@ -1,10 +1,10 @@
 import Dexie, { type EntityTable } from 'dexie'
-import type { Habit, Log, SyncQueue } from '@shared/types'
+import type { Habit, Log, SyncOperation } from '@shared/types'
 
 const db = new Dexie('HabitStitchDB') as Dexie & {
   habits: EntityTable<Habit, 'id'>
   logs: EntityTable<Log, 'id'>
-  sync: EntityTable<SyncQueue, 'id'>
+  sync: EntityTable<SyncOperation, 'id'>
 }
 
 db.version(1).stores({
@@ -23,7 +23,6 @@ db.habits.add({
   is_active: true,
   created_on: '2025-09-20',
   user_id: 1,
-  sync_status: false,
 })
 
 // db.logs.add({

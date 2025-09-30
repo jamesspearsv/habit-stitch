@@ -1,10 +1,10 @@
 import { db } from '@client/dexie/db'
-import type { SyncQueue } from '@shared/types'
+import type { SyncOperation } from '@shared/types'
 
 // TODO: Add syncing push and pull functions
 
 export async function insertIntoSyncQueue(
-  sync: Pick<SyncQueue, 'action' | 'table' | 'payload_id' | 'payload'>,
+  sync: Pick<SyncOperation, 'action' | 'table' | 'payload_id' | 'payload'>,
 ) {
   // Search sync queue for existing changes to the given row
   const row = await db.sync.where('payload_id').equals(sync.payload_id).first()

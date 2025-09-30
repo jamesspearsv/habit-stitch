@@ -8,17 +8,13 @@ import {
   LogSchema,
   HabitsResponseSchema,
   LogResponseSchema,
+  SyncOperationSchema,
+  SyncQueueSchema,
 } from './zod'
 
-export type SyncQueue = {
-  id: string
-  timestamp: number
-  status: boolean
-  action: 'create' | 'delete' | 'update'
-  table: 'habits' | 'logs'
-  payload_id: string
-  payload: Habit | Log | string
-}
+// Sync Layer Schemas
+export type SyncOperation = z.infer<typeof SyncOperationSchema>
+export type SyncQueue = z.infer<typeof SyncQueueSchema>
 
 //* Database Types
 export type User = z.infer<typeof UserSchema>

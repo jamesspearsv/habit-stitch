@@ -18,7 +18,6 @@ export async function insertLog(user_id: User['id'], habit_id: Habit['id'], day:
     created_on: day,
     notes: '',
     user_id,
-    sync_status: false,
   }
 
   await db.logs.add(log)

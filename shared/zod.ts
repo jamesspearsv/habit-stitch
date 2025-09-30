@@ -18,7 +18,6 @@ export const HabitSchema = z.object({
   is_active: z.boolean(),
   created_on: z.string(), // ISO formatted calendar date
   user_id: z.number(),
-  sync_status: z.boolean(),
 })
 
 export const LogSchema = z.object({
@@ -27,7 +26,6 @@ export const LogSchema = z.object({
   habit_id: z.uuid(),
   user_id: z.number(),
   created_on: z.string(), // ISO formatted calendar date
-  sync_status: z.boolean(),
 })
 
 // Auth, JWT user data
@@ -52,6 +50,18 @@ export const JWTPayloadSchema = z.object({
   user: UserSchema,
 })
 
+export const SyncOperationSchema = z.object({
+  id: z.uuid(),
+  timestamp: z.number(),
+  status: z.boolean(),
+  action: z.union([z.literal('create'), z.literal('delete'), z.literal('update')]),
+  table: z.union([z.literal('habits'), z.literal('logs')]),
+  payload_id: z.string(),
+  payload: z.union([HabitSchema, LogSchema, z.uuid()]),
+})
+
+export const SyncQueueSchema = z.array(SyncOperationSchema)
+
 //* Response Schemas
 export const AuthResponseSchema = z.discriminatedUnion('success', [
   z.object({ success: z.literal(true), message: z.string(), authObject: AuthObjectSchema }),
@@ -65,5 +75,6 @@ function ResponseSchema<DataSchema extends z.ZodType>(dataSchema: DataSchema) {
   ])
 }
 
+//* Worker Responses */
 export const HabitsResponseSchema = ResponseSchema(z.array(HabitSchema))
 export const LogResponseSchema = ResponseSchema(z.string())
