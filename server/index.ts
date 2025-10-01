@@ -1,4 +1,3 @@
-import { api } from './routers/apiRoutes'
 import { resetAndSeedDB } from './drizzleQueries'
 import { newHono } from './utils'
 import { auth } from './routers/authRoutes'
@@ -17,7 +16,6 @@ app.onError((error, c) => {
 })
 
 app.route('/auth', auth)
-app.route('/api', api)
 app.route('/sync', sync)
 
 app.get('/seed', async (c) => {
