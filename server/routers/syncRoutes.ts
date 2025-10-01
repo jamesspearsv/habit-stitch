@@ -2,9 +2,9 @@ import { jwt } from 'hono/jwt'
 import { newHono } from '../utils'
 import { SyncQueueSchema } from '@shared/zod'
 import { SyncQueue } from '@shared/types'
-import { composeSyncQuery } from '../queries'
+import { handleSyncOperation } from '../drizzleQueries'
 
-const sync = newHono()
+export const sync = newHono()
 
 sync.use(async (c, next) => {
   const jwtMiddleware = jwt({
@@ -27,7 +27,12 @@ sync.post('/push', async (c) => {
 
   for await (const op of safeBody.data) {
     // parse single operation and compose drizzle logic
-    const result = await composeSyncQuery(op, c.env.DB)
+    try {
+      await handleSyncOperation(op, c.env.DB)
+    } catch (error) {
+      failedOperations.push(op)
+      console.error(error)
+    }
   }
 
   return c.json({ message: 'Push: Work in progress' })

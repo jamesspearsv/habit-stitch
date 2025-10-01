@@ -3,6 +3,8 @@ import { ref } from 'vue'
 import CreateHabitForm from '@client/components/CreateHabitForm.vue'
 import ListDayChanger from '@client/components/ListDayChanger.vue'
 import HabitList from '@client/components/HabitList.vue'
+import { selectSyncQueue } from '@client/dexie/dexieQueries'
+import { getAuthObject } from '@client/lib/auth'
 
 const current_day = ref(new Date())
 
@@ -12,12 +14,39 @@ function changeDay(action: 'next' | 'previous') {
   if (action === 'next') date += 1
   current_day.value = new Date(current_day.value.setDate(date))
 }
+
+async function syncLocalData() {
+  /* 
+  1. query entire sync queue
+  2. Send POST request to /sync/push
+  3. await response from sync server
+  */
+
+  const user = getAuthObject()
+  if (!user) {
+    console.error('no user')
+    return
+  }
+
+  const queue = await selectSyncQueue()
+
+  const res = await fetch('/sync/push', {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${user.accessToken}`,
+    },
+    body: JSON.stringify(queue),
+  })
+
+  console.log(res)
+}
 </script>
 
 <template>
   <section class="home_heading">
     <h1>Habit<span>Stitch</span></h1>
     <CreateHabitForm />
+    <button @click="syncLocalData">Sync</button>
   </section>
   <section class="date_display">
     <h2>{{ current_day.toDateString() }}</h2>

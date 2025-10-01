@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { db } from '@client/dexie/db'
+import { db } from '@client/dexie/dexieSchema'
 import { getAuthObject } from '@client/lib/auth'
 import type { Habit, Log } from '@shared/types'
 import { parseDate } from '@client/lib/helpers'
 import { computed, ref, watch } from 'vue'
-import { deleteLog, insertLog, selectLogs } from '@client/dexie/queries'
+import { deleteLog, insertLog, selectLogs } from '@client/dexie/dexieQueries'
 import { liveQuery, type Subscription } from 'dexie'
 
 const props = defineProps<{

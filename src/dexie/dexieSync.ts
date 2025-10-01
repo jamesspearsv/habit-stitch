@@ -1,4 +1,4 @@
-import { db } from '@client/dexie/db'
+import { db } from '@client/dexie/dexieSchema'
 import type { SyncOperation } from '@shared/types'
 
 // TODO: Add syncing push and pull functions

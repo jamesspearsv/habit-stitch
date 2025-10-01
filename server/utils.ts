@@ -1,6 +1,6 @@
 import { Context, Hono } from 'hono'
 import { sign, type JwtVariables } from 'hono/jwt'
-import { users } from './schema'
+import { users } from './drizzleSchema'
 import { Result, type JWTPayload } from '@shared/types'
 import { JWTPayloadSchema } from '@shared/zod'
 

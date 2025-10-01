@@ -1,11 +1,16 @@
 import type { Habit, Log, User } from '@shared/types'
-import { db } from './db'
+import { db } from './dexieSchema'
 import { parseDate } from '@client/lib/helpers'
-import { insertIntoSyncQueue } from './sync'
+import { insertIntoSyncQueue } from './dexieSync'
 
 //* SELECT OPERATIONS
 export async function selectLogs(date: string) {
   const result = await db.logs.where('created_on').equals(date).toArray()
+  return result
+}
+
+export async function selectSyncQueue() {
+  const result = await db.sync.orderBy('timestamp').toArray()
   return result
 }
 

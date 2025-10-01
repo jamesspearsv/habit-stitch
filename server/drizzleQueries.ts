@@ -1,11 +1,10 @@
 import { drizzle } from 'drizzle-orm/d1'
-import { habits, logs, users } from './schema'
+import { habits, logs, users } from './drizzleSchema'
 import { and, DrizzleQueryError, eq } from 'drizzle-orm'
 import { Result, SyncOperation } from '@shared/types'
 import { reset, seed } from 'drizzle-seed'
 import bcryptjs from 'bcryptjs'
-import { generateHexCode } from '../src/lib/helpers'
-import { SQLiteTableWithColumns } from 'drizzle-orm/sqlite-core'
+import { HabitSchema, LogSchema } from '@shared/zod'
 
 export async function resetAndSeedDB(binding: D1Database) {
   const db = drizzle(binding)
@@ -35,7 +34,7 @@ export async function resetAndSeedDB(binding: D1Database) {
         description: f.loremIpsum(),
         name: f.jobTitle(),
         color: f.default({
-          defaultValue: generateHexCode(),
+          defaultValue: '#123456',
         }),
       },
     },
@@ -127,7 +126,31 @@ export async function selectHabits(
   }
 }
 
-export async function composeSyncQuery(operation: SyncOperation, binding: D1Database) {
-  // TODO: Figure out how to build a dynamic and scalable query to process sync operations.
-  // This might be better as multiple function, queries
+export async function handleSyncOperation(operation: SyncOperation, binding: D1Database) {
+  /* 
+  1. Parse which table is being modified
+  2. See what type of operation is being done
+  3. Validate the operation payload
+  4. Apply the operations
+  */
+
+  const db = drizzle(binding)
+  const { action, table, payload } = operation
+  const dbTable = operation.table === 'habits' ? habits : logs
+
+  if (action === 'create' || action === 'update') {
+    const safePayload =
+      table === 'habits' ? await HabitSchema.safeParse(payload) : await LogSchema.safeParse(payload)
+
+    if (!safePayload.success) return
+
+    await db
+      .insert(dbTable)
+      .values(safePayload.data)
+      .onConflictDoUpdate({ target: dbTable.id, set: safePayload.data })
+  }
+
+  // TODO: handle upserts
+
+  // TODO: handle deletions
 }

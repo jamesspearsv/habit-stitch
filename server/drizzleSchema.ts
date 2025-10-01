@@ -26,7 +26,7 @@ export const habits = sqliteTable('habits', {
   color: text().notNull(), // color hex code string (#rrggbb)
   interval_days: integer().notNull(), // completion interval in number of days
   is_active: integer({ mode: 'boolean' }).notNull().default(false),
-  created_at: text()
+  created_on: text()
     .notNull()
     .default(sql`CURRENT_TIMESTAMP`), // ISO datetime in UTC
   user_id: integer()
@@ -46,5 +46,5 @@ export const logs = sqliteTable('logs', {
   user_id: integer()
     .notNull()
     .references(() => users.id), // related user id
-  created_at: text().default(sql`CURRENT_TIMESTAMP`), // entry creation timestamp
+  created_on: text().default(sql`CURRENT_TIMESTAMP`), // entry creation timestamp
 })

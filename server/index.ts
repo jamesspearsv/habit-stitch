@@ -1,7 +1,8 @@
 import { api } from './routers/apiRoutes'
-import { resetAndSeedDB } from './queries'
+import { resetAndSeedDB } from './drizzleQueries'
 import { newHono } from './utils'
 import { auth } from './routers/authRoutes'
+import { sync } from './routers/syncRoutes'
 
 // Cloudflare D1 and Hono guides
 // https://developers.cloudflare.com/d1/worker-api/d1-database/
@@ -17,6 +18,7 @@ app.onError((error, c) => {
 
 app.route('/auth', auth)
 app.route('/api', api)
+app.route('/sync', sync)
 
 app.get('/seed', async (c) => {
   if (import.meta.env.DEV) {

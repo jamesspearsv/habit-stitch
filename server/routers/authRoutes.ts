@@ -1,4 +1,4 @@
-import { insertUser, selectUser } from '../queries'
+import { insertUser, selectUser } from '../drizzleQueries'
 import bcryptjs from 'bcryptjs'
 import { NewUser } from '../../shared/zod'
 import { AuthResponse } from '../../shared/types'

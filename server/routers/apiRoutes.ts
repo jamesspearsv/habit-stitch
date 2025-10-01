@@ -1,4 +1,4 @@
-import { insertLog, selectHabits } from '../queries'
+import { insertLog, selectHabits } from '../drizzleQueries'
 import { newHono, parseJWT } from '../utils'
 import { jwt } from 'hono/jwt'
 import { HabitsResponse, LogResponse } from '../../shared/types'

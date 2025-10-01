@@ -3,7 +3,7 @@ import { ref, watch } from 'vue'
 import FeatherIcon from './FeatherIcon.vue'
 import type { Habit } from '@shared/types'
 import { getAuthObject } from '@client/lib/auth'
-import { insertHabit } from '@client/dexie/queries'
+import { insertHabit } from '@client/dexie/dexieQueries'
 
 const initialState: Pick<Habit, 'name' | 'description' | 'interval_days'> = {
   name: '',
