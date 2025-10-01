@@ -135,14 +135,15 @@ export async function handleSyncOperation(operation: SyncOperation, binding: D1D
   */
 
   const db = drizzle(binding)
-  const { action, table, payload } = operation
+  const { action, table, payload, payload_id } = operation
   const dbTable = operation.table === 'habits' ? habits : logs
 
   if (action === 'create' || action === 'update') {
+    // TODO: handle validation failure
     const safePayload =
       table === 'habits' ? await HabitSchema.safeParse(payload) : await LogSchema.safeParse(payload)
 
-    if (!safePayload.success) return
+    if (!safePayload.success) return false
 
     await db
       .insert(dbTable)
@@ -150,7 +151,8 @@ export async function handleSyncOperation(operation: SyncOperation, binding: D1D
       .onConflictDoUpdate({ target: dbTable.id, set: safePayload.data })
   }
 
-  // TODO: handle upserts
-
   // TODO: handle deletions
+  if (action === 'delete') {
+    await db.delete(dbTable).where(eq(dbTable.id, payload_id))
+  }
 }

@@ -38,7 +38,9 @@ async function syncLocalData() {
     body: JSON.stringify(queue),
   })
 
-  console.log(res)
+  console.log(await res.json())
+
+  // TODO: Remove successful operations from the sync queue
 }
 </script>
 

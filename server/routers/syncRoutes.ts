@@ -1,7 +1,7 @@
 import { jwt } from 'hono/jwt'
 import { newHono } from '../utils'
 import { SyncQueueSchema } from '@shared/zod'
-import { SyncQueue } from '@shared/types'
+import { SyncOperation } from '@shared/types'
 import { handleSyncOperation } from '../drizzleQueries'
 
 export const sync = newHono()
@@ -23,17 +23,20 @@ sync.post('/push', async (c) => {
   }
 
   // Loop through sync queue, attempt to apply each operation
-  const failedOperations: SyncQueue = []
+  const successfulOperations: SyncOperation['id'][] = []
 
   for await (const op of safeBody.data) {
-    // parse single operation and compose drizzle logic
     try {
       await handleSyncOperation(op, c.env.DB)
+      successfulOperations.push(op.id)
     } catch (error) {
-      failedOperations.push(op)
       console.error(error)
     }
   }
 
-  return c.json({ message: 'Push: Work in progress' })
+  return c.json({
+    success: true,
+    message: 'Finished processing queue. Failed operation returned',
+    successfulOperations,
+  })
 })
