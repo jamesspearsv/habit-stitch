@@ -1,5 +1,5 @@
 import { drizzle } from 'drizzle-orm/d1'
-import { habits, users } from '../drizzleSchema'
+import { habits, users, logs } from '../drizzleSchema'
 import { DrizzleQueryError, eq } from 'drizzle-orm'
 import { Result } from '@shared/types'
 import { reset, seed } from 'drizzle-seed'
@@ -8,7 +8,7 @@ import bcryptjs from 'bcryptjs'
 export async function resetAndSeedDB(binding: D1Database) {
   const db = drizzle(binding)
   console.log('resetting database tables...')
-  await reset(db, { habits, users })
+  await reset(db, { users })
 
   console.log('seeding users table...')
   await seed(db, { users }).refine((f) => ({
@@ -22,22 +22,22 @@ export async function resetAndSeedDB(binding: D1Database) {
     },
   }))
 
-  console.log('seeding habits table...')
-  await seed(db, { habits }).refine((f) => ({
-    habits: {
-      count: 10,
-      columns: {
-        user_id: f.valuesFromArray({ values: [1] }),
-        created_at: f.datetime(),
-        interval_days: f.valuesFromArray({ values: [1, 2, 7, 30] }),
-        description: f.loremIpsum(),
-        name: f.jobTitle(),
-        color: f.default({
-          defaultValue: '#123456',
-        }),
-      },
-    },
-  }))
+  // console.log('seeding habits table...')
+  // await seed(db, { habits }).refine((f) => ({
+  //   habits: {
+  //     count: 10,
+  //     columns: {
+  //       user_id: f.valuesFromArray({ values: [1] }),
+  //       created_at: f.datetime(),
+  //       interval_days: f.valuesFromArray({ values: [1, 2, 7, 30] }),
+  //       description: f.loremIpsum(),
+  //       name: f.jobTitle(),
+  //       color: f.default({
+  //         defaultValue: '#123456',
+  //       }),
+  //     },
+  //   },
+  // }))
 }
 
 export async function insertUser(
