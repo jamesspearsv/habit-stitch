@@ -46,3 +46,5 @@ sync.post('/push', async (c) => {
     failed_operations,
   } as SyncPushResponse)
 })
+
+// TODO: Add /sync/pull route

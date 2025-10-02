@@ -8,6 +8,8 @@ import { getAuthObject } from '@client/lib/auth'
 import { SyncPushResponseSchema } from '@shared/zod'
 
 const current_day = ref(new Date())
+
+// TODO: Improve sync status UI and feedback
 const sync_status = ref<'synced' | 'in progress' | 'unsynced'>('synced')
 
 function changeDay(action: 'next' | 'previous') {

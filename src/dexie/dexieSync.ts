@@ -1,7 +1,7 @@
 import { db } from '@client/dexie/dexieSchema'
 import type { SyncOperation } from '@shared/types'
 
-// TODO: Add syncing push and pull functions
+// TODO: Add syncing pull functions
 
 export async function insertIntoSyncQueue(
   sync: Pick<SyncOperation, 'action' | 'table' | 'payload_id' | 'payload'>,
