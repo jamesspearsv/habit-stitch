@@ -36,7 +36,7 @@ export const UserSchema = z.object({
   created_at: z.string(),
 })
 
-// authentication schemas
+//* Authentication schemas
 // Client side auth data
 export const AuthObjectSchema = z.object({
   accessToken: z.string(),
@@ -50,6 +50,7 @@ export const JWTPayloadSchema = z.object({
   user: UserSchema,
 })
 
+//* Sync layer schemes
 export const SyncOperationSchema = z.object({
   id: z.uuid(),
   timestamp: z.number(),
@@ -68,13 +69,19 @@ export const AuthResponseSchema = z.discriminatedUnion('success', [
   z.object({ success: z.literal(false), message: z.string() }),
 ])
 
-function ResponseSchema<DataSchema extends z.ZodType>(dataSchema: DataSchema) {
-  return z.discriminatedUnion('success', [
-    z.object({ success: z.literal(true), data: dataSchema }),
-    z.object({ success: z.literal(false), message: z.string() }),
-  ])
-}
+export const SyncPushResponseSchema = z.discriminatedUnion('success', [
+  z.object({
+    success: z.literal(true),
+    message: z.string(),
+    successful_operations: z.array(z.uuid()),
+    failed_operations: z.array(z.uuid()),
+  }),
+  z.object({ success: z.literal(false), message: z.string() }),
+])
 
-//* Worker Responses */
-export const HabitsResponseSchema = ResponseSchema(z.array(HabitSchema))
-export const LogResponseSchema = ResponseSchema(z.string())
+// function ResponseSchema<DataSchema extends z.ZodType>(dataSchema: DataSchema) {
+//   return z.discriminatedUnion('success', [
+//     z.object({ success: z.literal(true), data: dataSchema }),
+//     z.object({ success: z.literal(false), message: z.string() }),
+//   ])
+// }

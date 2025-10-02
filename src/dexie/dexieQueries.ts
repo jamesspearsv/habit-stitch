@@ -70,3 +70,9 @@ export async function deleteLog(id: Log['id']) {
     payload: id,
   })
 }
+
+export async function clearSyncQueue(successful_operations: string[]) {
+  for (const op of successful_operations) {
+    await db.sync.delete(op)
+  }
+}

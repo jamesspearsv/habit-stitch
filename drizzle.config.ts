@@ -32,7 +32,7 @@ function findLocalD1DB() {
 
 export default defineConfig({
   dialect: 'sqlite',
-  schema: './server/schema.ts',
+  schema: './server/drizzleSchema.ts',
   dbCredentials: {
     url: findLocalD1DB()!,
   },

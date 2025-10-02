@@ -6,13 +6,12 @@ import {
   type HabitSchema,
   UserSchema,
   LogSchema,
-  HabitsResponseSchema,
-  LogResponseSchema,
   SyncOperationSchema,
   SyncQueueSchema,
+  SyncPushResponseSchema,
 } from './zod'
 
-// Sync Layer Schemas
+//* Sync Layer Types
 export type SyncOperation = z.infer<typeof SyncOperationSchema>
 export type SyncQueue = z.infer<typeof SyncQueueSchema>
 
@@ -24,9 +23,9 @@ export type AuthObject = z.infer<typeof AuthObjectSchema>
 
 //* Data Exchange Types
 export type AuthResponse = z.infer<typeof AuthResponseSchema>
-export type HabitsResponse = z.infer<typeof HabitsResponseSchema>
-export type LogResponse = z.infer<typeof LogResponseSchema>
+export type SyncPushResponse = z.infer<typeof SyncPushResponseSchema>
 
+//* Utility Types
 export type Result<T = string> = { success: true; data: T } | { success: false; message: string }
 
 export type JWTPayload = z.infer<typeof JWTPayloadSchema>

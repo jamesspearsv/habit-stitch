@@ -1,4 +1,4 @@
-import { resetAndSeedDB } from './drizzleQueries'
+import { resetAndSeedDB } from './queries/authQueries'
 import { newHono } from './utils'
 import { auth } from './routers/authRoutes'
 import { sync } from './routers/syncRoutes'

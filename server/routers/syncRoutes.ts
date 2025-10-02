@@ -1,8 +1,8 @@
 import { jwt } from 'hono/jwt'
 import { newHono } from '../utils'
 import { SyncQueueSchema } from '@shared/zod'
-import { SyncOperation } from '@shared/types'
-import { handleSyncOperation } from '../drizzleQueries'
+import { SyncOperation, SyncPushResponse } from '@shared/types'
+import { handleSyncOperation } from '../queries/syncQueries'
 
 export const sync = newHono()
 
@@ -22,21 +22,27 @@ sync.post('/push', async (c) => {
     return c.json({ success: false, message: 'Bad request' }, 403)
   }
 
-  // Loop through sync queue, attempt to apply each operation
-  const successfulOperations: SyncOperation['id'][] = []
+  // Init array to hold id of successful, failed operations
+  const successful_operations: SyncOperation['id'][] = []
+  const failed_operations: SyncOperation['id'][] = []
 
-  for await (const op of safeBody.data) {
+  // Loop through sync queue, attempt to apply each operation
+  for (const op of safeBody.data) {
     try {
-      await handleSyncOperation(op, c.env.DB)
-      successfulOperations.push(op.id)
+      const result = await handleSyncOperation(op, c.env.DB)
+      if (result.success) {
+        successful_operations.push(op.id)
+      }
     } catch (error) {
       console.error(error)
+      failed_operations.push(op.id)
     }
   }
 
   return c.json({
     success: true,
-    message: 'Finished processing queue. Failed operation returned',
-    successfulOperations,
-  })
+    message: 'Completed queue processing',
+    successful_operations,
+    failed_operations,
+  } as SyncPushResponse)
 })
