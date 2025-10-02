@@ -3,5 +3,8 @@ export function parseDate(date: Date) {
   const month = '0' + (date.getMonth() + 1).toString()
   const day = '0' + date.getDate().toString()
 
-  return `${year}-${month.slice(-2)}-${day.slice(-2)}`
+  const date_string = `${year}-${month.slice(-2)}-${day.slice(-2)}`
+  const timestamp = date.getTime()
+
+  return { date_string, timestamp }
 }

@@ -15,14 +15,17 @@ export async function selectSyncQueue() {
 }
 
 //* INSERT OPERATIONS
-export async function insertLog(user_id: User['id'], habit_id: Habit['id'], day: string) {
+export async function insertLog(user_id: User['id'], habit_id: Habit['id'], date: Date) {
   const row_id = crypto.randomUUID()
+  const { date_string, timestamp } = parseDate(date)
+
   const log: Log = {
     id: row_id,
     habit_id,
-    created_on: day,
+    created_on: date_string,
     notes: '',
     user_id,
+    last_modified: timestamp,
   }
 
   await db.logs.add(log)
@@ -39,15 +42,17 @@ export async function insertHabit(
   formData: Pick<Habit, 'name' | 'description' | 'interval_days'>,
 ) {
   const row_id = crypto.randomUUID()
+  const { date_string, timestamp } = parseDate(new Date())
 
   const habit = {
     ...formData,
     color: '#123456',
     is_active: true,
-    created_on: parseDate(new Date()),
+    created_on: date_string,
     user_id,
     id: row_id,
     sync_status: false,
+    last_modified: timestamp,
   }
 
   await db.habits.add(habit)

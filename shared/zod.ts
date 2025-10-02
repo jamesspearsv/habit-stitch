@@ -18,6 +18,7 @@ export const HabitSchema = z.object({
   is_active: z.boolean(),
   created_on: z.string(), // ISO formatted calendar date
   user_id: z.number(),
+  last_modified: z.int().positive(),
 })
 
 export const LogSchema = z.object({
@@ -26,6 +27,7 @@ export const LogSchema = z.object({
   habit_id: z.uuid(),
   user_id: z.number(),
   created_on: z.string(), // ISO formatted calendar date
+  last_modified: z.int().positive(),
 })
 
 // Auth, JWT user data

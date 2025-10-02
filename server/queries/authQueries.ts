@@ -1,5 +1,5 @@
 import { drizzle } from 'drizzle-orm/d1'
-import { habits, users, logs } from '../drizzleSchema'
+import { users } from '../drizzleSchema'
 import { DrizzleQueryError, eq } from 'drizzle-orm'
 import { Result } from '@shared/types'
 import { reset, seed } from 'drizzle-seed'

@@ -21,7 +21,7 @@ export async function handleSyncOperation(
 
     await db
       .insert(dbTable)
-      .values({ ...safePayload.data })
+      .values(safePayload.data)
       .onConflictDoUpdate({ target: dbTable.id, set: safePayload.data })
   }
 

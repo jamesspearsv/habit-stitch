@@ -32,7 +32,7 @@ export const habits = sqliteTable('habits', {
   user_id: integer()
     .notNull()
     .references(() => users.id, { onDelete: 'cascade' }),
-  updated_at: integer({ mode: 'timestamp_ms' }),
+  last_modified: integer({ mode: 'timestamp_ms' }),
 })
 
 export const logs = sqliteTable('logs', {
@@ -48,5 +48,5 @@ export const logs = sqliteTable('logs', {
     .notNull()
     .references(() => users.id, { onDelete: 'cascade' }), // related user id
   created_on: text().default(sql`CURRENT_TIMESTAMP`), // entry creation timestamp
-  updated_at: integer({ mode: 'timestamp_ms' }),
+  last_modified: integer({ mode: 'timestamp_ms' }),
 })

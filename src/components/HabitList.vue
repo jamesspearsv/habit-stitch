@@ -48,7 +48,7 @@ watch(
     })
 
     const logs_query = liveQuery(() =>
-      db.logs.where('created_on').equals(parseDate(props.current_day)).toArray(),
+      db.logs.where('created_on').equals(parseDate(props.current_day).date_string).toArray(),
     )
     const logs_subscription = logs_query.subscribe({
       next: (result) => (logs.value = result),
@@ -69,14 +69,14 @@ async function updateHabitCheckmark(e: Event, log_id?: string) {
 
   if (checkbox.checked) {
     // add new log to local indexDB
-    await insertLog(user_id, habit_id, parseDate(props.current_day))
+    await insertLog(user_id, habit_id, props.current_day)
   } else {
     if (log_id) {
       await deleteLog(log_id)
     }
   }
 
-  await selectLogs(parseDate(props.current_day))
+  await selectLogs(parseDate(props.current_day).date_string)
 }
 </script>
 
