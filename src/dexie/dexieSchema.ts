@@ -4,13 +4,13 @@ import type { Habit, Log, SyncOperation } from '@shared/types'
 const db = new Dexie('HabitStitchDB') as Dexie & {
   habits: EntityTable<Habit, 'id'>
   logs: EntityTable<Log, 'id'>
-  sync: EntityTable<SyncOperation, 'id'>
+  syncQueue: EntityTable<SyncOperation, 'id'>
 }
 
 db.version(1).stores({
   habits: '&id, name',
   logs: '&id, created_on, user_id, habit_id',
-  sync: '++id, timestamp, payload_id',
+  syncQueue: '++id, timestamp, payload_id',
 })
 
 // Seed initial data

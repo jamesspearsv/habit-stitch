@@ -10,7 +10,7 @@ export async function selectLogs(date: string) {
 }
 
 export async function selectSyncQueue() {
-  const result = await db.sync.orderBy('timestamp').toArray()
+  const result = await db.syncQueue.orderBy('timestamp').toArray()
   return result
 }
 
@@ -78,6 +78,6 @@ export async function deleteLog(id: Log['id']) {
 
 export async function clearSyncQueue(successful_operations: string[]) {
   for (const op of successful_operations) {
-    await db.sync.delete(op)
+    await db.syncQueue.delete(op)
   }
 }

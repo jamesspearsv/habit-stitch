@@ -1,6 +1,6 @@
-import { Result, SyncOperation } from '@shared/types'
+import { Result, SyncOperation, User } from '@shared/types'
 import { HabitSchema, LogSchema } from '@shared/zod'
-import { eq } from 'drizzle-orm'
+import { and, eq, gt } from 'drizzle-orm'
 import { drizzle } from 'drizzle-orm/d1'
 import { habits, logs } from '../drizzleSchema'
 import z from 'zod'
@@ -34,4 +34,22 @@ export async function handleSyncOperation(
   }
 
   return { success: true, data: 'Successfully completed operation' }
+}
+
+export async function selectHabits(user_id: User['id'], timestamp: number, binding: D1Database) {
+  const db = drizzle(binding)
+
+  return await db
+    .select()
+    .from(habits)
+    .where(and(eq(habits.user_id, user_id), gt(habits.last_modified, timestamp)))
+}
+
+export async function selectLogs(user_id: User['id'], timestamp: number, binding: D1Database) {
+  const db = drizzle(binding)
+
+  return await db
+    .select()
+    .from(logs)
+    .where(and(eq(logs.user_id, user_id), gt(logs.last_modified, timestamp)))
 }

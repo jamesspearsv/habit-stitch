@@ -29,10 +29,10 @@ export const habits = sqliteTable('habits', {
   created_on: text()
     .notNull()
     .default(sql`CURRENT_TIMESTAMP`), // ISO datetime in UTC
+  last_modified: integer(),
   user_id: integer()
     .notNull()
     .references(() => users.id, { onDelete: 'cascade' }),
-  last_modified: integer({ mode: 'timestamp_ms' }),
 })
 
 export const logs = sqliteTable('logs', {
@@ -44,9 +44,9 @@ export const logs = sqliteTable('logs', {
   habit_id: integer()
     .notNull()
     .references(() => habits.id, { onDelete: 'cascade' }), // related habit id
+  created_on: text().default(sql`CURRENT_TIMESTAMP`), // entry creation timestamp
+  last_modified: integer(),
   user_id: integer()
     .notNull()
     .references(() => users.id, { onDelete: 'cascade' }), // related user id
-  created_on: text().default(sql`CURRENT_TIMESTAMP`), // entry creation timestamp
-  last_modified: integer({ mode: 'timestamp_ms' }),
 })

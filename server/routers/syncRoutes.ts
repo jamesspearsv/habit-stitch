@@ -47,4 +47,9 @@ sync.post('/push', async (c) => {
   } as SyncPushResponse)
 })
 
-// TODO: Add /sync/pull route
+// /sync/pull?timestamp=1234567890
+sync.get('/pull', async (c) => {
+  // TODO: Add /sync/pull route
+  const user = c.get('jwtPayload')
+  const { timestamp } = c.req.query()
+})
