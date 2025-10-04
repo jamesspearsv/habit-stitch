@@ -1,5 +1,5 @@
 import { drizzle } from 'drizzle-orm/d1'
-import { users } from '../drizzleSchema'
+import { habits, users } from '../drizzleSchema'
 import { DrizzleQueryError, eq } from 'drizzle-orm'
 import { Result } from '@shared/types'
 import { reset, seed } from 'drizzle-seed'
@@ -22,22 +22,31 @@ export async function resetAndSeedDB(binding: D1Database) {
     },
   }))
 
-  // console.log('seeding habits table...')
-  // await seed(db, { habits }).refine((f) => ({
-  //   habits: {
-  //     count: 10,
-  //     columns: {
-  //       user_id: f.valuesFromArray({ values: [1] }),
-  //       created_at: f.datetime(),
-  //       interval_days: f.valuesFromArray({ values: [1, 2, 7, 30] }),
-  //       description: f.loremIpsum(),
-  //       name: f.jobTitle(),
-  //       color: f.default({
-  //         defaultValue: '#123456',
-  //       }),
-  //     },
-  //   },
-  // }))
+  console.log('seeding habits table...')
+  await seed(db, { habits }).refine((f) => ({
+    habits: {
+      count: 10,
+      columns: {
+        user_id: f.valuesFromArray({ values: [1] }),
+        created_on: f.date(),
+        last_modified: f.default({ defaultValue: Date.now() }),
+        interval_days: f.valuesFromArray({ values: [1, 2, 7, 30] }),
+        description: f.loremIpsum(),
+        name: f.valuesFromArray({
+          values: [
+            'learn dexie',
+            'read a book',
+            'go to the gym',
+            'take a walk',
+            'practice another skill',
+          ],
+        }),
+        color: f.default({
+          defaultValue: '#123456',
+        }),
+      },
+    },
+  }))
 }
 
 export async function insertUser(
