@@ -2,7 +2,7 @@ import { jwt } from 'hono/jwt'
 import { newHono } from '../utils'
 import { SyncQueueSchema } from '@shared/zod'
 import { SyncOperation, SyncPushResponse } from '@shared/types'
-import { handleSyncOperation } from '../queries/syncQueries'
+import { handleSyncOperation, selectHabits, selectLogs } from '../queries/syncQueries'
 
 export const sync = newHono()
 
@@ -52,4 +52,10 @@ sync.get('/pull', async (c) => {
   // TODO: Add /sync/pull route
   const user = c.get('user')
   const { timestamp } = c.req.query()
+
+  const safe_timestamp = parseInt(timestamp)
+  if (!isNaN(safe_timestamp)) return c.json({ success: false, message: 'Bad request' }, 400)
+
+  const habits_promise = selectHabits(user.id, safe_timestamp, c.env.DB)
+  const logs_promise = selectLogs(user.id, safe_timestamp, c.env.DB)
 })

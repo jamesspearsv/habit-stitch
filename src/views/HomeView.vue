@@ -1,9 +1,9 @@
 <script lang="ts" setup>
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import CreateHabitForm from '@client/components/CreateHabitForm.vue'
 import ListDayChanger from '@client/components/ListDayChanger.vue'
 import HabitList from '@client/components/HabitList.vue'
-import { clearSyncQueue, selectSyncQueue } from '@client/dexie/dexieQueries'
+import { clearSyncQueue, selectSyncQueue, viewSyncHistory } from '@client/dexie/dexieQueries'
 import { getAuthObject } from '@client/lib/auth'
 import { SyncPushResponseSchema } from '@shared/zod'
 
@@ -56,6 +56,15 @@ async function syncLocalData() {
     sync_status.value = safe_json.data.failed_operations.length > 0 ? 'unsynced' : 'synced'
   }
 }
+
+onMounted(async () => {
+  // review sync history and pull fresh data
+  const history = await viewSyncHistory()
+  const pull_url = history ? `/sync/pull?timestamp=${history}` : '/sync/pull'
+
+  const res = await fetch(pull_url)
+  console.log(await res.json())
+})
 </script>
 
 <template>
