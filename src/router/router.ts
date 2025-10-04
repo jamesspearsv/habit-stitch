@@ -5,6 +5,7 @@ import SignupView from '@client/views/SignupView.vue'
 import AppView from '@client/views/AppView.vue'
 import LandingView from '@client/views/LandingView.vue'
 import WorkerView from '@client/views/WorkerView.vue'
+import PullView from '@client/views/PullView.vue'
 import { isLoggedIn, logOut } from '@client/lib/auth'
 
 const router = createRouter({
@@ -16,7 +17,10 @@ const router = createRouter({
       path: '/',
       name: 'App',
       component: AppView,
-      children: [{ path: '', name: 'Home', component: HomeView }],
+      children: [
+        { path: '', name: 'Home', component: HomeView },
+        { path: '/pull', name: 'Pull', component: PullView },
+      ],
     },
     {
       path: '/login',

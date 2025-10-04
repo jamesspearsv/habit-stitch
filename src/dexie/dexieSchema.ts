@@ -5,12 +5,14 @@ const db = new Dexie('HabitStitchDB') as Dexie & {
   habits: EntityTable<Habit, 'id'>
   logs: EntityTable<Log, 'id'>
   syncQueue: EntityTable<SyncOperation, 'id'>
+  syncHistory: EntityTable<{ id: string; timestamp: number }, 'id'>
 }
 
 db.version(1).stores({
   habits: '&id, name',
   logs: '&id, created_on, user_id, habit_id',
-  syncQueue: '++id, timestamp, payload_id',
+  syncQueue: '&id, timestamp, payload_id',
+  syncHistory: '&id, timestamp',
 })
 
 // Seed initial data

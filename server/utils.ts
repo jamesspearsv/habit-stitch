@@ -1,5 +1,5 @@
 import { Context, Hono } from 'hono'
-import { JwtVariables, sign } from 'hono/jwt'
+import { sign } from 'hono/jwt'
 import { users } from './drizzleSchema'
 import { Result, type JWTPayload } from '@shared/types'
 import { JWTPayloadSchema } from '@shared/zod'
@@ -9,7 +9,7 @@ type Bindings = {
   SECRET_KEY: string
 }
 
-type Variables = JwtVariables
+type Variables = JWTPayload
 
 /**
  * Utility function to sign and create JWT

@@ -81,3 +81,8 @@ export async function clearSyncQueue(successful_operations: string[]) {
     await db.syncQueue.delete(op)
   }
 }
+
+export async function viewSyncHistory() {
+  const history = await db.syncHistory.orderBy('timestamp').last()
+  return history?.timestamp
+}
