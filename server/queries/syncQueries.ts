@@ -1,5 +1,5 @@
 import { Result, SyncOperation, User } from '@shared/types'
-import { HabitSchema, LogSchema } from '@shared/zod'
+import { HabitSchema, LogSchema } from '@shared/zodSchemas'
 import { and, eq, gt } from 'drizzle-orm'
 import { drizzle } from 'drizzle-orm/d1'
 import { habits, logs } from '../drizzleSchema'
@@ -42,7 +42,9 @@ export async function selectHabits(user_id: User['id'], timestamp: number, bindi
   return await db
     .select()
     .from(habits)
-    .where(and(eq(habits.user_id, user_id), gt(habits.last_modified, timestamp)))
+    .where(
+      and(eq(habits.user_id, user_id), timestamp ? gt(habits.last_modified, timestamp) : undefined),
+    )
 }
 
 export async function selectLogs(user_id: User['id'], timestamp: number, binding: D1Database) {
@@ -51,5 +53,7 @@ export async function selectLogs(user_id: User['id'], timestamp: number, binding
   return await db
     .select()
     .from(logs)
-    .where(and(eq(logs.user_id, user_id), gt(logs.last_modified, timestamp)))
+    .where(
+      and(eq(logs.user_id, user_id), timestamp ? gt(logs.last_modified, timestamp) : undefined),
+    )
 }

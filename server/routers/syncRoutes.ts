@@ -1,7 +1,7 @@
 import { jwt } from 'hono/jwt'
 import { newHono } from '../utils'
-import { SyncQueueSchema } from '@shared/zod'
-import { SyncOperation, SyncPushResponse } from '@shared/types'
+import { SyncQueueSchema } from '@shared/zodSchemas'
+import { SyncOperation, SyncPullResponse, SyncPushResponse } from '@shared/types'
 import { handleSyncOperation, selectHabits, selectLogs } from '../queries/syncQueries'
 
 export const sync = newHono()
@@ -19,7 +19,7 @@ sync.post('/push', async (c) => {
   const body = await c.req.json()
   const safeBody = SyncQueueSchema.safeParse(body)
   if (!safeBody.success) {
-    return c.json({ success: false, message: 'Bad request' }, 403)
+    return c.json({ success: false, message: 'Bad request' } satisfies SyncPushResponse, 403)
   }
 
   // Init array to hold id of successful, failed operations
@@ -49,13 +49,19 @@ sync.post('/push', async (c) => {
 
 // /sync/pull?timestamp=1234567890
 sync.get('/pull', async (c) => {
-  // TODO: Add /sync/pull route
-  const user = c.get('user')
+  const { user } = c.get('jwtPayload')
   const { timestamp } = c.req.query()
 
+  // console.log(jwt_payload.user, timestamp)
+
   const safe_timestamp = parseInt(timestamp)
-  if (!isNaN(safe_timestamp)) return c.json({ success: false, message: 'Bad request' }, 400)
+  if (!isNaN(safe_timestamp))
+    return c.json({ success: false, message: 'Bad request' } as SyncPullResponse, 400)
 
   const habits_promise = selectHabits(user.id, safe_timestamp, c.env.DB)
   const logs_promise = selectLogs(user.id, safe_timestamp, c.env.DB)
+
+  const [habits, logs] = await Promise.all([habits_promise, logs_promise])
+
+  return c.json({ success: true, message: 'success!', habits, logs } satisfies SyncPullResponse)
 })

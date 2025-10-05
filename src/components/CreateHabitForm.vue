@@ -5,10 +5,9 @@ import type { Habit } from '@shared/types'
 import { getAuthObject } from '@client/lib/auth'
 import { insertHabit } from '@client/dexie/dexieQueries'
 
-const initialState: Pick<Habit, 'name' | 'description' | 'interval_days'> = {
+const initialState: Pick<Habit, 'name' | 'description'> = {
   name: '',
   description: null,
-  interval_days: 1,
 }
 const formData = ref({ ...initialState })
 const dialog = ref<HTMLDialogElement | null>(null)
@@ -66,11 +65,6 @@ async function addHabit() {
       </div>
       <div class="form-group">
         <label for="Interval">Interval</label>
-        <select name="interval" id="habit_interval" v-model="formData.interval_days">
-          <option value="1">Daily</option>
-          <option value="7">Weekly</option>
-          <option value="30">Monthly</option>
-        </select>
       </div>
       <div class="form-group">
         <input type="submit" value="Add" class="submit-btn" />

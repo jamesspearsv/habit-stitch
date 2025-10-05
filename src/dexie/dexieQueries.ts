@@ -23,7 +23,6 @@ export async function insertLog(user_id: User['id'], habit_id: Habit['id'], date
     id: row_id,
     habit_id,
     created_on: date_string,
-    notes: '',
     user_id,
     last_modified: timestamp,
   }
@@ -39,7 +38,7 @@ export async function insertLog(user_id: User['id'], habit_id: Habit['id'], date
 
 export async function insertHabit(
   user_id: User['id'],
-  formData: Pick<Habit, 'name' | 'description' | 'interval_days'>,
+  formData: Pick<Habit, 'name' | 'description'>,
 ) {
   const row_id = crypto.randomUUID()
   const { date_string, timestamp } = parseDate(new Date())
@@ -76,6 +75,7 @@ export async function deleteLog(id: Log['id']) {
   })
 }
 
+//* SYNC OPERATIONS
 export async function clearSyncQueue(successful_operations: string[]) {
   for (const op of successful_operations) {
     await db.syncQueue.delete(op)
@@ -85,4 +85,14 @@ export async function clearSyncQueue(successful_operations: string[]) {
 export async function viewSyncHistory() {
   const history = await db.syncHistory.orderBy('timestamp').last()
   return history?.timestamp
+}
+
+export async function insertFreshLogs(logs: Log[]) {
+  const result = await db.logs.bulkPut(logs)
+  console.log('bulk habit put', result)
+}
+
+export async function insertFreshHabits(habits: Habit[]) {
+  const result = await db.habits.bulkPut(habits)
+  console.log('bulk log put', result)
 }

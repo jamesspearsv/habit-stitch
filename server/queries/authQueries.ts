@@ -27,10 +27,10 @@ export async function resetAndSeedDB(binding: D1Database) {
     habits: {
       count: 10,
       columns: {
+        id: f.uuid(),
         user_id: f.valuesFromArray({ values: [1] }),
         created_on: f.date(),
         last_modified: f.default({ defaultValue: Date.now() }),
-        interval_days: f.valuesFromArray({ values: [1, 2, 7, 30] }),
         description: f.loremIpsum(),
         name: f.valuesFromArray({
           values: [

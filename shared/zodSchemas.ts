@@ -10,24 +10,22 @@ export const NewUser = z.object({
 
 // Database table schemas
 export const HabitSchema = z.object({
-  id: z.uuid(),
+  id: z.string(),
   name: z.string(),
   description: z.nullable(z.string()),
   color: z.string(),
-  interval_days: z.number(),
   is_active: z.boolean(),
   created_on: z.string(), // ISO formatted calendar date
   user_id: z.number(),
-  last_modified: z.int().positive(),
+  last_modified: z.int().positive().nullable(),
 })
 
 export const LogSchema = z.object({
-  id: z.uuid(),
-  notes: z.string(),
-  habit_id: z.uuid(),
+  id: z.string(),
+  habit_id: z.string(),
   user_id: z.number(),
   created_on: z.string(), // ISO formatted calendar date
-  last_modified: z.int().positive(),
+  last_modified: z.int().positive().nullable(),
 })
 
 // Auth, JWT user data
@@ -77,6 +75,16 @@ export const SyncPushResponseSchema = z.discriminatedUnion('success', [
     message: z.string(),
     successful_operations: z.array(z.uuid()),
     failed_operations: z.array(z.uuid()),
+  }),
+  z.object({ success: z.literal(false), message: z.string() }),
+])
+
+export const SyncPullResponseSchema = z.discriminatedUnion('success', [
+  z.object({
+    success: z.literal(true),
+    message: z.string(),
+    habits: z.array(HabitSchema),
+    logs: z.array(LogSchema),
   }),
   z.object({ success: z.literal(false), message: z.string() }),
 ])

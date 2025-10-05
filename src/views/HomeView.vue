@@ -3,9 +3,16 @@ import { onMounted, ref } from 'vue'
 import CreateHabitForm from '@client/components/CreateHabitForm.vue'
 import ListDayChanger from '@client/components/ListDayChanger.vue'
 import HabitList from '@client/components/HabitList.vue'
-import { clearSyncQueue, selectSyncQueue, viewSyncHistory } from '@client/dexie/dexieQueries'
+import {
+  clearSyncQueue,
+  insertFreshHabits,
+  insertFreshLogs,
+  selectSyncQueue,
+  viewSyncHistory,
+} from '@client/dexie/dexieQueries'
 import { getAuthObject } from '@client/lib/auth'
-import { SyncPushResponseSchema } from '@shared/zod'
+import { SyncPullResponseSchema, SyncPushResponseSchema } from '@shared/zodSchemas'
+import z from 'zod'
 
 const current_day = ref(new Date())
 
@@ -62,8 +69,22 @@ onMounted(async () => {
   const history = await viewSyncHistory()
   const pull_url = history ? `/sync/pull?timestamp=${history}` : '/sync/pull'
 
-  const res = await fetch(pull_url)
-  console.log(await res.json())
+  const res = await fetch(pull_url, {
+    headers: {
+      Authorization: `Bearer ${getAuthObject()?.accessToken}`,
+    },
+  })
+  const json = await res.json()
+
+  const safe_json = SyncPullResponseSchema.safeParse(json)
+
+  console.log(json)
+  console.log(safe_json.error)
+
+  if (safe_json.success && safe_json.data.success) {
+    insertFreshHabits(safe_json.data.habits)
+    insertFreshLogs(safe_json.data.logs)
+  }
 })
 </script>
 

@@ -1,5 +1,5 @@
 import type { AuthObject, Result } from '@shared/types'
-import { AuthObjectSchema, AuthResponseSchema } from '@shared/zod'
+import { AuthObjectSchema, AuthResponseSchema } from '@shared/zodSchemas'
 
 const authStoreKey = 'habitstitch_auth'
 

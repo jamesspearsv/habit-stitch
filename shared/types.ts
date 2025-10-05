@@ -9,7 +9,8 @@ import {
   SyncOperationSchema,
   SyncQueueSchema,
   SyncPushResponseSchema,
-} from './zod'
+  SyncPullResponseSchema,
+} from './zodSchemas'
 
 //* Sync Layer Types
 export type SyncOperation = z.infer<typeof SyncOperationSchema>
@@ -21,9 +22,10 @@ export type Habit = z.infer<typeof HabitSchema>
 export type Log = z.infer<typeof LogSchema>
 export type AuthObject = z.infer<typeof AuthObjectSchema>
 
-//* Data Exchange Types
+//* Request & Response Types
 export type AuthResponse = z.infer<typeof AuthResponseSchema>
 export type SyncPushResponse = z.infer<typeof SyncPushResponseSchema>
+export type SyncPullResponse = z.infer<typeof SyncPullResponseSchema>
 
 //* Utility Types
 export type Result<T = string> = { success: true; data: T } | { success: false; message: string }

@@ -5,7 +5,7 @@ import ListDayChanger from '@client/components/ListDayChanger.vue'
 import HabitList from '@client/components/HabitList.vue'
 import { clearSyncQueue, selectSyncQueue } from '@client/dexie/dexieQueries'
 import { getAuthObject } from '@client/lib/auth'
-import { SyncPushResponseSchema } from '@shared/zod'
+import { SyncPushResponseSchema } from '@shared/zodSchemas'
 
 const current_day = ref(new Date())
 

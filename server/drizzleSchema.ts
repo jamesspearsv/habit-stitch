@@ -24,11 +24,8 @@ export const habits = sqliteTable('habits', {
   name: text().notNull(), // task name
   description: text(), // explanation of habit
   color: text().notNull(), // color hex code string (#rrggbb)
-  interval_days: integer().notNull(), // completion interval in number of days
   is_active: integer({ mode: 'boolean' }).notNull().default(false),
-  created_on: text()
-    .notNull()
-    .default(sql`CURRENT_TIMESTAMP`), // ISO datetime in UTC
+  created_on: text().notNull(), // ISO datetime in UTC
   last_modified: integer(),
   user_id: integer()
     .notNull()
@@ -40,11 +37,10 @@ export const logs = sqliteTable('logs', {
   timestamp: text()
     .notNull()
     .default(sql`CURRENT_TIMESTAMP`), // ISO datetime of log entry in UTC
-  notes: text(), // optional user notes
-  habit_id: integer()
+  habit_id: text()
     .notNull()
     .references(() => habits.id, { onDelete: 'cascade' }), // related habit id
-  created_on: text().default(sql`CURRENT_TIMESTAMP`), // entry creation timestamp
+  created_on: text().notNull(), // creation timestamp
   last_modified: integer(),
   user_id: integer()
     .notNull()

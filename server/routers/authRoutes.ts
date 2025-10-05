@@ -1,6 +1,6 @@
 import { insertUser, selectUser } from '../queries/authQueries'
 import bcryptjs from 'bcryptjs'
-import { NewUser } from '../../shared/zod'
+import { NewUser } from '../../shared/zodSchemas'
 import { AuthResponse } from '../../shared/types'
 import { newHono, signJWT } from '../utils'
 
