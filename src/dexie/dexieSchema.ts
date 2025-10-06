@@ -1,18 +1,13 @@
-import Dexie, { type EntityTable } from 'dexie'
-import type { Habit, Log, SyncOperation } from '@shared/types'
+import Dexie from 'dexie'
+import type { DexieDatabase } from '@shared/types'
+import { SyncLayer } from './dexieSync'
 
-const db = new Dexie('HabitStitchDB') as Dexie & {
-  habits: EntityTable<Habit, 'id'>
-  logs: EntityTable<Log, 'id'>
-  syncQueue: EntityTable<SyncOperation, 'id'>
-  syncHistory: EntityTable<{ id: string; timestamp: number }, 'id'>
-}
+const db = new Dexie('HabitStitchDB') as DexieDatabase
 
 db.version(1).stores({
   habits: '&id, name',
   logs: '&id, created_on, user_id, habit_id',
   syncQueue: '&id, timestamp, payload_id',
-  syncHistory: '&id, timestamp',
 })
 
 // Seed initial data
@@ -36,4 +31,7 @@ db.version(1).stores({
 //   sync_status: false,
 // })
 
-export { db }
+// Init new sync manager instance to manage sync queue and operations
+const sync = new SyncLayer(db.syncQueue, db)
+
+export { db, sync }

@@ -11,6 +11,7 @@ import {
   SyncPushResponseSchema,
   SyncPullResponseSchema,
 } from './zodSchemas'
+import Dexie, { type EntityTable } from 'dexie'
 
 //* Sync Layer Types
 export type SyncOperation = z.infer<typeof SyncOperationSchema>
@@ -32,5 +33,9 @@ export type Result<T = string> = { success: true; data: T } | { success: false; 
 
 export type JWTPayload = z.infer<typeof JWTPayloadSchema>
 
-//* Dexie Query Types
-export type HabitQuery = Habit & { logs: Log[]; completed: boolean }
+//* Dexie Schema
+export type DexieDatabase = Dexie & {
+  habits: EntityTable<Habit, 'id'>
+  logs: EntityTable<Log, 'id'>
+  syncQueue: EntityTable<SyncOperation, 'id'>
+}

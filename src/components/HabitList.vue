@@ -4,7 +4,7 @@ import { getAuthObject } from '@client/lib/auth'
 import type { Habit, Log } from '@shared/types'
 import { parseDate } from '@client/lib/helpers'
 import { computed, ref, watch } from 'vue'
-import { deleteLog, insertLog, selectLogs } from '@client/dexie/dexieQueries'
+import { deleteLog, insertLog } from '@client/dexie/dexieQueries'
 import { liveQuery, type Subscription } from 'dexie'
 
 const props = defineProps<{
@@ -75,8 +75,6 @@ async function updateHabitCheckmark(e: Event, log_id?: string) {
       await deleteLog(log_id)
     }
   }
-
-  await selectLogs(parseDate(props.current_day).date_string)
 }
 </script>
 

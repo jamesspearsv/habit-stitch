@@ -1,7 +1,6 @@
 import type { Habit, Log, User } from '@shared/types'
-import { db } from './dexieSchema'
+import { db, sync } from './dexieSchema'
 import { parseDate } from '@client/lib/helpers'
-import { insertIntoSyncQueue } from './dexieSync'
 
 //* SELECT OPERATIONS
 export async function selectLogs(date: string) {
@@ -28,7 +27,14 @@ export async function insertLog(user_id: User['id'], habit_id: Habit['id'], date
   }
 
   await db.logs.add(log)
-  await insertIntoSyncQueue({
+  // await insertIntoSyncQueue({
+  //   action: 'create',
+  //   table: 'logs',
+  //   payload_id: row_id,
+  //   payload: log,
+  // })
+
+  await sync.addToQueue({
     action: 'create',
     table: 'logs',
     payload_id: row_id,
@@ -56,7 +62,14 @@ export async function insertHabit(
 
   await db.habits.add(habit)
 
-  await insertIntoSyncQueue({
+  // await insertIntoSyncQueue({
+  //   action: 'create',
+  //   table: 'habits',
+  //   payload_id: row_id,
+  //   payload: habit,
+  // })
+
+  await sync.addToQueue({
     action: 'create',
     table: 'habits',
     payload_id: row_id,
@@ -67,7 +80,14 @@ export async function insertHabit(
 //* DELETE OPERATIONS
 export async function deleteLog(id: Log['id']) {
   await db.logs.delete(id)
-  await insertIntoSyncQueue({
+  // await insertIntoSyncQueue({
+  //   action: 'delete',
+  //   table: 'logs',
+  //   payload_id: id,
+  //   payload: id,
+  // })
+
+  await sync.addToQueue({
     action: 'delete',
     table: 'logs',
     payload_id: id,
@@ -80,11 +100,6 @@ export async function clearSyncQueue(successful_operations: string[]) {
   for (const op of successful_operations) {
     await db.syncQueue.delete(op)
   }
-}
-
-export async function viewSyncHistory() {
-  const history = await db.syncHistory.orderBy('timestamp').last()
-  return history?.timestamp
 }
 
 export async function insertFreshLogs(logs: Log[]) {

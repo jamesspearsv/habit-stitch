@@ -13,6 +13,7 @@ import {
 import { getAuthObject } from '@client/lib/auth'
 import { SyncPullResponseSchema, SyncPushResponseSchema } from '@shared/zodSchemas'
 import z from 'zod'
+import { sync } from '@client/dexie/dexieSchema'
 
 const current_day = ref(new Date())
 
@@ -64,35 +65,21 @@ async function syncLocalData() {
   }
 }
 
-onMounted(async () => {
-  // review sync history and pull fresh data
-  const history = await viewSyncHistory()
-  const pull_url = history ? `/sync/pull?timestamp=${history}` : '/sync/pull'
-
-  const res = await fetch(pull_url, {
-    headers: {
-      Authorization: `Bearer ${getAuthObject()?.accessToken}`,
-    },
-  })
-  const json = await res.json()
-
-  const safe_json = SyncPullResponseSchema.safeParse(json)
-
-  console.log(json)
-  console.log(safe_json.error)
-
-  if (safe_json.success && safe_json.data.success) {
-    insertFreshHabits(safe_json.data.habits)
-    insertFreshLogs(safe_json.data.logs)
-  }
-})
+async function pullFreshData() {
+  const user = getAuthObject()
+  if (!user) return
+  await sync.pull(user.accessToken)
+}
 </script>
 
 <template>
   <section class="home_heading">
     <h1>Habit<span>Stitch</span></h1>
     <CreateHabitForm />
-    <button @click="syncLocalData">{{ sync_status }}</button>
+    <div>
+      <button @click="syncLocalData">{{ sync_status }}</button>
+      <button @click="pullFreshData">pull</button>
+    </div>
   </section>
   <section class="date_display">
     <h2>{{ current_day.toDateString() }}</h2>
