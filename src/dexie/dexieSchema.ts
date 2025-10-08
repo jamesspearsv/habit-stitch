@@ -32,6 +32,6 @@ db.version(1).stores({
 // })
 
 // Init new sync manager instance to manage sync queue and operations
-const sync = new SyncLayer(db.syncQueue, db)
+const sync = new SyncLayer(db)
 
 export { db, sync }

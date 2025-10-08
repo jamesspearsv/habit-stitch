@@ -1,16 +1,13 @@
 import type { DexieDatabase, Result, SyncOperation } from '@shared/types'
 import { SyncPullResponseSchema, SyncPushResponseSchema } from '@shared/zodSchemas'
-import type { EntityTable } from 'dexie'
 
 export class SyncLayer {
-  private queue: EntityTable<SyncOperation, 'id'>
   private db: DexieDatabase
   private push_url_base = '/sync/push'
   private pull_url_base = '/sync/pull'
   private last_sync_key = 'habitstitch_last_sync'
 
-  constructor(dexie_queue: typeof this.queue, db: typeof this.db) {
-    this.queue = dexie_queue
+  constructor(db: typeof this.db) {
     this.db = db
   }
 
@@ -105,17 +102,17 @@ export class SyncLayer {
 
   async addToQueue(operation: Pick<SyncOperation, 'action' | 'table' | 'payload_id' | 'payload'>) {
     // Search sync queue for existing changes to the given row
-    const row = await this.queue.where('payload_id').equals(operation.payload_id).first()
+    const row = await this.db.syncQueue.where('payload_id').equals(operation.payload_id).first()
 
     if (row) {
-      await this.queue.update(row.id, {
+      await this.db.syncQueue.update(row.id, {
         action: operation.action,
         timestamp: Date.now(),
         payload_id: operation.payload_id,
         payload: operation.payload,
       })
     } else {
-      await this.queue.add({
+      await this.db.syncQueue.add({
         id: crypto.randomUUID(),
         timestamp: Date.now(),
         status: false,
@@ -130,6 +127,6 @@ export class SyncLayer {
   }
 
   async removeFromQueue(operations: SyncOperation['id'][]) {
-    await this.queue.bulkDelete(operations)
+    await this.db.syncQueue.bulkDelete(operations)
   }
 }
