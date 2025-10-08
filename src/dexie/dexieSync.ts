@@ -1,6 +1,7 @@
-import type { DexieDatabase, SyncOperation } from '@shared/types'
+import type { DexieDatabase, Result, SyncOperation } from '@shared/types'
 import { SyncPullResponseSchema } from '@shared/zodSchemas'
 import type { EntityTable } from 'dexie'
+import { success } from 'zod'
 
 export class SyncLayer {
   private queue: EntityTable<SyncOperation, 'id'>
@@ -14,7 +15,7 @@ export class SyncLayer {
     this.db = db
   }
 
-  async pull(access_token: string) {
+  async pull(access_token: string): Promise<Result> {
     const last_sync = localStorage.getItem(this.last_sync_key)
     let endpoint = this.pull_url_base
 
@@ -29,16 +30,32 @@ export class SyncLayer {
       },
     })
 
-    // TODO: handle request failure
+    if (!res.ok)
+      return {
+        success: false,
+        message: 'Server error. Try again later',
+      }
 
     const json = await res.json()
 
     const safe_json = SyncPullResponseSchema.safeParse(json)
 
-    if (safe_json.success && safe_json.data.success) {
-      await this.db.habits.bulkPut(safe_json.data.habits)
-      await this.db.logs.bulkPut(safe_json.data.logs)
-    }
+    if (!safe_json.success)
+      return {
+        success: false,
+        message: 'Server error. Bad response.',
+      }
+
+    if (!safe_json.data.success)
+      return {
+        success: false,
+        message: 'Server error. Try again later.',
+      }
+
+    await this.db.habits.bulkPut(safe_json.data.habits)
+    await this.db.logs.bulkPut(safe_json.data.logs)
+
+    return { success: true, data: '' }
   }
 
   async push(access_token: string) {

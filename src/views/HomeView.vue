@@ -1,18 +1,11 @@
 <script lang="ts" setup>
-import { onMounted, ref } from 'vue'
+import { ref } from 'vue'
 import CreateHabitForm from '@client/components/CreateHabitForm.vue'
 import ListDayChanger from '@client/components/ListDayChanger.vue'
 import HabitList from '@client/components/HabitList.vue'
-import {
-  clearSyncQueue,
-  insertFreshHabits,
-  insertFreshLogs,
-  selectSyncQueue,
-  viewSyncHistory,
-} from '@client/dexie/dexieQueries'
+import { clearSyncQueue, selectSyncQueue } from '@client/dexie/dexieQueries'
 import { getAuthObject } from '@client/lib/auth'
-import { SyncPullResponseSchema, SyncPushResponseSchema } from '@shared/zodSchemas'
-import z from 'zod'
+import { SyncPushResponseSchema } from '@shared/zodSchemas'
 import { sync } from '@client/dexie/dexieSchema'
 
 const current_day = ref(new Date())
