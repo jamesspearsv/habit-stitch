@@ -1,5 +1,5 @@
 import type { DexieDatabase, Result, SyncOperation } from '@shared/types'
-import { SyncPullResponseSchema } from '@shared/zodSchemas'
+import { SyncPullResponseSchema, SyncPushResponseSchema } from '@shared/zodSchemas'
 import type { EntityTable } from 'dexie'
 import { success } from 'zod'
 
@@ -58,8 +58,50 @@ export class SyncLayer {
     return { success: true, data: '' }
   }
 
-  async push(access_token: string) {
-    console.log(access_token)
+  async push(access_token: string): Promise<Result> {
+    const queue = await this.db.syncQueue.orderBy('timestamp').toArray()
+
+    if (queue.length < 1)
+      return {
+        success: false,
+        message: 'No changes to sync',
+      }
+
+    const res = await fetch(this.push_url_base, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${access_token}`,
+      },
+      body: JSON.stringify(queue),
+    })
+
+    if (!res.ok)
+      return {
+        success: false,
+        message: 'Server error. Try again later.',
+      }
+
+    const json = await res.json()
+    const safe_json = SyncPushResponseSchema.safeParse(json)
+
+    if (!safe_json.success)
+      return {
+        success: false,
+        message: 'Bad response.',
+      }
+
+    if (!safe_json.data.success)
+      return {
+        success: false,
+        message: 'Server error. Try again later.',
+      }
+
+    await this.db.syncQueue.bulkDelete(safe_json.data.successful_operations)
+
+    return {
+      success: true,
+      data: `${safe_json.data.successful_operations.length} of ${queue.length} synced successfully`,
+    }
   }
 
   async addToQueue(operation: Pick<SyncOperation, 'action' | 'table' | 'payload_id' | 'payload'>) {
