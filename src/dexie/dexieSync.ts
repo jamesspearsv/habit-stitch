@@ -1,7 +1,6 @@
 import type { DexieDatabase, Result, SyncOperation } from '@shared/types'
 import { SyncPullResponseSchema, SyncPushResponseSchema } from '@shared/zodSchemas'
 import type { EntityTable } from 'dexie'
-import { success } from 'zod'
 
 export class SyncLayer {
   private queue: EntityTable<SyncOperation, 'id'>
@@ -58,7 +57,7 @@ export class SyncLayer {
     return { success: true, data: '' }
   }
 
-  async push(access_token: string): Promise<Result> {
+  async push(access_token: string): Promise<Result<number>> {
     const queue = await this.db.syncQueue.orderBy('timestamp').toArray()
 
     if (queue.length < 1)
@@ -100,7 +99,7 @@ export class SyncLayer {
 
     return {
       success: true,
-      data: `${safe_json.data.successful_operations.length} of ${queue.length} synced successfully`,
+      data: safe_json.data.failed_operations.length,
     }
   }
 
@@ -126,35 +125,11 @@ export class SyncLayer {
         payload: operation.payload,
       })
     }
+
+    return (await this.db.syncQueue.toArray()).length
   }
 
   async removeFromQueue(operations: SyncOperation['id'][]) {
     await this.queue.bulkDelete(operations)
   }
 }
-
-// export async function insertIntoSyncQueue(
-//   sync: Pick<SyncOperation, 'action' | 'table' | 'payload_id' | 'payload'>,
-// ) {
-//   // Search sync queue for existing changes to the given row
-//   const row = await db.syncQueue.where('payload_id').equals(sync.payload_id).first()
-
-//   if (row) {
-//     await db.syncQueue.update(row.id, {
-//       action: sync.action,
-//       timestamp: Date.now(),
-//       payload_id: sync.payload_id,
-//       payload: sync.payload,
-//     })
-//   } else {
-//     await db.syncQueue.add({
-//       id: crypto.randomUUID(),
-//       timestamp: Date.now(),
-//       status: false,
-//       action: sync.action,
-//       table: sync.table,
-//       payload_id: sync.payload_id,
-//       payload: sync.payload,
-//     })
-//   }
-// }

@@ -8,11 +8,6 @@ export async function selectLogs(date: string) {
   return result
 }
 
-export async function selectSyncQueue() {
-  const result = await db.syncQueue.orderBy('timestamp').toArray()
-  return result
-}
-
 //* INSERT OPERATIONS
 export async function insertLog(user_id: User['id'], habit_id: Habit['id'], date: Date) {
   const row_id = crypto.randomUUID()
@@ -27,14 +22,8 @@ export async function insertLog(user_id: User['id'], habit_id: Habit['id'], date
   }
 
   await db.logs.add(log)
-  // await insertIntoSyncQueue({
-  //   action: 'create',
-  //   table: 'logs',
-  //   payload_id: row_id,
-  //   payload: log,
-  // })
 
-  await sync.addToQueue({
+  return await sync.addToQueue({
     action: 'create',
     table: 'logs',
     payload_id: row_id,
@@ -62,14 +51,7 @@ export async function insertHabit(
 
   await db.habits.add(habit)
 
-  // await insertIntoSyncQueue({
-  //   action: 'create',
-  //   table: 'habits',
-  //   payload_id: row_id,
-  //   payload: habit,
-  // })
-
-  await sync.addToQueue({
+  return await sync.addToQueue({
     action: 'create',
     table: 'habits',
     payload_id: row_id,
@@ -80,34 +62,11 @@ export async function insertHabit(
 //* DELETE OPERATIONS
 export async function deleteLog(id: Log['id']) {
   await db.logs.delete(id)
-  // await insertIntoSyncQueue({
-  //   action: 'delete',
-  //   table: 'logs',
-  //   payload_id: id,
-  //   payload: id,
-  // })
 
-  await sync.addToQueue({
+  return await sync.addToQueue({
     action: 'delete',
     table: 'logs',
     payload_id: id,
     payload: id,
   })
-}
-
-//* SYNC OPERATIONS
-export async function clearSyncQueue(successful_operations: string[]) {
-  for (const op of successful_operations) {
-    await db.syncQueue.delete(op)
-  }
-}
-
-export async function insertFreshLogs(logs: Log[]) {
-  const result = await db.logs.bulkPut(logs)
-  console.log('bulk habit put', result)
-}
-
-export async function insertFreshHabits(habits: Habit[]) {
-  const result = await db.habits.bulkPut(habits)
-  console.log('bulk log put', result)
 }
