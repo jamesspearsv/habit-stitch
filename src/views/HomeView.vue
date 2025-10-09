@@ -3,14 +3,14 @@ import { computed, onMounted, ref } from 'vue'
 import CreateHabitForm from '@client/components/CreateHabitForm.vue'
 import ListDayChanger from '@client/components/ListDayChanger.vue'
 import HabitList from '@client/components/HabitList.vue'
-import { getAuthObject } from '@client/lib/auth'
 import { sync } from '@client/dexie/dexieSchema'
+import { getAuthObject } from '@client/lib/auth'
 
 const current_day = ref(new Date())
 const queue_length = ref(0)
 // TODO: Improve sync status UI and feedback
-const sync_status = computed<'Sync Changes' | 'Changes Saved' | 'Error'>(() => {
-  if (queue_length.value > 0) return 'Sync Changes'
+const sync_status = computed<'Unsaved Changes' | 'Changes Saved' | 'Error'>(() => {
+  if (queue_length.value > 0) return 'Unsaved Changes'
   if (queue_length.value === 0) return 'Changes Saved'
   return 'Error'
 })
@@ -22,44 +22,69 @@ function changeDay(action: 'next' | 'previous') {
   current_day.value = new Date(current_day.value.setDate(date))
 }
 
-async function syncLocalData() {
-  const user = getAuthObject()
-  if (!user) {
-    console.error('no user')
-    return
+// async function syncLocalData() {
+//   const user = getAuthObject()
+//   if (!user) {
+//     console.error('no user')
+//     return
+//   }
+
+//   const result = await sync.push(user.accessToken)
+
+//   if (!result.success) {
+//     console.error(result.message)
+//   }
+
+//   if (result.success) {
+//     queue_length.value = result.data
+//   }
+// }
+
+async function updateQueueLength(l: number) {
+  if (l < 5 && l > 0) {
+    // only update queue length state
+    queue_length.value = l
   }
 
-  const result = await sync.push(user.accessToken)
+  if (l >= 5) {
+    // sync changes & update queue length
+    const user = getAuthObject()
+    if (!user) return
 
-  if (!result.success) {
-    console.error(result.message)
+    const push = await sync.push(user.accessToken)
+
+    if (push.success) {
+      const pull = await sync.pull(user.accessToken)
+      if (pull.success) queue_length.value = pull.data
+    } else {
+      // handle error
+      queue_length.value = -1
+    }
   }
-
-  if (result.success) {
-    queue_length.value = result.data
-  }
-}
-
-async function pullFreshData() {
-  const user = getAuthObject()
-  if (!user) return
-  const result = await sync.pull(user.accessToken)
-
-  if (result.success) queue_length.value = result.data
 }
 
 onMounted(async () => (queue_length.value = (await sync.getQueue()).length))
+onMounted(async () => {
+  const user = await getAuthObject()
+  if (user) {
+    const pull = await sync.pull(user.accessToken)
+
+    if (!pull.success) {
+      queue_length.value = -1
+    } else {
+      queue_length.value = pull.data
+    }
+  }
+})
 </script>
 
 <template>
   <section class="home_heading">
-    <h1>Habit<span>Stitch</span></h1>
-    <p>{{ queue_length }}</p>
-    <CreateHabitForm />
     <div>
-      <button @click="syncLocalData">{{ sync_status }}</button>
-      <button @click="pullFreshData">pull</button>
+      <h1>Habit<span>Stitch</span></h1>
+      <p>{{ sync_status }} {{ queue_length > 0 ? `(${queue_length})` : undefined }}</p>
     </div>
+    <CreateHabitForm />
   </section>
   <section class="date_display">
     <h2>{{ current_day.toDateString() }}</h2>
@@ -69,7 +94,7 @@ onMounted(async () => (queue_length.value = (await sync.getQueue()).length))
     />
   </section>
   <section class="habit_list">
-    <HabitList :current_day="current_day" @update-queue="(length) => (queue_length = length)" />
+    <HabitList :current_day="current_day" @update-queue="updateQueueLength" />
   </section>
 </template>
 

@@ -28,7 +28,7 @@ export async function insertLog(user_id: User['id'], habit_id: Habit['id'], date
     table: 'logs',
     payload_id: row_id,
     payload: log,
-  })
+  }, )
 }
 
 export async function insertHabit(

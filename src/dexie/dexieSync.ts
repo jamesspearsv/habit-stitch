@@ -11,6 +11,11 @@ export class SyncLayer {
     this.db = db
   }
 
+  /**
+   * Pull fresh data from remote server
+   * @param access_token
+   * @returns Current number of unsaved changes in a result object
+   */
   async pull(access_token: string): Promise<Result<number>> {
     const last_sync = localStorage.getItem(this.last_sync_key)
     let endpoint = this.pull_url_base
@@ -53,7 +58,11 @@ export class SyncLayer {
 
     return { success: true, data: (await this.db.syncQueue.toArray()).length }
   }
-
+  /**
+   * Push local changes to remote database
+   * @param access_token
+   * @returns Number of failed operations in a result object
+   */
   async push(access_token: string): Promise<Result<number>> {
     const queue = await this.db.syncQueue.orderBy('timestamp').toArray()
 
@@ -100,6 +109,11 @@ export class SyncLayer {
     }
   }
 
+  /**
+   * Add new changes to the Dexie sync queue
+   * @param operation
+   * @returns Number of changes in the sync queue
+   */
   async addToQueue(operation: Pick<SyncOperation, 'action' | 'table' | 'payload_id' | 'payload'>) {
     // Search sync queue for existing changes to the given row
     const row = await this.db.syncQueue.where('payload_id').equals(operation.payload_id).first()
