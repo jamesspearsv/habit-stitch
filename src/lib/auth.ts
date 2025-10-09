@@ -116,7 +116,7 @@ export function getAuthObject() {
   if (authStore) {
     const authObject = JSON.parse(authStore)
     const safeAuthObject = AuthObjectSchema.safeParse(authObject)
-    console.log(safeAuthObject.success)
+
     if (!safeAuthObject.success) return null
     const { accessToken, user } = safeAuthObject.data
     return { accessToken, user }

@@ -52,10 +52,9 @@ sync.get('/pull', async (c) => {
   const { user } = c.get('jwtPayload')
   const { timestamp } = c.req.query()
 
-  // console.log(jwt_payload.user, timestamp)
-
   const safe_timestamp = parseInt(timestamp)
-  if (!isNaN(safe_timestamp))
+
+  if (isNaN(safe_timestamp))
     return c.json({ success: false, message: 'Bad request' } as SyncPullResponse, 400)
 
   const habits_promise = selectHabits(user.id, safe_timestamp, c.env.DB)

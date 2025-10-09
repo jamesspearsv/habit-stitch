@@ -56,6 +56,8 @@ export class SyncLayer {
     await this.db.habits.bulkPut(safe_json.data.habits)
     await this.db.logs.bulkPut(safe_json.data.logs)
 
+    localStorage.setItem(this.last_sync_key, `${Date.now()}`)
+
     return { success: true, data: (await this.db.syncQueue.toArray()).length }
   }
   /**
@@ -107,6 +109,14 @@ export class SyncLayer {
       success: true,
       data: safe_json.data.failed_operations.length,
     }
+  }
+
+  async save(access_token: string): Promise<number> {
+    await this.push(access_token)
+    const pull_result = await this.pull(access_token)
+
+    if (pull_result.success) return pull_result.data
+    return -1
   }
 
   /**

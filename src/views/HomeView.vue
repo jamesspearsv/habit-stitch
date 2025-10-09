@@ -5,6 +5,7 @@ import ListDayChanger from '@client/components/ListDayChanger.vue'
 import HabitList from '@client/components/HabitList.vue'
 import { sync } from '@client/dexie/dexieSchema'
 import { getAuthObject } from '@client/lib/auth'
+import FeatherIcon from '@client/components/FeatherIcon.vue'
 
 const current_day = ref(new Date())
 const queue_length = ref(0)
@@ -22,44 +23,31 @@ function changeDay(action: 'next' | 'previous') {
   current_day.value = new Date(current_day.value.setDate(date))
 }
 
-// async function syncLocalData() {
-//   const user = getAuthObject()
-//   if (!user) {
-//     console.error('no user')
-//     return
-//   }
-
-//   const result = await sync.push(user.accessToken)
-
-//   if (!result.success) {
-//     console.error(result.message)
-//   }
-
-//   if (result.success) {
-//     queue_length.value = result.data
-//   }
-// }
-
 async function updateQueueLength(l: number) {
-  if (l < 5 && l > 0) {
-    // only update queue length state
+  if (queue_length.value >= 0 && queue_length.value < 3) {
     queue_length.value = l
   }
 
-  if (l >= 5) {
-    // sync changes & update queue length
-    const user = getAuthObject()
-    if (!user) return
+  const user = getAuthObject()
+  if (queue_length.value >= 3 && user) {
+    const new_queue = await sync.save(user.accessToken)
+    queue_length.value = new_queue
+  }
+}
 
-    const push = await sync.push(user.accessToken)
+async function saveChanges() {
+  const user = getAuthObject()
+  if (user) {
+    queue_length.value = await sync.save(user.accessToken)
+  }
+}
 
-    if (push.success) {
-      const pull = await sync.pull(user.accessToken)
-      if (pull.success) queue_length.value = pull.data
-    } else {
-      // handle error
-      queue_length.value = -1
-    }
+async function refreshData() {
+  const user = getAuthObject()
+  if (user) {
+    const pull = await sync.pull(user.accessToken)
+    if (pull.success) queue_length.value = pull.data
+    else queue_length.value = -1
   }
 }
 
@@ -82,9 +70,17 @@ onMounted(async () => {
   <section class="home_heading">
     <div>
       <h1>Habit<span>Stitch</span></h1>
-      <p>{{ sync_status }} {{ queue_length > 0 ? `(${queue_length})` : undefined }}</p>
+      <div class="sync-status">
+        <p>{{ sync_status }} {{ queue_length > 0 ? `(${queue_length})` : undefined }}</p>
+        <button v-if="queue_length > 0" @click="saveChanges">
+          <FeatherIcon icon="save" :size="20" />
+        </button>
+        <button v-if="queue_length === 0" @click="refreshData">
+          <FeatherIcon icon="refresh-cw" :size="18" />
+        </button>
+      </div>
     </div>
-    <CreateHabitForm />
+    <CreateHabitForm @add-habit="updateQueueLength" />
   </section>
   <section class="date_display">
     <h2>{{ current_day.toDateString() }}</h2>
@@ -104,6 +100,16 @@ onMounted(async () => {
   gap: 1rem;
   align-items: center;
   justify-content: space-between;
+}
+
+.sync-status {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.sync-status > button {
+  padding: 0.2rem;
+  background-color: transparent;
 }
 
 .date_display {

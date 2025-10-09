@@ -5,6 +5,10 @@ import type { Habit } from '@shared/types'
 import { getAuthObject } from '@client/lib/auth'
 import { insertHabit } from '@client/dexie/dexieQueries'
 
+const emits = defineEmits<{
+  'add-habit': [queue_length: number]
+}>()
+
 const initialState: Pick<Habit, 'name' | 'description'> = {
   name: '',
   description: null,
@@ -37,8 +41,9 @@ async function addHabit() {
   const user = getAuthObject()
   if (!user) return
 
-  await insertHabit(user.user.id, formData.value)
+  const length = await insertHabit(user.user.id, formData.value)
 
+  emits('add-habit', length)
   closeDialog()
 }
 </script>
@@ -50,10 +55,12 @@ async function addHabit() {
   <dialog ref="dialog" @close.prevent="() => (open = false)">
     <form @submit.prevent="addHabit" @reset.prevent="() => (open = false)">
       <h2>Add a new habit</h2>
+
       <div class="form-group">
         <label for="name">Habit</label>
         <input type="text" name="name" id="habit_name" v-model="formData.name" required />
       </div>
+
       <div class="form-group">
         <label for="description">Description</label>
         <textarea
@@ -63,12 +70,11 @@ async function addHabit() {
           v-model="formData.description"
         />
       </div>
-      <div class="form-group">
-        <label for="Interval">Interval</label>
-      </div>
+
       <div class="form-group">
         <input type="submit" value="Add" class="submit-btn" />
       </div>
+
       <div class="form-group">
         <input type="reset" class="cancel-btn" value="Cancel" />
       </div>
