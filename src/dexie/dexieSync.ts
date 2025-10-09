@@ -11,7 +11,7 @@ export class SyncLayer {
     this.db = db
   }
 
-  async pull(access_token: string): Promise<Result> {
+  async pull(access_token: string): Promise<Result<number>> {
     const last_sync = localStorage.getItem(this.last_sync_key)
     let endpoint = this.pull_url_base
 
@@ -51,7 +51,7 @@ export class SyncLayer {
     await this.db.habits.bulkPut(safe_json.data.habits)
     await this.db.logs.bulkPut(safe_json.data.logs)
 
-    return { success: true, data: '' }
+    return { success: true, data: (await this.db.syncQueue.toArray()).length }
   }
 
   async push(access_token: string): Promise<Result<number>> {
@@ -128,5 +128,9 @@ export class SyncLayer {
 
   async removeFromQueue(operations: SyncOperation['id'][]) {
     await this.db.syncQueue.bulkDelete(operations)
+  }
+
+  async getQueue() {
+    return await this.db.syncQueue.orderBy('timestamp').toArray()
   }
 }

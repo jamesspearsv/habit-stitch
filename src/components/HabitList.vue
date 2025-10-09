@@ -11,6 +11,10 @@ const props = defineProps<{
   current_day: Date
 }>()
 
+const emit = defineEmits<{
+  'update-queue': [queue_length: number]
+}>()
+
 const habits = ref<Habit[]>([])
 const logs = ref<Log[]>([])
 
@@ -67,14 +71,18 @@ async function updateHabitCheckmark(e: Event, log_id?: string) {
   const checkbox = e.currentTarget as HTMLInputElement
   const habit_id = checkbox.id
 
+  let new_queue_length = 0
+
   if (checkbox.checked) {
     // add new log to local indexDB
-    await insertLog(user_id, habit_id, props.current_day)
+    new_queue_length = await insertLog(user_id, habit_id, props.current_day)
   } else {
     if (log_id) {
-      await deleteLog(log_id)
+      new_queue_length = await deleteLog(log_id)
     }
   }
+
+  emit('update-queue', new_queue_length)
 }
 </script>
 

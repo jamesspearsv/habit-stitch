@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import CreateHabitForm from '@client/components/CreateHabitForm.vue'
 import ListDayChanger from '@client/components/ListDayChanger.vue'
 import HabitList from '@client/components/HabitList.vue'
@@ -7,9 +7,13 @@ import { getAuthObject } from '@client/lib/auth'
 import { sync } from '@client/dexie/dexieSchema'
 
 const current_day = ref(new Date())
-
+const queue_length = ref(0)
 // TODO: Improve sync status UI and feedback
-const sync_status = ref<'synced' | 'in progress' | 'unsynced' | 'error'>('synced')
+const sync_status = computed<'Sync Changes' | 'Changes Saved' | 'Error'>(() => {
+  if (queue_length.value > 0) return 'Sync Changes'
+  if (queue_length.value === 0) return 'Changes Saved'
+  return 'Error'
+})
 
 function changeDay(action: 'next' | 'previous') {
   let date = current_day.value.getDate()
@@ -19,7 +23,6 @@ function changeDay(action: 'next' | 'previous') {
 }
 
 async function syncLocalData() {
-  sync_status.value = 'in progress'
   const user = getAuthObject()
   if (!user) {
     console.error('no user')
@@ -29,25 +32,29 @@ async function syncLocalData() {
   const result = await sync.push(user.accessToken)
 
   if (!result.success) {
-    sync_status.value = 'error'
     console.error(result.message)
   }
 
   if (result.success) {
-    sync_status.value = result.data > 0 ? 'unsynced' : 'synced'
+    queue_length.value = result.data
   }
 }
 
 async function pullFreshData() {
   const user = getAuthObject()
   if (!user) return
-  await sync.pull(user.accessToken)
+  const result = await sync.pull(user.accessToken)
+
+  if (result.success) queue_length.value = result.data
 }
+
+onMounted(async () => (queue_length.value = (await sync.getQueue()).length))
 </script>
 
 <template>
   <section class="home_heading">
     <h1>Habit<span>Stitch</span></h1>
+    <p>{{ queue_length }}</p>
     <CreateHabitForm />
     <div>
       <button @click="syncLocalData">{{ sync_status }}</button>
@@ -62,7 +69,7 @@ async function pullFreshData() {
     />
   </section>
   <section class="habit_list">
-    <HabitList :current_day="current_day" />
+    <HabitList :current_day="current_day" @update-queue="(length) => (queue_length = length)" />
   </section>
 </template>
 
